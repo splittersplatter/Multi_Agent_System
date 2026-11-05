@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "multi-agent-election"
+version = "0.1.0"
+description = "Research plans for a political multi-agent election simulator"
+requires-python = ">=3.11"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "Research project"}]
+dependencies = []
+
+[tool.setuptools]
+packages = []
