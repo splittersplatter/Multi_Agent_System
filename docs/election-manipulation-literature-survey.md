@@ -8,6 +8,18 @@ competing roadmap. It maps published models, not verified open-source implementa
 “Implemented” below means the paper specifies or simulates a mechanism; public
 code availability is not assumed.
 
+**Full-text collection/method audit — 7 November 2026:**
+[paper-by-paper heuristics and metrics](literature-heuristics-and-metrics.md),
+[local PDFs and access status](../References/README.md). 31/32 works available;
+S24 still blocked. The 36 PDFs include five retained versions/prints, not 36
+independent papers. Original files and historical survey scope retained. This
+audit adds method/metric evidence and bibliographic corrections; it is not a
+fresh systematic search or a simulator replication. In particular, k-pragmatist
+and Top-K EU differ; S14 evaluates analytical success probabilities; final
+margin, margin change and victory probability must not be pooled. S7's
+confusion-axis inconsistency and S23's unclear normalized-gain denominator are
+flagged rather than silently resolved. No novelty or stage-completion claim added.
+
 ## Main findings
 
 1. **Poll manipulation is a close precedent, including repeated polls.**
@@ -123,9 +135,9 @@ boundary relevant here. “No network” describes the paper's model, not realit
 
 ### Knowledge, information and strategic voting
 
-**S1.** van Ditmarsch, Lang & Saffidine, [Strategic Voting and the Logic of Knowledge](https://arxiv.org/abs/1310.6436), 2013 arXiv preprint. **P**, epistemic voting. A/I: voters choose reported preferences under uncertainty about others and higher-order knowledge. D/R: finite knowledge profiles and information updates; several voting examples, no social graph required; strategic manipulation/equilibrium definitions. Result/limit: public polls and preference revelation change knowledge; foundational formal models rather than a validated population simulation.
+**S1.** van Ditmarsch, Lang & Saffidine, [Strategic Voting and the Logic of Knowledge](https://arxiv.org/abs/1310.6436), TARK 2013; linked author preprint. **P**, epistemic voting. A/I: voters choose reported preferences under uncertainty about others and higher-order knowledge. D/R: finite knowledge profiles and information updates; several voting examples, no social graph required; strategic manipulation/equilibrium definitions. Result/limit: public polls and preference revelation change knowledge; foundational formal models rather than a validated population simulation.
 
-**S2.** Bakhtiari, van Ditmarsch & Saffidine, [How does uncertainty about other voters determine a strategic vote?](https://arxiv.org/abs/1809.10489), 2018 preprint, later version 2019. **P**, epistemic voting. A/I: agents know their own preferences but may be uncertain about others and their knowledge. D/R: finite possible worlds, preference profiles, knowledge, public announcements and strategic concepts; no physical interaction graph required. Result/limit: de dicto/de re manipulation, dominance and conditional equilibrium are already formalized; no probabilistic or arbitrary deceptive-message semantics follows automatically. Semantic reference for the planned model; former implementation removed.
+**S2.** Bakhtiari, van Ditmarsch & Saffidine, [How does uncertainty about other voters determine a strategic vote?](https://arxiv.org/abs/1809.10489), *Studies in Logic* 12(3):32-56, 2019; linked arXiv v2. **P**, epistemic voting. A/I: agents know their own preferences but may be uncertain about others and their knowledge. D/R: finite possible worlds, preference profiles, knowledge, public announcements and strategic concepts; no physical interaction graph required. Result/limit: de dicto/de re manipulation, dominance and conditional equilibrium are already formalized; no probabilistic or arbitrary deceptive-message semantics follows automatically. Semantic reference for the planned model; former implementation removed.
 
 **S3.** Endriss, Obraztsova, Polukarov & Rosenschein, [Strategic Voting with Incomplete Information](https://ijcai.org/proceedings/2016/41), IJCAI 2016. **P**, strategic/iterative game theory. A/I: voters choose ballots using an information set defined by a published winner, score vector or majority graph. D/R: repeated unilateral deviations; plurality, veto, k-approval, Borda, Copeland and Maximin; no social graph. Result/limit: manipulations and convergence depend on rule and disclosure; a stable *winner* is not necessarily a stable ballot profile.
 
@@ -157,7 +169,7 @@ boundary relevant here. “No network” describes the paper's model, not realit
 
 **S15.** Castiglioni, Ferraioli & Gatti, [Election Control in Social Networks via Edge Addition or Removal](https://doi.org/10.1609/aaai.v34i02.5556), AAAI 2020. **D**, network-control complexity. A/I: an external controller alters edges while influencers and their candidate messages are fixed. D/R: network diffusion and election control for different candidate/message cases. Result/limit: hardness and reoptimization results hold under the stated diffusion and objective assumptions; not a model of strategic epistemic voters.
 
-**S16.** Castiglioni, Ferraioli, Gatti & Landriani, [Election Manipulation on Social Networks: Seeding, Edge Removal, Edge Addition](https://arxiv.org/abs/1911.06198), *Journal of Artificial Intelligence Research* 2021; linked preprint. **D**, network-diffusion election control. A/I: an outside agent selects seeds or changes edges; messages concern one or more candidates. D/R: independent-cascade influence over a graph and winner/margin objectives. Result/limit: broad worst-case and approximation hardness results; worst-case hardness does not imply all practical instances are hard.
+**S16.** Castiglioni, Ferraioli, Gatti & Landriani, [Election Manipulation on Social Networks: Seeding, Edge Removal, Edge Addition](https://doi.org/10.1613/jair.1.12826), *Journal of Artificial Intelligence Research* 2021; publisher full text collected; earlier arXiv v2 retained. **D**, network-diffusion election control. A/I: an outside agent selects seeds or changes edges; messages concern one or more candidates. D/R: independent-cascade influence over a graph and winner/margin objectives. Result/limit: broad worst-case and approximation hardness results; worst-case hardness does not imply all practical instances are hard.
 
 **S17.** Wilder & Vorobeychik, [Controlling Elections through Social Influence](https://www.ifaamas.org/Proceedings/aamas2018/pdfs/p265.pdf), AAMAS 2018. **D**, election-control optimization and simulation. A/I: budgeted outside actor selects information sources; affected nodes transmit stochastically and may change preferences. D/R: network diffusion followed by plurality; target-win probability and margin objectives. Result/limit: approximation/hardness analysis and experiments; voters do not use the strategic-poll reasoning of S12.
 
@@ -191,7 +203,7 @@ boundary relevant here. “No network” describes the paper's model, not realit
 
 **S31.** Madsen & Pilditch, [A method for evaluating cognitively informed micro-targeted campaign strategies: An agent-based model proof of principle](https://doi.org/10.1371/journal.pone.0193909), *PLOS ONE* 2018. **I**, belief and campaign simulation. A/I: campaign agents communicate with cognitively heterogeneous voter agents; voter response depends on credibility. D/R: simulated campaigning and belief updates; exact voting-rule/network details are not established in this review. Result/limit: illustrates sensitivity to the persuasion model; evidence is proof-of-principle simulation, not a validated operational model.
 
-**S32.** Zhou, Xu, Wang & Wang, [FlockVote: LLM-Empowered Agent-Based Modeling for Simulating U.S. Presidential Elections](https://arxiv.org/abs/2512.05982), 2025 arXiv preprint. **I**, recent generative-agent election simulation. A/I: profile-conditioned language-model agents receive stated candidate information and output vote probabilities. D/R: state-level aggregation in an ex-post 2024 election case; the paper's setup does not establish strategic network equilibrium. Result/limit: useful as a contrasting experimental design, but retrospective agreement and generated rationales do not independently validate individual behavior or eliminate training-data leakage; no LLM is required for this project.
+**S32.** Zhou, Xu, Wang & Wang, [FlockVote: LLM-Empowered Agent-Based Modeling for Simulating U.S. Presidential Elections](https://arxiv.org/abs/2512.05982), 2025 arXiv v1; authors report ICAIS 2025 publication, not independently verified here. **I**, recent generative-agent election simulation. A/I: profile-conditioned language-model agents receive stated candidate information and output vote probabilities. D/R: state-level aggregation in an ex-post 2024 election case; the paper's setup does not establish strategic network equilibrium. Result/limit: useful as a contrasting experimental design, but retrospective agreement and generated rationales do not independently validate individual behavior or eliminate training-data leakage; no LLM is required for this project.
 
 ## Candidate gaps to investigate
 

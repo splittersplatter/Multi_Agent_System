@@ -1,7 +1,7 @@
 # Stage 01 scale measurements
 
-Status: historical after campaign-layer changes; preliminary, one run each;
-not performance guarantees. Rebenchmark the current core. 2026-11-05.
+Status: preliminary, individual runs; not performance guarantees. Historical
+and current-code measurements are identified below. Updated 2026-11-06.
 Machine: Intel i7-12700H, x86_64 Linux 7.0.0, CPython 3.14.4.
 Original measurement core SHA-256: `629c342418714bd502d75a7393c9f88856e7e1efbeadc80649aac8ca5251b259`.
 Shared, non-isolated machine; some other test activity overlapped the CLI run.
@@ -50,6 +50,25 @@ the HTTP command above; all agents use `sensed_plurality` and public sensors.
 Both HTTP figures include client/server/retained history, not browser. Earlier
 browser figures use the original core; browser RSS and sensor-enabled browser
 performance remain unmeasured.
+
+## Recheck: current browser and pipeline
+
+2026-11-06; same machine, 500 agents, 100 HTTP rounds, seed 2026, one run each.
+Measured before the subsequent browser checkpoint revision guard; rebenchmark
+the changed pipeline before Stage 01 completion.
+Core SHA-256: `7a9d50bbee51cafbec45ea32142559836db92408f2cb5ff029b3d29c915b5947`;
+pipeline SHA-256: `069fbf7b5a30649df4b79e9937d978ea9be56993f5dcf0ceff10ca4932b45cc3`.
+
+| Path | Result | Scope |
+| --- | --- | --- |
+| HTTP, sensors off | mean 19.33 ms; p95 24.87 ms; max 28.97 ms; 97,000 KiB | Client + server + retained history; 100 rounds |
+| HTTP, sensors on | mean 32.61 ms; p95 39.98 ms; max 43.65 ms; 160,904 KiB | Same; 5,470 readings in final round |
+| Browser, sensors off | 155 rounds / 43.285 s, ~3.58 rounds/s at 5×; 5,470 links rendered | Includes pacing and browser-control overhead |
+| Browser, ten paused steps | mean 307.3 ms; max 349 ms | Rounds 156–165; click to visible round, includes automation overhead |
+
+HTTP p95/RSS and browser step maximum fall below the provisional budgets below;
+these are single runs, not proof of a stable performance bound. Browser RSS,
+sensor-enabled browser rendering, costly policies and dense graphs remain unmeasured.
 
 ## Provisional regression budgets
 

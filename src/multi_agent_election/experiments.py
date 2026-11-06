@@ -1,9 +1,12 @@
 """Matched interventions compared under keyed exogenous randomness."""
 
 from dataclasses import replace
+import json
+import time
 from .engine import Simulation
 from .metrics import series
 from .model import ElectionError, Scenario
+from .voting import STRATEGIC, configure_voting
 
 
 def batch(scenario: Scenario, seeds: list[int], target: str) -> dict:
@@ -30,7 +33,7 @@ def batch(scenario: Scenario, seeds: list[int], target: str) -> dict:
                      "winner_changed": left[-1]["winner"] != right[-1]["winner"],
                      "target_share_delta": right[-1]["shares"][target] - left[-1]["shares"][target],
                      "target_margin_delta": target_margin(right[-1]) - target_margin(left[-1])})
-    return {"record_type": "eclipse.batch", "record_version": 1,
+    return {"record_type": "eclipse.batch", "record_version": 2,
             "target": target, "runs": len(rows), "scenario": scenario.as_dict(), "manifest": run_manifest,
             "policy_digests": {name: digest for name, (_, digest, _) in b.plugins.items()},
             "control_target_win_rate": sum(row["control"][-1]["winner"] == target for row in rows) / len(rows),
@@ -39,3 +42,60 @@ def batch(scenario: Scenario, seeds: list[int], target: str) -> dict:
             "mean_target_share_delta": sum(row["target_share_delta"] for row in rows) / len(rows),
             "mean_target_margin_delta": sum(row["target_margin_delta"] for row in rows) / len(rows),
             "rows": rows}
+
+
+def compare_heuristics(scenario, seeds, policies, parameters=None, rounds=None, window=10):
+    """Matched electorate/movement; descriptive metrics, not a 'best' claim."""
+    if not seeds or len(set(seeds)) != len(seeds) or any(type(s) is not int or s < 0 for s in seeds):
+        raise ElectionError("comparison seeds must be unique nonnegative integers")
+    if not policies or len(set(policies)) != len(policies):
+        raise ElectionError("comparison requires unique policies")
+    if type(window) is not int or window < 1:
+        raise ElectionError("stability window must be positive")
+    horizon = scenario.rounds if rounds is None else rounds
+    if type(horizon) is not int or horizon < 1:
+        raise ElectionError("comparison rounds must be positive")
+    rows=[]; manifest=None
+    # Validate every configuration before any run; never silently drop failures.
+    configured = {p: configure_voting(scenario,p,parameters if p in STRATEGIC else {}) for p in policies}
+    for seed in seeds:
+        for policy in policies:
+            selected=replace(configured[policy],seed=seed,rounds=horizon)
+            sim=Simulation(selected)
+            if manifest is not None and sim.runtime_manifest != manifest:
+                raise ElectionError("runtime changed between heuristic comparison runs")
+            manifest=sim.runtime_manifest
+            started=time.perf_counter()
+            try:
+                sim.run(horizon)
+            except ElectionError as exc:
+                rows.append({"seed":seed,"policy":policy,"status":"failed","error":str(exc),
+                             "completed_round":sim.current.round,"runtime_seconds":time.perf_counter()-started})
+                continue
+            elapsed=time.perf_counter()-started
+            metrics=series(selected,sim.frames)
+            switches=[sum(a != dict(right.ballots)[person] for person,a in left.ballots)
+                      for left,right in zip(sim.frames,sim.frames[1:])]
+            final=sim.current
+            # Deliberately labelled ordinal-rank proxy; not interpersonal cardinal welfare.
+            prefs=dict(final.preferences); m=len(selected.parties)
+            welfare=sum((m-1-prefs[person.id].index(final.winner))/max(1,m-1) for person in selected.people)/len(selected.people)
+            stable=len(switches)>=window and all(s==0 for s in switches[-window:])
+            winners=[f.winner for f in sim.frames[-window-1:]]
+            trace={p:json.loads(mem) for p,mem in final.policy_memory}
+            rows.append({"seed":seed,"policy":policy,"status":"observed_ballot_stability" if stable else "horizon_reached",
+                         "completed_round":final.round,"winner":final.winner,
+                         "winner_stable_window":len(winners)==window+1 and len(set(winners))==1,
+                         "ballot_stable_window":stable,"total_ballot_switches":sum(switches),
+                         "final_switch_fraction":switches[-1]/len(selected.people),
+                         "winner_mean_rank_utility":welfare,"runtime_seconds":elapsed,
+                         "metrics":metrics,"final_decisions":trace,
+                         "scenario":selected.as_dict(),
+                         "policy_digests":{name:digest for name,(_,digest,_) in sim.plugins.items()}})
+    return {"record_type":"eclipse.heuristic-comparison","record_version":1,
+            "manifest":manifest,"scenario":scenario.as_dict(),"seeds":seeds,
+            "parameters":parameters or {},"rounds":horizon,"stability_window":window,
+            "notes":["Same electorate and actor-round movement streams across policies.",
+                     "Simultaneous updates; stability window is not proof of convergence.",
+                     "Native information: pivotal receives initial global poll, other new policies use local sensors. Set information_source=poll for matched strategic information.",
+                     "Winner rank utility is a researcher ordinal proxy, not validated welfare."],"rows":rows}

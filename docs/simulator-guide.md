@@ -32,12 +32,22 @@ last, and can create a separate full checkpoint. Missing frames cannot be
 exported from the sampled record alone. Batch compares configured interventions
 against no intervention, paired by explicit seed; its plot is mean target-share
 change, not a causal claim. Images show intervention markers and recorded state.
-Run JSON and JSONL headers identify `eclipse.run` record version 1; batch JSON
-identifies `eclipse.batch` version 1. JSONL contains a header followed by metric
+Run JSON and JSONL headers identify `eclipse.run` record version 2; batch JSON
+identifies `eclipse.batch` version 2. JSONL contains a header followed by metric
 and available frame records; it is not itself a resumable checkpoint.
-Network arrows point sender to recipient; campaign links take visual precedence
-over persistent links, which take precedence over overlapping proximity links.
+Network arrows point sender to recipient; overlapping public layers and reverse
+directions use separate offset arrows.
 Coincident nodes cannot show direction at image scale.
+
+Metrics include party counts/shares and rank frequencies (rank counts divided
+by population), zero-based mean winner rank, group sizes/counts/shares, and
+per-layer and deduplicated public-edge counts. Switching compares adjacent
+recorded rounds only: the first round and gaps are `null` (blank in CSV).
+Empty-group shares are also `null`; their counts are zero. CSV group and rank
+header IDs are percent-encoded. Intervention traces identify `scheduled`,
+`interactive`, or `policy` origins; rejected actions raise errors and are not
+committed. Paired plots mark scheduled treatment events only. Markers show
+timing, not causal attribution.
 
 ## Scenario
 
@@ -50,12 +60,16 @@ unique ID, group, full strict private `preference` and optional `[x,y]` position
 and `overrides`. Bounds: positions in `[0,1]^2`; `1 <= k <= number of parties`.
 Round 0 votes sincerely; first-choice plurality counts each length-k ballot.
 
-Group fields: `voting` (`sincere`, `local_plurality`, `sensed_plurality`, or plugin), `movement`
+Group fields: `voting` (baseline, [strategic heuristic](voting-heuristics.md), or plugin), `movement`
 (`stationary`, `random_walk`, or plugin), `max_step` (0..1), `communication`
 (`none`, `truthful`, or plugin), `graph` (`none` or plugin), `parameters` (table).
 Person overrides replace individual fields; `{}` restores group defaults.
 `local_plurality` chooses the most-reported first choice, breaking ties by own
 preference; no reports means sincere voting.
+
+Ten strategic heuristics, startup selector, JSON parameters and matched-seed
+`compare` command: [voting reference](voting-heuristics.md). All use the same
+engine/history. Defaults are explicit modelling assumptions, not paper replications.
 
 Each group accepts a `capabilities` table of boolean permissions:
 
@@ -141,7 +155,7 @@ and plugin-source hashes. Sensor counts are included in metrics/CSV. Readings
 are available observations, not proof a sincere policy used them. Restore replays
 and compares history. If core/runtime changes, `--allow-environment-change`
 permits explicit replay-based migration; plugin source mismatches still fail.
-Manifest version 1 records Python, machine, core and CLI/experiment/render
+Manifest version 1 records Python, machine, core and CLI/experiment/render/browser-adapter
 pipeline hashes, plus RNG schema `actor-round-phase-v1`. Movement and each
 person's policy phase use SHA-256-derived independent streams keyed by seed,
 actor and round; equal seeds alone do not guarantee pairing for arbitrary plugins.
@@ -160,14 +174,42 @@ alone does not prove which core bytecode Python had already loaded.
 
 Open the localhost URL printed by `visual`. Select a person, step/play/seek,
 choose speed, filter groups/layers and toggle node color. The sidebar shows
-first-choice shares. Researcher view includes true private preferences; these
+first-choice shares with percentage/round axes and expandable metrics for the
+displayed round. Dashed markers show the selected round and intervention events;
+events do not establish causality. Network
+nodes support Tab and Enter/Space; focus survives playback redraws. Researcher
+view includes true private preferences; these
 are not passed to other policies. Pause to edit preferences, one-round ballot,
 group, JSON overrides, position, outgoing persistent/campaign neighbors or private
 channel memberships. Edits apply at the next boundary; editing a past frame
 replaces later frames. Only changed fields are submitted, so untouched scheduled
 actions remain effective. Download a checkpoint before editing to preserve history.
+Unsubmitted edits are local drafts scoped to one agent and recorded frame; they
+survive filters, selection and timeline navigation. Successful edits, a changed
+remote revision or page reload discard drafts. A rejected edit at an unchanged
+revision keeps its draft. Drafts are not checkpointed.
+Browser checkpoint downloads reject stale revisions; reload if another session
+changed the simulation. The legacy unversioned HTTP endpoint returns current state.
 The inspector lists the selected agent's trusted ballot readings for the displayed
-voting phase, including source and completed round.
+voting phase, including source and completed round. Expand agent reports and
+memory for received/pending reports, policy memory and interventions in that frame.
+The preference-estimate color mode is a visualization heuristic, not an agent
+belief: selected agent's own preference is known; others use the first choice
+of reports or sensed ballots available at that round's voting phase. These can
+be stale or strategic. Missing or conflicting first choices are gray; pending
+messages and hidden preferences are excluded. Rewind changes the evidence shown.
+Overlapping directed public layers use separate offset arrows in the browser,
+network PNG and GIF; coincident or near-coincident positions may obscure direction.
+The export selector downloads metrics CSV, vote-share SVG/PNG, displayed-round
+network PNG or a GIF of the retained timeline. PNG/GIF need Pillow. Exports use
+an immutable revision-checked snapshot and do not advance or rerun the model.
+Pause first; if a step is still completing, retry after it finishes. Browser
+download settings control whether the requested file is actually saved. The
+latest prepared file stays available as a direct save link labeled with its
+source revision (and displayed round for exports); preparing another replaces it.
+During an in-flight step, Pause shows `Pausing…`; timeline navigation, edits,
+and downloads stay disabled until the committed round arrives. A disconnect
+stops playback; already committed server-side rounds are not rolled back.
 
 Progress and measured limitations: [Stage 01](plans/stage-01-political-simulator.md#progress).
 Reproducible scale workloads: [benchmark notes](stage-01-benchmarks.md).

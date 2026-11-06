@@ -3,3 +3,5 @@
 :root .group-legend{margin-top:8px;color:#536c6a}.group-legend span:before{background:white;border:2px solid var(--color)}
 details{font-size:12px;color:#405c5c}details summary{cursor:pointer}details pre{overflow:auto;font-size:11px;line-height:1.4}
 .filters .layer-persistent:after,.filters .layer-proximity:after,.filters .layer-campaign:after{content:"";width:14px;height:3px;display:inline-block}.filters .layer-persistent:after{background:#526f91}.filters .layer-proximity:after{background:#9aa9a2}.filters .layer-campaign:after{background:#bf6636}
+#notice[data-kind="info"]{color:#1f7254}
+.chart-label{font-size:10px;fill:#405c5c}

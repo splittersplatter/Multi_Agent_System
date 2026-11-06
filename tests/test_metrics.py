@@ -23,6 +23,43 @@ class MetricTests(unittest.TestCase):
         self.assertEqual(row["mean_winner_rank"], 0.75)
         self.assertEqual(row["winner_margin"], 0)
 
+    def test_missing_initial_switches_empty_groups_and_rank_frequencies(self):
+        data = example(); data["groups"]["empty"] = {"voting": "sincere"}
+        data["interventions"] = [{"round": 1, "person": "2", "group": "empty", "ballot": ["C", "A"]}]
+        scenario = make_scenario(data); sim = Simulation(scenario); sim.run(1)
+        initial, changed = series(scenario, sim.frames)
+        self.assertIsNone(initial["ballot_switch_count"])
+        self.assertIsNone(initial["ballot_switch_rate"])
+        self.assertEqual(initial["group_sizes"]["empty"], 0)
+        self.assertEqual(initial["group_counts"]["empty"], {"A": 0, "B": 0, "C": 0})
+        self.assertEqual(initial["group_shares"]["empty"], {"A": None, "B": None, "C": None})
+        self.assertEqual(initial["rank_frequencies"]["A"], [0.5, 0.25])
+        for rank in range(scenario.k):
+            self.assertAlmostEqual(sum(initial["rank_frequencies"][party][rank] for party in scenario.parties), 1)
+        self.assertEqual((changed["ballot_switch_count"], changed["ballot_switch_rate"]), (1, 0.25))
+        self.assertEqual(changed["group_shares"]["empty"], {"A": 0, "B": 0, "C": 1})
+        self.assertEqual(changed["intervention_origin_counts"], {"interactive": 0, "policy": 0, "scheduled": 1})
+
+    def test_switching_unavailable_across_missing_rounds(self):
+        scenario = make_scenario(example()); sim = Simulation(scenario); sim.run(4)
+        sparse = series(scenario, [sim.frames[0], sim.frames[3], sim.frames[4]])
+        self.assertEqual([row["ballot_switch_rate"] for row in sparse], [None, None, 0])
+
+    def test_intervention_origins_replay_and_legacy_projection(self):
+        data = example(); data["interventions"] = [{"round": 1, "person": "2", "ballot": ["C", "A"]}]
+        data["people"][0]["overrides"] = {"graph": "python:strategy_fixture:graph", "parameters": {"target": "2"}}
+        sim = Simulation(make_scenario(data)); sim.edit_after(0, "3", position=[0.2, 0.2]); frame = sim.step()
+        origins = {event["person"]: event["origin"] for event in frame.as_dict()["interventions"]}
+        self.assertEqual(origins, {"1": "policy", "2": "scheduled", "3": "interactive"})
+        self.assertEqual(Simulation.from_checkpoint(sim.checkpoint()).current, frame)
+        altered = sim.checkpoint(); altered["frames"][1]["interventions"][0]["origin"] = "policy"
+        with self.assertRaisesRegex(ElectionError, "history does not match"):
+            Simulation.from_checkpoint(altered)
+        old = sim.checkpoint(); old["version"] = 9
+        for saved in old["frames"]:
+            for event in saved["interventions"]: event.pop("origin")
+        self.assertEqual(Simulation.from_checkpoint(old).current, frame)
+
     def test_matched_zero_and_effect(self):
         data = example()
         no_attack = batch(make_scenario(data), [1, 2], "B")

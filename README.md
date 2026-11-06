@@ -5,9 +5,12 @@
 
 Goal: one political simulator, seven mechanism studies, combined experiments,
 reproducible report. Stage 00 is verified; Stage 01 is in progress. The current
-engine supports sincere/local-plurality voters, ranked ballots, movement,
+engine supports baseline and ten strategic voting heuristics, ranked ballots, movement,
 persistent/proximity graphs, delayed reports, scheduled edits and replay.
 It is research software, not a validated election model.
+
+[Voting heuristic selection and matched experiments](docs/voting-heuristics.md).
+Browser: choose startup voting before the first step. CLI: `--voting top_k`.
 
 Run from the project root with Python 3.11+:
 

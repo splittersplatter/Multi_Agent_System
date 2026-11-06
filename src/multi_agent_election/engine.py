@@ -10,6 +10,7 @@ from .model import ElectionError, Frame, Scenario, Intervention, apply_overrides
 from .network import proximity_edges, random_walk
 from .policies import Observation, canonical_json, load_plugin, policy_rng
 from .provenance import manifest
+from .voting import STRATEGIC, decide, validate_parameters
 
 
 def count_plurality(parties: Sequence[str], k: int, ballots: Mapping[str, Sequence[str]]) -> tuple[tuple[tuple[str, int], ...], str]:
@@ -75,6 +76,12 @@ class Simulation:
         self.plugins = self._load_plugins(())
         ballots = {person.id: person.preference[:scenario.k] for person in scenario.people}
         counts, winner = count_plurality(scenario.parties, scenario.k, ballots)
+        self.initial_poll = tuple(count for _, count in counts)
+        groups = {g.id: g for g in scenario.groups}
+        for person in scenario.people:
+            group = apply_overrides(groups[person.group], person.overrides)
+            if group.voting in STRATEGIC:
+                validate_parameters(json.loads(group.parameters).get("voting", {}), scenario.parties, len(scenario.people))
         positions = {person.id: person.position for person in scenario.people}
         self.frames = [Frame(0, tuple(ballots.items()), counts, winner, tuple(positions.items()),
                              scenario.persistent_edges, proximity_edges(positions, scenario.radius), (), (),
@@ -294,7 +301,21 @@ class Simulation:
             group = policy(memberships[p.id], overrides[p.id])
             preference = preferences[p.id]
             messages = inbox[p.id]
-            if group.voting == "local_plurality" and messages:
+            if group.voting in STRATEGIC:
+                old_policy = policy(prior_groups[p.id], prior_overrides[p.id])
+                previous_memory = json.loads(memory[p.id]) if (old_policy.voting, old_policy.parameters) == (group.voting, group.parameters) else None
+                observed = observation(p.id, positions[p.id], messages, outgoing[p.id], membership_channels[p.id], voting_sensors)
+                try:
+                    voting_params = json.loads(group.parameters).get("voting", {})
+                    if previous_memory is None and self.current.round > 0 and (group.voting == "pivotal" or voting_params.get("information_source") == "poll"):
+                        raise ElectionError("poll-based voting must be configured at episode start; cannot reconstruct unseen past deviations")
+                    ballots[p.id], trace = decide(group.voting, observed, voting_params,
+                                                 previous_memory, policy_rng(self.scenario.seed, p.id, self.current.round + 1),
+                                                 len(self.scenario.people), self.initial_poll)
+                    memory[p.id] = canonical_json(trace, "voting decision")
+                except ElectionError as exc:
+                    raise ElectionError(f"person {p.id!r}, round {self.current.round + 1}, voting: {exc}") from exc
+            elif group.voting == "local_plurality" and messages:
                 counts = Counter(ballot[0] for _, _, ballot in messages)
                 highest = max(counts.values())
                 choice = next(party for party in preference if counts[party] == highest)

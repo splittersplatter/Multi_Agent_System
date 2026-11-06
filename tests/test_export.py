@@ -6,6 +6,9 @@ import tempfile
 import unittest
 from pathlib import Path
 import importlib.util
+import subprocess
+import sys
+import os
 
 from multi_agent_election import Simulation, make_scenario
 from multi_agent_election.cli import main
@@ -13,6 +16,29 @@ from test_baseline import example
 
 
 class ExportTests(unittest.TestCase):
+    @unittest.skipUnless(importlib.util.find_spec("PIL"), "install requirements-visualization.txt for PNG/GIF checks")
+    def test_network_and_gif_keep_overlapping_layers_and_reciprocal_edges(self):
+        from PIL import Image
+        from multi_agent_election.render import network_image, export_gif
+        data = example(); data["people"] = data["people"][:2]
+        data["people"][0]["position"] = [0.1, 0.5]
+        data["people"][1]["position"] = [0.9, 0.5]
+        data["network"] = {"radius": 0.81, "persistent_edges": [["1", "2"]],
+                           "campaign_edges": [["1", "2"]]}
+        scenario = make_scenario(data); simulation = Simulation(scenario)
+        image = network_image(scenario, simulation.current)
+        expected = {281: (162, 170, 166), 287: (162, 170, 166),
+                    293: (82, 111, 145), 299: (191, 102, 54)}
+        for y, color in expected.items():
+            self.assertEqual(image.getpixel((200, y)), color)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "overlap.gif"
+            export_gif(scenario, simulation.frames, path, 1, 5)
+            with Image.open(path) as gif:
+                rgb = gif.convert("RGB")
+                for y, color in expected.items():
+                    self.assertEqual(rgb.getpixel((200, y)), color)
+
     @unittest.skipUnless(importlib.util.find_spec("PIL"), "install requirements-visualization.txt for PNG/GIF checks")
     def test_network_export_arrow_points_from_sender_to_recipient(self):
         from multi_agent_election.render import network_image
@@ -28,7 +54,17 @@ class ExportTests(unittest.TestCase):
         data["network"]["campaign_edges"] = [["1", "2"]]
         scenario = make_scenario(data)
         image = network_image(scenario, Simulation(scenario).current)
-        self.assertEqual(image.getpixel((662, 288)), (191, 102, 54))
+        # Overlapping layers remain separate; both arrowheads point to 2.
+        self.assertEqual(image.getpixel((662, 288)), (82, 111, 145))
+        self.assertEqual(image.getpixel((662, 292)), (191, 102, 54))
+        self.assertEqual(image.getpixel((138, 285)), (255, 255, 255))
+        data["network"]["campaign_edges"] = [["2", "1"]]
+        scenario = make_scenario(data)
+        image = network_image(scenario, Simulation(scenario).current)
+        # Reverse-direction campaign arrow widens at 1, not 2.
+        self.assertEqual(image.getpixel((138, 292)), (191, 102, 54))
+        self.assertEqual(image.getpixel((662, 292)), (255, 255, 255))
+        self.assertEqual(image.getpixel((662, 288)), (82, 111, 145))
 
     @unittest.skipUnless(importlib.util.find_spec("PIL"), "install requirements-visualization.txt for PNG/GIF checks")
     def test_metrics_and_rendered_frames(self):
@@ -79,6 +115,41 @@ class ExportTests(unittest.TestCase):
             with (root / "metrics.csv").open(newline="") as handle:
                 rows = list(csv.DictReader(handle))
             self.assertEqual([row["sensor_observation_count"] for row in rows], ["0", "1", "1"])
+
+    def test_csv_includes_rank_group_and_unavailable_values(self):
+        data = example(); data["groups"]["empty:group"] = {"voting": "sincere"}
+        sim = Simulation(make_scenario(data)); sim.run(1)
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); checkpoint = root / "checkpoint.json"; checkpoint.write_text(json.dumps(sim.checkpoint()))
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(main(["export", str(checkpoint), "--csv", str(root / "metrics.csv")]), 0)
+            with (root / "metrics.csv").open(newline="") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual(rows[0]["ballot_switch_rate"], "")
+            self.assertEqual(rows[0]["group_size:empty%3Agroup"], "0")
+            self.assertEqual(rows[0]["group_share:empty%3Agroup:A"], "")
+            self.assertEqual(float(rows[0]["rank_frequency:1:A"]), 0.5)
+            self.assertEqual(rows[0]["rank_count:2:A"], "1")
+
+    def test_paired_annotations_only_mark_scheduled_treatment(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); env = {**os.environ, "PYTHONPATH": "src:examples"}
+            for scenario, expected in (("examples/custom.toml", False), ("examples/integrated.toml", True)):
+                target = root / (Path(scenario).stem + ".svg")
+                subprocess.run([sys.executable, "-m", "multi_agent_election.cli", "batch", scenario,
+                                "--seeds", "1", "--target", "A", "--plot-svg", str(target)],
+                               env=env, capture_output=True, text=True, check=True)
+                svg = target.read_text()
+                self.assertEqual("Intervention round 2" in svg, expected)
+                self.assertNotIn("Intervention round 1", svg)
+
+    def test_sampled_plot_uses_actual_round_spacing(self):
+        from multi_agent_election.render import export_plot
+        scenario = make_scenario(example()); sim = Simulation(scenario); sim.run(4)
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "plot.svg"
+            export_plot(scenario, [sim.frames[i] for i in (0, 3, 4)], path, "svg")
+            self.assertIn("55.00,275.00 580.00,275.00 755.00,275.00", path.read_text())
 
     def test_batch_comparison_csv_and_plot_match_data(self):
         with tempfile.TemporaryDirectory() as folder:

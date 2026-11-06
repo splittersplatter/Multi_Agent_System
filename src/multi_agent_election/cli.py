@@ -6,10 +6,12 @@ import json
 import sys
 import tomllib
 from pathlib import Path
+from urllib.parse import quote
 from .engine import Simulation
-from .experiments import batch
+from .experiments import batch, compare_heuristics
 from .metrics import frame_metrics, series
 from .model import ElectionError, make_scenario
+from .voting import VOTING_POLICIES, STRATEGIC, configure_voting
 
 
 def _write_jsonl(path: Path, data: dict) -> None:
@@ -36,6 +38,35 @@ def _preflight_outputs(paths: list[Path | None]) -> None:
     canonical = [path.resolve() for path in outputs]
     if len(set(canonical)) != len(outputs):
         raise ElectionError("output paths must be distinct, including aliases")
+
+
+def _write_metrics_csv(path: Path, scenario, rows: list[dict]) -> None:
+    fixed = ("round", "winner", "winner_margin", "mean_winner_rank", "ballot_switch_count", "ballot_switch_rate",
+             "public_edge_count", "persistent_edge_count", "proximity_edge_count", "campaign_edge_count",
+             "private_channel_count", "private_membership_count", "mean_out_degree", "intervention_count",
+             "sensor_observation_count")
+    names = list(fixed) + [f"count:{party}" for party in scenario.parties]
+    names += [f"share:{quote(party, safe='')}" for party in scenario.parties]
+    names += [f"{kind}:{rank + 1}:{quote(party, safe='')}" for kind in ("rank_count", "rank_frequency")
+              for rank in range(scenario.k) for party in scenario.parties]
+    groups = sorted(group.id for group in scenario.groups)
+    names += [f"group_size:{quote(group, safe='')}" for group in groups]
+    names += [f"{kind}:{quote(group, safe='')}:{quote(party, safe='')}" for kind in ("group_count", "group_share")
+              for group in groups for party in scenario.parties]
+    origins = ("scheduled", "interactive", "policy", "unknown")
+    names += [f"intervention_origin:{origin}" for origin in origins]
+    with path.open("x", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle); writer.writerow(names)
+        for row in rows:
+            values = [row[key] for key in fixed] + [row["counts"][party] for party in scenario.parties]
+            values += [row["shares"][party] for party in scenario.parties]
+            values += [row["rank_counts" if kind == "rank_count" else "rank_frequencies"][party][rank]
+                       for kind in ("rank_count", "rank_frequency") for rank in range(scenario.k) for party in scenario.parties]
+            values += [row["group_sizes"][group] for group in groups]
+            values += [row["group_counts" if kind == "group_count" else "group_shares"][group][party]
+                       for kind in ("group_count", "group_share") for group in groups for party in scenario.parties]
+            values += [row["intervention_origin_counts"].get(origin, 0) for origin in origins]
+            writer.writerow(values)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -74,11 +105,37 @@ def main(argv: list[str] | None = None) -> int:
     visual = commands.add_parser("visual", help="open a local interactive session")
     visual.add_argument("scenario", type=Path)
     visual.add_argument("--port", type=int, default=8000)
+    compare = commands.add_parser("compare", help="matched-seed voting heuristic comparison; stdout JSON")
+    compare.add_argument("scenario", type=Path)
+    compare.add_argument("--seeds", type=int, nargs="+", required=True)
+    compare.add_argument("--policies", nargs="+", choices=VOTING_POLICIES, default=["sincere","sensed_plurality",*STRATEGIC])
+    compare.add_argument("--parameters", default="{}", help="JSON strategic parameters shared across policies")
+    compare.add_argument("--rounds", type=int)
+    compare.add_argument("--window", type=int, default=10)
+    compare.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    for command in (run, batches, visual):
+        command.add_argument("--voting", choices=VOTING_POLICIES, help="episode-wide voting policy; preserves movement and permissions")
+        command.add_argument("--voting-parameters", default="{}", help="JSON parameters for selected voting policy")
     args = parser.parse_args(argv)
     try:
-        if args.command in ("run", "batch", "visual"):
+        if args.command in ("run", "batch", "visual", "compare"):
             with args.scenario.open("rb") as handle:
                 scenario = make_scenario(tomllib.load(handle))
+            if args.command == "compare":
+                _preflight_outputs([args.output])
+                result=compare_heuristics(scenario,args.seeds,args.policies,json.loads(args.parameters),args.rounds,args.window)
+                if args.output:
+                    with args.output.open("x",encoding="utf-8") as handle:
+                        json.dump(result,handle,indent=2,allow_nan=False);handle.write("\n")
+                    print(json.dumps({"output":str(args.output),"runs":len(result["rows"]),
+                                      "failed":sum(r["status"]=="failed" for r in result["rows"])}))
+                else:
+                    print(json.dumps(result,indent=2,allow_nan=False))
+                return 0
+            if args.voting:
+                scenario = configure_voting(scenario, args.voting, json.loads(args.voting_parameters))
+            elif args.voting_parameters != "{}":
+                raise ElectionError("--voting-parameters requires --voting")
             if args.command == "batch":
                 _preflight_outputs([args.csv, args.plot_svg, args.plot_png])
                 if args.plot_png:
@@ -130,7 +187,7 @@ def main(argv: list[str] | None = None) -> int:
                     if args.sample is not None and (current.round % args.sample == 0 or current.round == scenario.rounds):
                         samples.append(current.as_dict())
                     simulation.frames = [current]
-                output_data = {"record_type": "eclipse.run", "record_version": 1,
+                output_data = {"record_type": "eclipse.run", "record_version": 2,
                                "seed": scenario.seed, "parties": scenario.parties, "k": scenario.k,
                                "scenario": scenario.as_dict(), "manifest": simulation.runtime_manifest,
                                "policy_digests": {name: digest for name, (_, digest, _) in simulation.plugins.items()},
@@ -166,11 +223,7 @@ def main(argv: list[str] | None = None) -> int:
                 from .render import _pillow
                 _pillow()
             if args.csv:
-                with args.csv.open("x", encoding="utf-8", newline="") as handle:
-                    writer = csv.writer(handle)
-                    writer.writerow(["round", "winner", "winner_margin", "mean_winner_rank", "ballot_switch_rate", "public_edge_count", "campaign_edge_count", "mean_out_degree", "intervention_count", "sensor_observation_count"] + [f"count:{p}" for p in simulation.scenario.parties])
-                    for row in rows:
-                        writer.writerow([row[k] for k in ("round", "winner", "winner_margin", "mean_winner_rank", "ballot_switch_rate", "public_edge_count", "campaign_edge_count", "mean_out_degree", "intervention_count", "sensor_observation_count")] + [row["counts"][p] for p in simulation.scenario.parties])
+                _write_metrics_csv(args.csv, simulation.scenario, rows)
             if any((args.plot_svg, args.plot_png, args.network_png, args.gif)):
                 from .render import export_gif, export_network, export_plot
                 if args.plot_svg: export_plot(simulation.scenario, simulation.frames, args.plot_svg, "svg")
@@ -186,7 +239,7 @@ def main(argv: list[str] | None = None) -> int:
     except (OSError, json.JSONDecodeError, tomllib.TOMLDecodeError, ElectionError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
-    result = {"record_type": "eclipse.run", "record_version": 1,
+    result = {"record_type": "eclipse.run", "record_version": 2,
               "seed": scenario.seed, "parties": scenario.parties, "k": scenario.k,
               "scenario": scenario.as_dict(), "manifest": simulation.runtime_manifest,
               "policy_digests": {name: digest for name, (_, digest, _) in simulation.plugins.items()},

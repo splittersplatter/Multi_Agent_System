@@ -92,7 +92,7 @@ class RecordingContractTests(unittest.TestCase):
             sampled = cli("run", "examples/integrated.toml", "--sample", "2",
                           "--checkpoint", str(checkpoint), "--jsonl", str(jsonl))
             for output in (full, summary, sampled):
-                self.assertEqual((output["record_type"], output["record_version"]), ("eclipse.run", 1))
+                self.assertEqual((output["record_type"], output["record_version"]), ("eclipse.run", 2))
                 self.assertEqual(output["manifest"]["manifest_version"], 1)
                 self.assertTrue(output["manifest"]["pipeline_sha256"])
                 self.assertEqual(output["metrics"], full["metrics"])
@@ -101,7 +101,7 @@ class RecordingContractTests(unittest.TestCase):
             self.assertEqual(sampled["frames"], [full["frames"][i] for i in (0, 2, 3)])
             self.assertEqual(json.loads(checkpoint.read_text())["frames"], full["frames"])
             records = [json.loads(line) for line in jsonl.read_text().splitlines()]
-            self.assertEqual((records[0]["record_type"], records[0]["record_version"]), ("eclipse.run", 1))
+            self.assertEqual((records[0]["record_type"], records[0]["record_version"]), ("eclipse.run", 2))
             self.assertEqual([record["data"] for record in records if record["type"] == "metrics"], full["metrics"])
             self.assertEqual([record["data"] for record in records if record["type"] == "frame"], sampled["frames"])
             resumed = cli("resume", str(checkpoint), "--rounds", "2", "--output", str(root / "resumed.json"))
@@ -137,7 +137,7 @@ class RecordingContractTests(unittest.TestCase):
         with contextlib.redirect_stdout(out):
             self.assertEqual(main(["batch", "examples/network.toml", "--seeds", "3", "7", "--target", "A"]), 0)
         result = json.loads(out.getvalue())
-        self.assertEqual((result["record_type"], result["record_version"]), ("eclipse.batch", 1))
+        self.assertEqual((result["record_type"], result["record_version"]), ("eclipse.batch", 2))
         self.assertEqual(result["manifest"]["manifest_version"], 1)
         self.assertEqual(result["manifest"]["rng_schema"], "actor-round-phase-v1")
         self.assertEqual([row["seed"] for row in result["rows"]], [3, 7])

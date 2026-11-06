@@ -182,8 +182,9 @@ def _number(value: Any, label: str, minimum: float, maximum: float) -> float:
 
 
 def _make_group(group: str, policy: Mapping[str, Any]) -> Group:
+    from .voting import VOTING_POLICIES, STRATEGIC, validate_parameters
     _id(group, "group")
-    if not isinstance(policy, dict) or set(policy) - {"voting", "movement", "max_step", "communication", "graph", "parameters", "capabilities"} or not isinstance(policy.get("voting"), str) or not (policy["voting"] in ("sincere", "local_plurality", "sensed_plurality") or policy["voting"].startswith("python:")):
+    if not isinstance(policy, dict) or set(policy) - {"voting", "movement", "max_step", "communication", "graph", "parameters", "capabilities"} or not isinstance(policy.get("voting"), str) or not (policy["voting"] in VOTING_POLICIES or policy["voting"].startswith("python:")):
         raise ElectionError(f"group {group!r}: expected supported voting and movement")
     movement = policy.get("movement", "stationary")
     if not isinstance(movement, str) or not (movement in ("stationary", "random_walk") or movement.startswith("python:")):
@@ -198,6 +199,8 @@ def _make_group(group: str, policy: Mapping[str, Any]) -> Group:
     params = policy.get("parameters", {})
     if not isinstance(params, dict):
         raise ElectionError(f"group {group!r}: parameters must be a table")
+    if policy["voting"] in STRATEGIC:
+        validate_parameters(params.get("voting", {}))
     try:
         encoded = json.dumps(params, sort_keys=True, separators=(",", ":"), allow_nan=False)
     except (ValueError, TypeError) as exc:

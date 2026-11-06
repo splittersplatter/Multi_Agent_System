@@ -36,9 +36,10 @@ def network_image(scenario: Scenario, frame: Frame):
         return 55 + int(x * 690), 515 - int(y * 450)
     draw.text((25, 18), f"Eclipse network - round {frame.round} - true first preference", fill="#183c38")
     draw.text((25, 35), "Arrows: sender to recipient; orange = campaign, blue = persistent, gray = proximity", fill="#183c38")
-    def arrow(a, b, color):
+    def arrow(a, b, color, ox=0, oy=0):
         x1, y1 = xy(a); x2, y2 = xy(b)
         distance = math.hypot(x2 - x1, y2 - y1)
+        x1 += ox; x2 += ox; y1 += oy; y2 += oy
         if distance <= 12:
             # Coincident/near-coincident nodes cannot show direction at this scale.
             draw.line((x1, y1, x2, y2), fill=color, width=1)
@@ -49,14 +50,19 @@ def network_image(scenario: Scenario, frame: Frame):
         draw.line((x1, y1, tip_x, tip_y), fill=color, width=1)
         draw.polygon(((tip_x, tip_y), (base_x - 3 * uy, base_y + 3 * ux),
                       (base_x + 3 * uy, base_y - 3 * ux)), fill=color)
-    persistent = set(frame.persistent_edges)
-    campaign = set(frame.campaign_edges)
-    for a, b in sorted(set(frame.proximity_edges) - persistent - campaign):
-        arrow(a, b, "#a2aaa6")
-    for a, b in sorted(persistent - campaign):
-        arrow(a, b, "#526f91")
-    for a, b in sorted(campaign):
-        arrow(a, b, "#bf6636")
+    edges = {}
+    for values, color in ((frame.proximity_edges, "#a2aaa6"),
+                          (frame.persistent_edges, "#526f91"),
+                          (frame.campaign_edges, "#bf6636")):
+        for a, b in sorted(values):
+            edges.setdefault(tuple(sorted((a, b))), []).append((a, b, color))
+    for (first, second), layers in sorted(edges.items()):
+        ax, ay = xy(first); bx, by = xy(second)
+        distance = math.hypot(bx - ax, by - ay)
+        nx, ny = (-(by - ay) / distance, (bx - ax) / distance) if distance else (0, 1)
+        for index, (a, b, color) in enumerate(layers):
+            offset = (index - (len(layers) - 1) / 2) * 6
+            arrow(a, b, color, nx * offset, ny * offset)
     for person, position in positions.items():
         x, y = xy(person)
         color = _palette(scenario.parties.index(preferences[person][0]))
@@ -85,10 +91,13 @@ def export_gif(scenario: Scenario, frames: list[Frame], path: Path, stride: int,
 
 
 def export_plot(scenario: Scenario, frames: list[Frame], path: Path, format: str) -> None:
+    if not frames or any(a.round >= b.round for a, b in zip(frames, frames[1:])):
+        raise ElectionError("plot frames must have strictly increasing rounds")
     data = series(scenario, frames)
     height = max(540, 510 + ((len(scenario.parties) - 1) // 6) * 16)
-    points = lambda party: [(55 + i * 700 / max(1, len(data)-1), 455 - row["shares"][party] * 360)
-                            for i, row in enumerate(data)]
+    x_at = lambda frame: 55 + (frame.round - frames[0].round) * 700 / max(1, frames[-1].round - frames[0].round)
+    points = lambda party: [(x_at(frame), 455 - row["shares"][party] * 360)
+                            for frame, row in zip(frames, data)]
     if format == "svg":
         lines = [f'<svg xmlns="http://www.w3.org/2000/svg" width="800" height="{height}" viewBox="0 0 800 {height}">',
                  f'<rect width="800" height="{height}" fill="white"/>',
@@ -108,8 +117,10 @@ def export_plot(scenario: Scenario, frames: list[Frame], path: Path, format: str
             lines.append(f'<text x="{55+(i%6)*120}" y="{490+(i//6)*16}" font-family="sans-serif" font-size="12" fill="rgb({r},{g},{b})">{html.escape(party)}</text>')
         for idx, frame in enumerate(frames):
             if frame.interventions:
-                x = 55 + idx * 700 / max(1, len(frames)-1)
+                x = x_at(frame)
                 lines.append(f'<path d="M{x:.2f} 95 V455" stroke="#555" stroke-dasharray="4 4"><title>Intervention round {frame.round}</title></path>')
+        if any(frame.interventions for frame in frames):
+            lines.append('<text x="500" y="30" font-family="sans-serif" font-size="11">Dashed line: recorded intervention</text>')
         lines.append('</svg>')
         with path.open("x", encoding="utf-8") as handle:
             handle.write('\n'.join(lines) + '\n')
@@ -130,8 +141,10 @@ def export_plot(scenario: Scenario, frames: list[Frame], path: Path, format: str
             draw.text((55+(i%6)*120, 475+(i//6)*16), party, fill=color)
         for idx, frame in enumerate(frames):
             if frame.interventions:
-                x=55+idx*700/max(1,len(frames)-1)
+                x=x_at(frame)
                 draw.line((x,95,x,455), fill="#777777", width=1)
+        if any(frame.interventions for frame in frames):
+            draw.text((500, 20), "Gray line: recorded intervention", fill="#555555")
         _save(image, path, "PNG")
     else:
         raise ElectionError("plot format must be png or svg")
@@ -145,7 +158,7 @@ def export_comparison(result: dict, path: Path, format: str) -> None:
     deltas = [sum(row["treated"][i]["shares"][target] - row["control"][i]["shares"][target]
                   for row in rows) / len(rows) for i in range(count)]
     points = [(55 + i * 700 / max(1, count-1), 275 - value * 180) for i, value in enumerate(deltas)]
-    event_rounds = [i for i in range(count) if any(row["treated"][i]["intervention_count"] for row in rows)]
+    event_rounds = [i for i in range(count) if any(row["treated"][i]["intervention_origin_counts"]["scheduled"] for row in rows)]
     if format == "svg":
         coords = ' '.join(f'{x:.2f},{y:.2f}' for x,y in points)
         lines = ['<svg xmlns="http://www.w3.org/2000/svg" width="800" height="520" viewBox="0 0 800 520">',
@@ -161,6 +174,8 @@ def export_comparison(result: dict, path: Path, format: str) -> None:
         for i in event_rounds:
             x=55+i*700/max(1,count-1)
             lines.append(f'<path d="M{x:.2f} 95 V455" stroke="#555" stroke-dasharray="4 4"><title>Intervention round {i}</title></path>')
+        if event_rounds:
+            lines.append('<text x="500" y="48" font-family="sans-serif" font-size="11">Dashed line: scheduled intervention</text>')
         lines += [f'<text x="55" y="480" font-family="sans-serif" font-size="12">Round 0</text>',
                   f'<text x="670" y="480" font-family="sans-serif" font-size="12">Round {count-1}</text>', '</svg>']
         with path.open("x", encoding="utf-8") as handle:
@@ -176,6 +191,7 @@ def export_comparison(result: dict, path: Path, format: str) -> None:
         else: draw.line(points, fill="#176f55", width=3)
         for i in event_rounds:
             x=55+i*700/max(1,count-1); draw.line((x,95,x,455), fill="#777777")
+        if event_rounds: draw.text((500, 40), "Gray line: scheduled intervention", fill="#555555")
         draw.text((55,465), "Round 0", fill="#183c38"); draw.text((670,465), f"Round {count-1}", fill="#183c38")
         _save(image, path, "PNG")
     else:

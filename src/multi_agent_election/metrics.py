@@ -14,7 +14,8 @@ def frame_metrics(scenario: Scenario, frame: Frame, previous: Frame | None = Non
         group_counts[groups[person]][ballot[0]] += 1
         for rank, party in enumerate(ballot):
             ranks[party][rank] += 1
-    prev = dict(previous.ballots) if previous is not None else None
+    # A gap in recorded history cannot establish one-round switching.
+    prev = dict(previous.ballots) if previous is not None and previous.round == frame.round - 1 else None
     switches = sum(ballots[p] != prev[p] for p in ballots) if prev is not None else None
     edges = set(frame.persistent_edges) | set(frame.proximity_edges) | set(frame.campaign_edges)
     ordered_counts = sorted(counts.values(), reverse=True)
