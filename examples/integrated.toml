@@ -1,0 +1,52 @@
+parties = ["A", "B", "C"]
+k = 2
+seed = 17
+rounds = 3
+
+[groups.custom]
+voting = "python:favorite_policy:vote"
+movement = "python:phase_policies:move"
+graph = "python:phase_policies:connect"
+communication = "python:phase_policies:communicate"
+max_step = 0.05
+parameters = {party = "C", target = "2", step = 0.03}
+
+[groups.neighbors]
+voting = "local_plurality"
+communication = "truthful"
+capabilities = {sense_public_ballots = true}
+
+[groups.residents]
+voting = "sincere"
+communication = "truthful"
+
+[network]
+radius = 0.1
+persistent_edges = [["3", "1"]]
+campaign_edges = [["2", "3"]]
+private_channels = { team = ["2", "3"] }
+
+[[people]]
+id = "1"
+group = "custom"
+preference = ["A", "B", "C"]
+position = [0.1, 0.1]
+
+[[people]]
+id = "2"
+group = "neighbors"
+preference = ["B", "A", "C"]
+position = [0.8, 0.2]
+
+[[people]]
+id = "3"
+group = "residents"
+preference = ["C", "A", "B"]
+position = [0.15, 0.1]
+
+[[interventions]]
+round = 2
+person = "3"
+position = [0.65, 0.2]
+ballot = ["A", "B"]
+add_campaign_edges = ["1"]

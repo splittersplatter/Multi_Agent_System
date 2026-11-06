@@ -1,8 +1,8 @@
 # Stage plans
 
-Status: proposed documentation; no new features implemented.
+Status: Stage 00 verified; Stage 01 in progress; later stages pending.
 Load [roadmap](../project-roadmap.md), this file, and only the active stage.
-Current workspace: [planning-only](../README.md#current-state); source/tests removed.
+Current workspace: [current state](../README.md#current-state).
 
 | Stage | Plan |
 | --- | --- |

@@ -5,12 +5,21 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "multi-agent-election"
 version = "0.1.0"
-description = "Research plans for a political multi-agent election simulator"
+description = "Reproducible political multi-agent election simulation"
 requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [{name = "Research project"}]
 dependencies = []
 
-[tool.setuptools]
-packages = []
+[project.optional-dependencies]
+visualization = ["Pillow==12.1.1"]
+
+[project.scripts]
+multi-agent-election = "multi_agent_election.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+multi_agent_election = ["web/*"]

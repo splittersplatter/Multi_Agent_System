@@ -1,6 +1,6 @@
 # Eclipse roadmap
 
-Status: proposed. Milestone-based. [Stage plans](plans/README.md).
+Status: Stage 00 verified; Stage 01 in progress. [Stage plans](plans/README.md).
 
 ## Scope
 
@@ -12,8 +12,9 @@ Status: proposed. Milestone-based. [Stage plans](plans/README.md).
 - Shared information boundaries; selected exact finite epistemic checks.
 - Hidden leader alignment observable only through indirect public behavior signals.
 
-Proposed defaults: first-choice plurality over ranked ballots + counting-rule adapter;
-TOML configuration + Python plugins; optional UI/render dependencies;
+Adopted Stage 01 defaults: first-choice plurality over ranked ballots;
+TOML configuration + Python plugins; optional image-render dependency.
+Planned: counting-rule adapter;
 10k CLI / 500 visual-agent benchmark targets, not achieved guarantees.
 
 Sources: [final proposal](</home/dhruv/Downloads/Eclipse-MAS-Proposal.pdf>),
@@ -36,7 +37,7 @@ Sources: [final proposal](</home/dhruv/Downloads/Eclipse-MAS-Proposal.pdf>),
 | 10 | All-enabled model; isolated controls; leave-one-out ablations |
 | 11 | Frozen experiments; uncertainty; report; reproducible package |
 
-Source/tests removed; all stages pending. Build baseline/engine in Stage 01;
+Stage 00 contract verified; Stage 01 baseline and initial engine implemented;
 integrate epistemics in Stage 02; later stages validate mechanisms.
 
 ## Invariants

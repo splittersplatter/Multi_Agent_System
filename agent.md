@@ -10,7 +10,7 @@ mechanism studies, combined experiments and reproducible report.
 - Sequence: 00 baseline; 01 simulator; 02 epistemics; 03 proximity;
   04 coalition; 05 campaign edges; 06 public signals; 07 nomination/alignment;
   08 alignment attacks/detective; 09 adapting leaders; 10 integration; 11 report.
-- Planning-only workspace: source/tests removed. Historical API/test records are not current evidence.
+- Stage 01 baseline source/tests exist; older deleted baseline results remain historical.
 - Implement only requested work. Proposed defaults remain proposed until adopted;
   plans and baseline tests do not establish implemented extensions or research results.
 
@@ -64,7 +64,7 @@ mechanism studies, combined experiments and reproducible report.
   Reproduce failures, fix causes, add regression coverage; report unresolved failures.
 - Behavior changes: focused tests, then full suite once source/tests exist:
   `PYTHONPATH=src python3 -m unittest discover -s tests -v`.
-  Verify tests were discovered; zero tests is not validation. No suite currently exists.
+  Verify tests were discovered; zero tests is not validation.
   Documentation-only edits: check links, consistency and preserved requirements.
 
 ## Model and reproducibility

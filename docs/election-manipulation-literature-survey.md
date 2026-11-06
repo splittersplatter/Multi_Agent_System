@@ -196,8 +196,8 @@ boundary relevant here. “No network” describes the paper's model, not realit
 ## Candidate gaps to investigate
 
 Scores are historical **feasibility / distinctness**, 1–5, where 5 meant easier
-for the former baseline / more potentially distinct. Reassess feasibility after
-rebuilding. Distinctness is a provisional
+for the former baseline / more potentially distinct. Reassess feasibility against
+the current Stage 01 implementation. Distinctness is a provisional
 assessment of the exact intersection against the sources above, not a novelty
 guarantee. This historical ranking concerns research interest, not implementation
 order or a semester deadline; the milestone roadmap includes all seven mechanisms.
@@ -214,10 +214,9 @@ order or a semester deadline; the milestone roadmap includes all seven mechanism
 
 1. **Replicate a baseline:** reproduce a hand-worked S12/S13 style case with
    truthful poll and no intervention; compare against a bounded intervention.
-   Source/tests have since been deleted; implement and verify the baseline
-   through the roadmap before relying on historical results. Repeated-poll
-   simulation, private/false-announcement semantics and empirical validation
-   are not currently available.
+   The former source/tests were deleted; a new Stage 01 baseline exists, but
+   this poll-specific replication remains unverified. Repeated-poll simulation,
+   private/false-announcement semantics and empirical validation remain pending.
 2. **Declare information:** record for each actor the exact public and private
    observations; prevent strategies from accessing simulator truth. Specify
    whether reports are truthful observations, possibly false claims, or noisy

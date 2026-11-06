@@ -1,0 +1,27 @@
+parties = ["A", "B", "C"]
+k = 2
+seed = 42
+rounds = 3
+
+[groups.custom]
+voting = "python:favorite_policy:vote"
+movement = "python:phase_policies:move"
+graph = "python:phase_policies:connect"
+communication = "python:phase_policies:communicate"
+max_step = 0.05
+parameters = {party = "C", target = "2", step = 0.03}
+
+[groups.residents]
+voting = "local_plurality"
+
+[[people]]
+id = "1"
+group = "custom"
+preference = ["A", "B", "C"]
+position = [0.2, 0.4]
+
+[[people]]
+id = "2"
+group = "residents"
+preference = ["B", "A", "C"]
+position = [0.8, 0.4]
