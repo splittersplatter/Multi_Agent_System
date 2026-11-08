@@ -5,6 +5,9 @@ Stage 11 pending. [Code refinement](code-quality-refinement.md).
 Load [roadmap](../project-roadmap.md), this file, and only the active stage.
 Current workspace: [current state](../README.md#current-state).
 
+[Recent-encounter majority extension](recent-encounter-majority.md): passive,
+opt-in estimate; independent of strategic-policy adoption/convergence gates.
+
 [Heuristic audit/evaluation plan](heuristic-evaluation.md): role-specific candidates,
 metrics and convergence gate. Full-model universal absorption refuted; scope
 now follows [confirmed restricted cases](../convergence-foundations.md).

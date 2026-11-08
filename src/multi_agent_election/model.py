@@ -1,9 +1,12 @@
 """Validated immutable inputs and committed election frames."""
 
 from dataclasses import asdict, dataclass
-from typing import Any, Mapping
+from typing import Any, Mapping, TYPE_CHECKING
 import math
 import json
+
+if TYPE_CHECKING:
+    from .majority import MajorityConfig, MajorityState
 
 
 class ElectionError(ValueError):
@@ -195,6 +198,7 @@ class Scenario:
     alignment: Alignment | None = None
     detector: DetectorConfig | None = None
     leaders: LeaderConfig | None = None
+    majority_estimation: "MajorityConfig | None" = None
 
     def as_dict(self) -> dict[str, Any]:
         result: dict[str, Any] = {
@@ -260,6 +264,8 @@ class Scenario:
         if self.leaders is not None:
             result["leaders"] = asdict(self.leaders)
             result["leaders"]["adaptors"] = list(self.leaders.adaptors)
+        if self.majority_estimation is not None:
+            result["majority_estimation"] = self.majority_estimation.as_dict()
         return result
 
 
@@ -307,6 +313,9 @@ class Frame:
     # (leader, last direction index, public support before that action)
     leader_memory: tuple[tuple[str, int | None, int | None], ...] = ()
     leader_signals: tuple[tuple[str, tuple[float, ...]], ...] | None = None
+    majority_states: tuple[tuple[str, "MajorityState"], ...] = ()
+    majority_config: "MajorityConfig | None" = None
+    majority_parties: tuple[str, ...] = ()
 
     def as_dict(self) -> dict[str, Any]:
         result = {"round": self.round, "ballots": {p: list(b) for p, b in self.ballots},
@@ -345,6 +354,9 @@ class Frame:
                 "phase_memory": [[person, phase, json.loads(memory)] for person, phase, memory in self.phase_memory],
                 "ballot_sensors": [[observer, sender, source, round_number, list(ballot)]
                                    for observer, sender, source, round_number, ballot in self.ballot_sensors]}
+        if self.majority_config is not None:
+            result["majority_estimation"] = {p: state.as_dict(self.majority_parties, self.majority_config)
+                                              for p, state in self.majority_states}
         if self.coalition_report_spend:
             result["coalition_report_spend"] = dict(self.coalition_report_spend)
             result["deceptive_reports"] = [{"coalition": coalition, "sender": sender, "recipient": recipient,
@@ -463,7 +475,7 @@ def make_scenario(raw: Mapping[str, Any]) -> Scenario:
     if "nomination" in raw:
         from .nomination import make_nominated_scenario
         return make_nominated_scenario(raw)
-    allowed = {"parties", "k", "seed", "rounds", "groups", "people", "network", "interventions", "convergence", "coalitions", "campaign_controller", "signal_controller", "detector"}
+    allowed = {"parties", "k", "seed", "rounds", "groups", "people", "network", "interventions", "convergence", "coalitions", "campaign_controller", "signal_controller", "detector", "majority_estimation"}
     unknown = set(raw) - allowed
     if unknown:
         raise ElectionError(f"unknown scenario keys: {sorted(unknown)}")
@@ -473,6 +485,8 @@ def make_scenario(raw: Mapping[str, Any]) -> Scenario:
     parties = tuple(_id(x, "party") for x in party_data)
     if len(set(parties)) != len(parties):
         raise ElectionError("parties must be unique")
+    from .majority import parse_config
+    majority = parse_config(raw["majority_estimation"], parties) if "majority_estimation" in raw else None
     detector_raw = raw.get("detector")
     detector = None
     if "detector" in raw:
@@ -747,4 +761,4 @@ def make_scenario(raw: Mapping[str, Any]) -> Scenario:
                     tuple(sorted(normalized_interventions, key=lambda action: (action.round, action.person))), normalized_campaign,
                     convergence["case"] if convergence else None, proximity_mode, normalized_static,
                     tuple(sorted(coalitions, key=lambda coalition: coalition.id)), controller, signal_controller,
-                    detector=detector)
+                    detector=detector, majority_estimation=majority)

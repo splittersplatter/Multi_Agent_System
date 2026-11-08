@@ -26,6 +26,9 @@ poll-confident and epistemic policies; compare decisions and outcomes.
 
 ## Progress
 
+Recent extension: [rolling proximity-majority beliefs](recent-encounter-majority.md),
+passive estimates, not knowledge or a replacement for certified policy domains.
+
 Finite model, bounded conditional equilibrium and three actor-observation policies
 implemented; broader temporal/adversarial epistemic semantics remain pending. Historical names in the
 [reference map](../paper-implementation.md) are not all implemented.

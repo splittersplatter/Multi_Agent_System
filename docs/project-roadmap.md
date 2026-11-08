@@ -10,6 +10,9 @@ research experiments and remaining stage gates pending.
 
 ## Scope
 
+Current extension: [recent-encounter majority estimates](plans/recent-encounter-majority.md),
+passive only; no strategic-voting or convergence replacement.
+
 - One cumulative simulator; seven controlled mechanism studies; integrated ablations; reproducible report.
 - People: group policies, capability permissions, movement, messaging, ranked voting.
 - Ballots: exactly `k` distinct ranked parties per voter; global `1 <= k <= |C|`.

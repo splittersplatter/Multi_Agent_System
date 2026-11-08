@@ -23,6 +23,9 @@ Cumulative run: prior policies/groups/messages + moving graph + replay/edit/expo
 
 ## Progress
 
+Recent extension: [rolling encounter cache](recent-encounter-majority.md), incoming
+proximity observations with exact source/encounter rounds; no causal/convergence claim.
+
 | Date | Work/status | Evidence | Prior integration | Remaining |
 | --- | --- | --- | --- | --- |
 | 8 Nov 2026 | Early extension: directed proximity/public edge additions, removals, turnover and mean proximity in-degree; contact/turnover sidebar plots | Hand-calculated overlap, empty union and missing-round tests; export and JS harness checks | Frame metrics, JSON/JSONL/CSV and existing playback; certified cases remain separate | Stage 02 incomplete; per-group radius, matched controls and causal comparisons pending; live browser check blocked by approval usage limit |

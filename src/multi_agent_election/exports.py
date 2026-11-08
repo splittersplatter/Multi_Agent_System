@@ -44,6 +44,9 @@ def write_metrics_csv(path: Path, scenario, rows: list[dict]) -> None:
              "proximity_edge_turnover", "public_edge_additions", "public_edge_removals", "public_edge_turnover",
              "proximity_mean_in_degree")
     names = list(fixed) + [f"count:{party}" for party in scenario.parties]
+    majority_fields = ("majority_cached_neighbors", "majority_mean_sample_size", "majority_empty_fraction")
+    if scenario.majority_estimation is not None:
+        names += list(majority_fields)
     names += [f"share:{quote(party, safe='')}" for party in scenario.parties]
     names += [f"{kind}:{rank + 1}:{quote(party, safe='')}" for kind in ("rank_count", "rank_frequency")
               for rank in range(scenario.k) for party in scenario.parties]
@@ -87,6 +90,8 @@ def write_metrics_csv(path: Path, scenario, rows: list[dict]) -> None:
         writer = csv.writer(handle); writer.writerow(names)
         for row in rows:
             values = [row[key] for key in fixed] + [row["counts"][party] for party in scenario.parties]
+            if scenario.majority_estimation is not None:
+                values += [row[name] for name in majority_fields]
             values += [row["shares"][party] for party in scenario.parties]
             values += [row["rank_counts" if kind == "rank_count" else "rank_frequencies"][party][rank]
                        for kind in ("rank_count", "rank_frequency") for rank in range(scenario.k) for party in scenario.parties]
@@ -122,5 +127,4 @@ def write_metrics_csv(path: Path, scenario, rows: list[dict]) -> None:
             if scenario.convergence_case:
                 values += [row["convergence"].get(field) for field in convergence_fields]
             writer.writerow(values)
-
 

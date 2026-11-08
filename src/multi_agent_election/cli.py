@@ -22,6 +22,12 @@ from .exports import (write_jsonl as _write_jsonl, preflight_outputs as _preflig
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
+    majority = commands.add_parser("estimate-majority", help="passive matched majority-estimator pilot; no voting changes")
+    majority.add_argument("scenario", type=Path, nargs="?", help="TOML scenario; omit with --pilot")
+    majority.add_argument("--pilot", action="store_true", help="30 built-in trajectories at default seeds")
+    majority.add_argument("--seeds", type=int, nargs="+", default=[101, 102, 103, 104, 105])
+    majority.add_argument("--sensitivity", action="store_true", help="add window 5/20 and weight .25/.75 controls")
+    majority.add_argument("--output-dir", type=Path, required=True, help="new artifact directory; parent must exist")
     run = commands.add_parser("run", help="run a TOML scenario")
     run.add_argument("scenario", type=Path)
     run.add_argument("--checkpoint", type=Path, help="write final JSON checkpoint")
@@ -127,6 +133,17 @@ def main(argv: list[str] | None = None) -> int:
         command.add_argument("--voting-parameters", default="{}", help="JSON parameters for selected voting policy")
     args = parser.parse_args(argv)
     try:
+        if args.command == "estimate-majority":
+            from .majority_experiments import run_pilot
+            if args.pilot == (args.scenario is not None):
+                raise ElectionError("provide either a scenario or --pilot")
+            scenario = None
+            if args.scenario is not None:
+                with args.scenario.open("rb") as handle:
+                    scenario = make_scenario(tomllib.load(handle))
+            result = run_pilot(args.output_dir, seeds=args.seeds, sensitivity=args.sensitivity, scenario=scenario)
+            print(json.dumps({"output_dir": str(args.output_dir), "runs": len(result["runs"]), "failed": result["failed"]}))
+            return 1 if result["failed"] else 0
         if args.command == "knowledge":
             from .epistemic import KnowledgeModel
             with args.model.open(encoding="utf-8") as handle:

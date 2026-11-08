@@ -13,7 +13,7 @@ from .network import proximity_edges
 def make_nominated_scenario(raw):
     """Resolve one immutable leader set before compiling the ordinary scenario."""
     allowed = {"k", "seed", "rounds", "groups", "people", "network", "interventions", "convergence",
-               "coalitions", "campaign_controller", "signal_controller", "nomination", "alignment", "detector", "leaders"}
+               "coalitions", "campaign_controller", "signal_controller", "nomination", "alignment", "detector", "leaders", "majority_estimation"}
     if set(raw) - allowed:
         raise ElectionError("nomination scenarios derive parties; unsupported scenario fields")
     spec = raw["nomination"]

@@ -15,7 +15,16 @@
 
 ## Current state
 
-Checked 8 November 2026. Stage 00 verified; Stage 01 acceptance incomplete;
+9 November extension: [recent-encounter majority estimator](recent-encounter-majority.md)
+implemented opt-in; passive beliefs only. Rolling unique-neighbor memory, explicit
+initial poll, CLI/browser inspector and checkpoint22. [Plan/progress](plans/recent-encounter-majority.md).
+Focused24/full343 tests pass; stdlib339 pass/4 skips; all31 examples replay.
+[Implementation/pilot report](majority-estimation-report.md): final30 trajectories,
+240 arm evaluations, zero failures; repeated traces/predictions identical. Earlier
+stage acceptance/convergence limits remain unchanged; no strategic policy adopted.
+
+Baseline checked 8 November 2026; latest extension above checked 9 November.
+Stage 00 verified; Stage 01 acceptance incomplete;
 Stages 02–10 implemented in part; Stage 11 formal experiments/delivery pending.
 All seven mechanisms run through one engine. F1–F5 convergence certificates cover
 only their declared restricted domains. Core uses the standard library; optional
@@ -27,7 +36,7 @@ Output/replay/observation/coalition code now has focused ownership; mechanism
 studies use separate modules behind the existing experiment API. Canonical scenario
 validation closes a duplicate-voter bypass; browser assets enter provenance hashes.
 Thirty example fingerprints and twelve comparison records match the baseline.
-Final verification: 319 tests pass; stdlib 315 pass + four optional-image skips;
+Baseline refinement verification: 319 tests pass; stdlib 315 pass + four optional-image skips;
 proof checker/playback harness pass. Combined 10k × 100 CLI: 90.768 s; 500 × 100
 HTTP: p95 104.12 ms; single workload/sample, browser rendering unmeasured.
 Detailed evidence and remaining limits are maintained in the audit report.

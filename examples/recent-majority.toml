@@ -1,0 +1,40 @@
+# Passive majority estimates; poll_counts follow parties order, not hidden counts.
+parties = ["A", "B", "C"]
+k = 1
+seed = 101
+rounds = 100
+
+[majority_estimation]
+poll_counts = [2, 1, 1]
+memory_rounds = 10
+poll_weight = 0.5
+
+[network]
+radius = 0.3
+
+[groups.people]
+voting = "sincere"
+movement = "random_walk"
+max_step = 0.1
+communication = "none"
+
+[[people]]
+id = "1"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.1, 0.2]
+[[people]]
+id = "2"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.3, 0.2]
+[[people]]
+id = "3"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.8, 0.8]
+[[people]]
+id = "4"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.5, 0.5]

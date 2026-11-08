@@ -100,6 +100,11 @@ def frame_metrics(scenario: Scenario, frame: Frame, previous: Frame | None = Non
             result["mean_leader_perception_error"] = sum(errors.values()) / len(errors)
             result["mean_winner_true_current_distance"] = sum(math.dist(current[p], true[frame.winner]) for p in ballots) / n
             result["mean_winner_perceived_current_distance"] = sum(math.dist(current[p], perceived[frame.winner]) for p in ballots) / n
+    if scenario.majority_estimation is not None:
+        sizes = [len(state.entries) for _, state in frame.majority_states]
+        result["majority_cached_neighbors"] = sum(sizes)
+        result["majority_mean_sample_size"] = sum(sizes) / n
+        result["majority_empty_fraction"] = sum(size == 0 for size in sizes) / n
     if scenario.coalitions:
         result["deceptive_report_count"] = len(frame.deceptive_reports)
         result["coalition_report_spend"] = dict(frame.coalition_report_spend)

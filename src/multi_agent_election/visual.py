@@ -56,6 +56,8 @@ class Session:
                                    for g in self.simulation.scenario.groups},
                 "startup_voting_locked": bool(self.simulation.scenario.convergence_case) or self.simulation.current.round != 0 or bool(self.simulation.manual_interventions),
                 "frames": [frame.as_dict() for frame in self.simulation.frames],
+                **({"majority_estimation": self.simulation.scenario.majority_estimation.as_dict()}
+                   if self.simulation.scenario.majority_estimation is not None else {}),
                 "metrics": series(self.simulation.scenario, self.simulation.frames)}
 
     def command(self, value: Any) -> dict[str, Any]:

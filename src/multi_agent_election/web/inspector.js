@@ -10,6 +10,7 @@ function inspectAgent(frame, person) {
     received_reports: received.filter(report => report.recipient === person),
     pending_outgoing_reports: pending.filter(report => report.sender === person),
     voting_memory: frame.policy_memory[person],
+    ...(frame.majority_estimation ? {majority_estimation: frame.majority_estimation[person]} : {}),
     phase_memory: frame.phase_memory.filter(([id]) => id === person).map(([, phase, memory]) => ({phase, memory})),
     interventions: frame.interventions.filter(event => event.person === person),
     ...(frame.deceptive_reports ? {researcher_deceptive_reports: frame.deceptive_reports.filter(event => event.sender === person)} : {}),

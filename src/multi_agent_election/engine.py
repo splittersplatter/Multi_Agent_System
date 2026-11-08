@@ -17,6 +17,7 @@ from .policies import Observation, canonical_json, load_plugin, policy_rng
 from .provenance import manifest
 from .records import action_dict, legacy_frames
 from .observations import sense_ballots
+from .majority import MajorityState, advance_population
 from .coalitions import acquire_information
 from .voting import STRATEGIC, decide, validate_parameters, direct_best_response, source_local_dominance, certified_conformity
 from .epistemic import EPISTEMIC_POLICIES, SIGNAL_EPISTEMIC_POLICIES, response_from_observation, validate_signal_epistemic_group
@@ -112,6 +113,10 @@ class Simulation:
                                    else proximity_edges(positions, scenario.radius, radii))
         self.frames = [Frame(
             round=0,
+            majority_states=(tuple((p.id, MajorityState.initial(scenario.parties)) for p in scenario.people)
+                             if scenario.majority_estimation is not None else ()),
+            majority_config=scenario.majority_estimation,
+            majority_parties=scenario.parties if scenario.majority_estimation is not None else (),
             ballots=tuple(ballots.items()),
             counts=counts,
             winner=winner,
@@ -571,6 +576,11 @@ class Simulation:
                                     self.current.detector, dict(self.current.counts)) if self.scenario.detector else None)
         result = Frame(
             round=self.current.round + 1,
+            majority_states=(advance_population(self.current.majority_states, self.scenario.parties,
+                self.scenario.majority_estimation, self.current.round + 1, proximity, previous_ballots)
+                if self.scenario.majority_estimation is not None else ()),
+            majority_config=self.scenario.majority_estimation,
+            majority_parties=self.scenario.parties if self.scenario.majority_estimation is not None else (),
             ballots=tuple((p, tuple(ballot)) for p, ballot in ballots.items()),
             counts=counts,
             winner=winner,
@@ -624,7 +634,7 @@ class Simulation:
 
     def checkpoint(self) -> dict[str, Any]:
         """Capture the exact replayable history for the currently implemented policies."""
-        return {"version": 21, "manifest": self.runtime_manifest, "scenario": self.scenario.as_dict(),
+        return {"version": 22 if self.scenario.majority_estimation is not None else 21, "manifest": self.runtime_manifest, "scenario": self.scenario.as_dict(),
                 **({"nomination": self.scenario.nomination.as_dict()} if self.scenario.nomination else {}),
                 "policy_digests": {name: digest for name, (_, digest, _) in sorted(self.plugins.items())},
                 "manual_interventions": [self._action_dict(a) for a in self.manual_interventions],
@@ -680,7 +690,7 @@ class Simulation:
     @classmethod
     def from_checkpoint(cls, payload: Mapping[str, Any], *, allow_environment_change: bool = False) -> "Simulation":
         """Recompute and verify history before accepting a checkpoint."""
-        if not isinstance(payload, Mapping) or type(payload.get("version")) is not int or payload["version"] not in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21):
+        if not isinstance(payload, Mapping) or type(payload.get("version")) is not int or payload["version"] not in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22):
             raise ElectionError("unsupported or invalid checkpoint")
         expected = {"version", "scenario", "frames"} | ({"manual_interventions"} if payload["version"] >= 2 else set()) | ({"policy_digests"} if payload["version"] >= 3 else set()) | ({"manifest"} if payload["version"] >= 6 else set())
         if isinstance(payload.get("scenario"), Mapping) and "nomination" in payload["scenario"] and (payload["version"] >= 18 or "nomination" in payload):
@@ -693,6 +703,8 @@ class Simulation:
         if not isinstance(frames, list) or not frames:
             raise ElectionError("checkpoint must contain an initial frame")
         simulation = cls(make_scenario(payload["scenario"]))
+        if payload["version"] < 22 and simulation.scenario.majority_estimation is not None:
+            raise ElectionError("majority estimation requires checkpoint version 22")
         if payload["version"] < 21 and simulation.scenario.leaders is not None:
             raise ElectionError("leader adaptation requires checkpoint version 21")
         if payload["version"] < 20 and simulation.scenario.detector is not None:
