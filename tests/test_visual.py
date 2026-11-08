@@ -162,9 +162,11 @@ process.stdout.write(JSON.stringify(['1','2','3'].map(id=>inspectAgent(frame,id)
                                 check=True, capture_output=True, text=True)
         inspectors = json.loads(result.stdout)
         for person, actual in zip(("1", "2", "3"), inspectors):
-            expected_received = [{"sender": a, "recipient": b, "channel": c, "ballot": ballot}
+            expected_received = [{"sender": a, "recipient": b, "channel": c, "ballot": ballot,
+                                  "source_round": 0, "generated_round": 1, "delivered_round": 2}
                                  for a, b, c, ballot in frame["delivered"] if b == person]
-            expected_pending = [{"sender": a, "recipient": b, "channel": c, "ballot": ballot}
+            expected_pending = [{"sender": a, "recipient": b, "channel": c, "ballot": ballot,
+                                 "source_round": 1, "generated_round": 2, "delivered_round": None}
                                 for a, b, c, ballot in frame["pending"] if a == person]
             self.assertEqual(actual["round"], 2)
             self.assertEqual(actual["received_reports"], expected_received)

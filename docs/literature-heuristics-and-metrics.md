@@ -1,7 +1,7 @@
 # Literature: heuristics and evaluation metrics
 
-Audit: **7 November 2026**. Corpus: earlier chat/survey **S1-S32**, not a new
-systematic search. **31 works available; S24 blocked; 36 PDFs = 31 selected
+Audit: **7 November 2026**. Corpus: **31 retained works; stable source IDs**, not a new
+systematic search. **31 reviewed works; 36 PDFs = 31 selected
 copies + five retained versions/prints.** Three original PDFs preserved.
 [Collection/versions](../References/README.md) · [Manifest](../References/manifest.json)
 · [Earlier survey](election-manipulation-literature-survey.md).
@@ -10,8 +10,7 @@ Evidence: PDF-page numbers below are **1-based file pages**, including covers;
 printed pages/sections are supplied where useful. Records audit model/algorithm,
 evaluation and relevant appendices; they are not replications. **Theory** means
 formal results, not measured benchmark performance. **NR** means not reported in
-the cited evaluation, not permission to invent a default. S24 has no full-text
-method/metric claims. Public access does not imply unrestricted redistribution.
+the cited evaluation, not permission to invent a default. Public access does not imply unrestricted redistribution.
 
 ## Main corrections and additions
 
@@ -127,7 +126,7 @@ Meir, Lev, Rosenschein; EC 2014; [extended arXiv v2][S6], 51-page layout.
 - **Protocol:** 108 synthetic distributions, 200 profiles each, 100 paths/profile;
   IC, single-peaked, urn, riffle, Plackett-Luce; three German poll profiles and
   225 PrefLib profiles. Uncertainty `r=0..15`; truthful/random starts and heterogeneous radii.
-- **Evidence:** PDF pp.10-14, §4; pp.22-28, §6; pp.38-46, Appendix B.
+- **Evidence:** PDF pp.10-14, §4; p.17, Theorem 4; pp.22-28, §6; pp.38-46, Appendix B.
 
 ### S7 — Predicting Strategic Voting Behavior with Poll Information
 
@@ -430,20 +429,6 @@ Auletta, Carbone, Ferraioli; 2023 proceedings;
   its denominator is not explicitly specified in the audited passages. Eq.(9)
   defines raw gain and Corollary 1 its range; do not infer a normalization silently.
 
-### S24 — Diffusion of Ordinal Opinions in Social Networks: An Agent-Based Model and Heuristics for Campaigning
-
-Liu, Kato, Gu, Ren, Su, Zhang; *IEEE TCSS* 12(1):335-347, 2025;
-[DOI](https://doi.org/10.1109/TCSS.2024.3458950).
-
-- **Status:** full text blocked. Publisher access attempt rejected; exact-title,
-  author/institutional search and OpenAlex locations produced no verified public copy.
-  DOI metadata confirms issue/pages; online publication began in 2024.
-- **Heuristics/metrics:** **not audited**. Earlier survey's abstract-level
-  campaigning/greedy/margin/runtime description is not promoted to full-text evidence.
-  No inferred algorithm names, formulas, datasets, trials or scheduling defaults.
-- **Required:** lawful publisher/accepted-manuscript PDF from user/institution.
-  Manifest retains failed access; this row is a blocker, not a completed review.
-
 ### S25 — Voter Participation Control in Online Polls
 
 De, Dey, Sanyal; AAMAS 2025 extended abstract;
@@ -615,7 +600,6 @@ Names denote **paper methods**, not implemented simulator features.
 | Credibility targeting — S31 | Campaigner/voter; source beliefs, turnout | Bayesian persuasion and filtered contact | Absent; requires distinct belief/turnout state |
 | Six-probability voting game / zealots — S27 | Voter; local poll, time/payoff regime | Conditional stochastic support, avoid deadlock | Absent; different election/payoff semantics |
 | Profile-conditioned LLM — S32 | Generative agent; demographic/context prompt | Output support probabilities | Absent; not required for Eclipse |
-| Ordinal diffusion campaigning — S24 | **Unverified** | **Full-text access required** | Do not implement from abstract |
 
 ## Metric comparison matrix
 
@@ -673,6 +657,11 @@ Read-only source check: `voting.py`, `metrics.py`, `experiments.py`;
 
 ## Recommended evaluation contract — proposed, not published results
 
+Operational follow-up: [candidate plan](plans/heuristic-evaluation.md) and
+[metric dictionary](heuristic-evaluation-metrics.md). The stricter requested
+full-model convergence gate currently fails; recommendations below are research
+context, not authorization to run experiments or certify convergence.
+
 1. **Correctness gates:** independent tiny-state oracle; permitted-information
    invariance; valid ballots; tie/scheduler semantics; replay; explicit workload
    failures. Reproduce known cycles and S16-style graph counterexamples where applicable.
@@ -710,8 +699,6 @@ Read-only source check: `voting.py`, `metrics.py`, `experiments.py`;
   as extraction limits, not missing research results.
 - New downloads may be different versions of the same work; manifest explicitly
   distinguishes five retained alternatives. No identical-hash duplicate selected works.
-- **Blocked:** S24 full-text review. User copy requested; all S24 detailed
-  heuristic/metric fields remain unverified until supplied.
 - Research audit does not complete Stage 01/02 or validate new simulator behavior.
 
 [S1]: <../References/S1-strategic-voting-and-the-logic-of-knowledge.pdf>

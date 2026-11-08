@@ -10,7 +10,7 @@ Proposed; inherits 09. [Gates](README.md).
   realized-action budgets; no intermediate private-state leakage.
 - [ ] Cross-feature access/budget audit: graph layers/sensing, reports, voter/leader
   shifts, detective; rejected/conflicting actions logged.
-- [ ] Versioned scenario manifests: all-enabled, all-disabled, seven isolated studies,
+- [x] Versioned scenario manifests: all-enabled, all-disabled, seven isolated studies,
   seven mechanism leave-one-out conditions; no exhaustive factorial requirement.
 - [ ] End-to-end demo: inspect, rewind/edit/replace, resume, compare, GIF/export;
   replay edits through CLI; combined-workload benchmark.
@@ -31,3 +31,7 @@ Proposed; inherits 09. [Gates](README.md).
 
 | Date | Work/status | Evidence | Prior integration | Remaining |
 | --- | --- | --- | --- | --- |
+| 8 Nov 2026 | Initial all-enabled integration scenario | [Example](../../examples/all-enabled.toml), [tests](../../tests/test_all_enabled.py): all seven mechanisms, budgets/phase timing, attacker-perception boundary, no-signal invariant, CLI/HTTP/CSV/checkpoint/rewind and GIF | Inherits stages 01–09, one ballot per person; detector remains aggregate-only | Isolated/leave-one-out manifest matrix, rejection audit, benchmark, full shared gates and live browser validation pending |
+| 8 Nov 2026 | Cumulative regression | Full suite 304 pass; `python3 -S`: 300 pass + 4 optional-image skips; proof checker and playback harness pass | Shared engine/CSV/HTTP/replay/GIF exercised with all-enabled scenario | No claim of combined-stage completion or formal experimental evidence |
+| 8 Nov 2026 | Versioned 17-arm cumulative controls | [Contract](../simulator-guide.md#combined-mechanism-matrix), [tests](../../tests/test_combined_ablation.py): seven isolated/leave-one-out, no-op detector, nominee preservation, source/config hashes, independent replay, failure retention and exposure residuals | All seven engine mechanisms, prior controls and exogenous streams retained | Full cross-feature rejection audit, combined benchmark, formal experiments, remaining gates and live browser check pending |
+| 8 Nov 2026 | Combined matrix regression | Full suite 308 pass; `python3 -S`: 304 pass + 4 optional-image skips; proof checker, playback harness and `git diff --check` pass | Prior stages, 17 replayable arms, HTTP/session and checkpoint/GIF tests retained | Rejection audit, combined benchmark, research protocol/experiments, stage gates and live browser check remain open |

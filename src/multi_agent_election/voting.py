@@ -11,6 +11,7 @@ import math
 from typing import TYPE_CHECKING
 
 from .model import ElectionError, make_scenario
+from .epistemic import EPISTEMIC_POLICIES, validate_epistemic_parameters
 
 if TYPE_CHECKING:
     from .policies import Observation
@@ -19,6 +20,9 @@ if TYPE_CHECKING:
 STRATEGIC = ("pivotal", "expected_utility", "top_k", "max_m", "tie_u", "tie_h",
              "tie_r", "poisson", "local_dominance", "maximin")
 VOTING_POLICIES = ("sincere", "local_plurality", "sensed_plurality") + STRATEGIC
+COALITION_POLICIES = ("sight_plurality", "overheard_plurality", "coalition_fusion")
+SIGNAL_POLICIES = ("signal_confident",)
+CERTIFIED_POLICIES = ("direct_best_response", "source_local_dominance", "certified_conformity")
 DEFAULTS = {"utility_mode": "rank", "top_k": 2, "samples": 200,
             "uncertainty_radius": 2, "max_states": 200000,
             "poll": "initial_truthful", "information_source": "native"}
@@ -79,12 +83,14 @@ def configure_voting(scenario, policy, parameters=None):
     Individual/scheduled voting parameter overrides are replaced intentionally.
     Capabilities are never granted by choosing a policy.
     """
-    if policy not in VOTING_POLICIES:
+    if policy not in VOTING_POLICIES + COALITION_POLICIES + SIGNAL_POLICIES + EPISTEMIC_POLICIES:
         raise ElectionError("unknown voting policy")
     if not isinstance(parameters if parameters is not None else {}, dict):
         raise ElectionError("voting parameters must be an object")
     params = validate_parameters(parameters or {}, scenario.parties, len(scenario.people)) if policy in STRATEGIC else parameters or {}
-    if policy not in STRATEGIC and params:
+    if policy in EPISTEMIC_POLICIES:
+        validate_epistemic_parameters(params, policy)
+    if policy not in STRATEGIC + EPISTEMIC_POLICIES and params:
         raise ElectionError("baseline voting selection takes no strategic parameters")
     raw = scenario.as_dict()
     for group in raw["groups"].values():
@@ -102,6 +108,51 @@ def configure_voting(scenario, policy, parameters=None):
 
 def winner(scores, ballot):
     return max(range(len(scores)), key=lambda c: (scores[c] + (c == ballot), -c))
+
+
+def direct_best_response(parties, counts, current, preference):
+    """Source direct best reply given the current public aggregate and own ballot."""
+    own = parties.index(current)
+    scores = [counts[party] - (index == own) for index, party in enumerate(parties)]
+    current_winner = parties[winner(scores, own)]
+    achievable = {parties[winner(scores, candidate)] for candidate in range(len(parties))}
+    best = next(party for party in preference if party in achievable)
+    return best if preference.index(best) < preference.index(current_winner) else current
+
+
+def source_local_dominance(parties, counts, current, preference, radius, max_states):
+    """S6 variable-total L1 worlds around actual other-voter scores."""
+    center = tuple(counts[p] - (p == current) for p in parties)
+    worlds = []
+
+    def visit(index, remaining, partial):
+        if index == len(center):
+            worlds.append(tuple(partial))
+            if len(worlds) > max_states:
+                raise ElectionError("source local dominance world count exceeds max_states")
+            return
+        for delta in range(-min(center[index], remaining), remaining + 1):
+            partial.append(center[index] + delta)
+            visit(index + 1, remaining - abs(delta), partial)
+            partial.pop()
+
+    visit(0, radius, [])
+    rank = {party: index for index, party in enumerate(preference)}
+    outcomes = {party: [rank[parties[winner(world, index)]] for world in worlds]
+                for index, party in enumerate(parties)}
+    baseline = outcomes[current]
+    for party in preference:
+        values = outcomes[party]
+        if all(a <= b for a, b in zip(values, baseline)) and any(a < b for a, b in zip(values, baseline)):
+            return party
+    return current
+
+
+def certified_conformity(preference, observed_ballots):
+    """Most common observed first choice, with private-ranking tie order."""
+    counts = Counter(ballot[0] for ballot in observed_ballots)
+    highest = max(counts.values(), default=0)
+    return next(party for party in preference if counts[party] == highest)
 
 
 def compositions(total, size):

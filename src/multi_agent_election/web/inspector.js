@@ -1,14 +1,21 @@
 "use strict";
 
 function inspectAgent(frame, person) {
-  const message = ([sender, recipient, channel, ballot]) => ({sender, recipient, channel, ballot});
+  const received = frame.report_provenance?.delivered ?? frame.delivered.map(([sender, recipient, channel, ballot]) =>
+    ({sender, recipient, channel, ballot, source_round: frame.round - 2, generated_round: frame.round - 1, delivered_round: frame.round}));
+  const pending = frame.report_provenance?.pending ?? frame.pending.map(([sender, recipient, channel, ballot]) =>
+    ({sender, recipient, channel, ballot, source_round: frame.round - 1, generated_round: frame.round, delivered_round: null}));
   return {
     round: frame.round,
-    received_reports: frame.delivered.filter(([, recipient]) => recipient === person).map(message),
-    pending_outgoing_reports: frame.pending.filter(([sender]) => sender === person).map(message),
+    received_reports: received.filter(report => report.recipient === person),
+    pending_outgoing_reports: pending.filter(report => report.sender === person),
     voting_memory: frame.policy_memory[person],
     phase_memory: frame.phase_memory.filter(([id]) => id === person).map(([, phase, memory]) => ({phase, memory})),
     interventions: frame.interventions.filter(event => event.person === person),
+    ...(frame.deceptive_reports ? {researcher_deceptive_reports: frame.deceptive_reports.filter(event => event.sender === person)} : {}),
+    ...(frame.preference_sight ? {researcher_preference_sight: frame.preference_sight.filter(event => event.observer === person)} : {}),
+    ...(frame.overheard_reports ? {researcher_overheard_reports: frame.overheard_reports.filter(event => event.observer === person)} : {}),
+    ...(frame.campaign_controller ? {researcher_campaign_edges: frame.campaign_controller.accepted.filter(([sender,recipient]) => sender === person || recipient === person)} : {}),
   };
 }
 

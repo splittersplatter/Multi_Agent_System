@@ -5,6 +5,7 @@ import json
 import tempfile
 from pathlib import Path
 import unittest
+from dataclasses import replace
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.experiments import batch
 from multi_agent_election.metrics import series
@@ -45,6 +46,26 @@ class MetricTests(unittest.TestCase):
         sparse = series(scenario, [sim.frames[0], sim.frames[3], sim.frames[4]])
         self.assertEqual([row["ballot_switch_rate"] for row in sparse], [None, None, 0])
 
+    def test_directed_turnover_deduplicates_layers_and_handles_missing_history(self):
+        scenario = make_scenario(example()); original = Simulation(scenario).current
+        before = replace(original, round=1, proximity_edges=(("1","2"),("2","1")),
+                         persistent_edges=(("1","2"),("3","4")))
+        after = replace(original, round=2, proximity_edges=(("2","1"),("2","3")),
+                        persistent_edges=(("1","2"),("3","4")), campaign_edges=(("2","1"),))
+        initial, current = series(scenario, [before, after])
+        self.assertIsNone(initial["proximity_edge_turnover"])
+        self.assertEqual((current["proximity_edge_additions"],current["proximity_edge_removals"]), (1,1))
+        self.assertAlmostEqual(current["proximity_edge_turnover"], 2/3)
+        self.assertEqual((current["public_edge_additions"],current["public_edge_removals"]), (1,0))
+        self.assertAlmostEqual(current["public_edge_turnover"], 1/4)
+        self.assertEqual(current["proximity_mean_in_degree"], 0.5)
+        gap = series(scenario, [replace(before, round=0), after])[-1]
+        self.assertIsNone(gap["proximity_edge_turnover"])
+        empty = replace(original, proximity_edges=(), persistent_edges=(), campaign_edges=())
+        same = replace(empty, round=1)
+        row = series(scenario, [empty, same])[-1]
+        self.assertEqual((row["proximity_edge_turnover"],row["public_edge_turnover"]), (0,0))
+
     def test_intervention_origins_replay_and_legacy_projection(self):
         data = example(); data["interventions"] = [{"round": 1, "person": "2", "ballot": ["C", "A"]}]
         data["people"][0]["overrides"] = {"graph": "python:strategy_fixture:graph", "parameters": {"target": "2"}}
@@ -57,6 +78,7 @@ class MetricTests(unittest.TestCase):
             Simulation.from_checkpoint(altered)
         old = sim.checkpoint(); old["version"] = 9
         for saved in old["frames"]:
+            saved.pop("report_provenance")
             for event in saved["interventions"]: event.pop("origin")
         self.assertEqual(Simulation.from_checkpoint(old).current, frame)
 

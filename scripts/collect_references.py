@@ -39,7 +39,6 @@ SOURCES = {
     21: ["https://ojs.aaai.org/index.php/AAAI/article/download/16693/16500"],
     22: ["https://www.ijcai.org/proceedings/2022/0079.pdf"],
     23: ["https://arxiv.org/pdf/2308.10845"],
-    24: ["https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10712164"],
     25: ["https://arxiv.org/pdf/2410.12256"],
     26: ["https://arxiv.org/pdf/2510.21200"],
     27: ["https://ide.mit.edu/sites/default/files/publications/2019%20Stewart%20et%20al%20-%20Nature.pdf"],
@@ -65,7 +64,6 @@ PUBLICATIONS = {
     19: "IJCAI 2019, 201-207; extended arXiv 1902.07454 collected",
     20: "IJCAI 2018, 219-225; proceedings", 21: "AAAI 2021, 5506-5513; proceedings",
     22: "IJCAI 2022, 557-563; proceedings", 23: "2023 proceedings DOI 10.1007/978-3-031-47546-7_32; extended arXiv v1",
-    24: "IEEE TCSS 12(1):335-347, February 2025; online 2024; full text blocked",
     25: "AAMAS 2025 extended abstract, 2484-2486; full arXiv version collected",
     26: "arXiv 2510.21200v3, 3 June 2026; preprint; malformed conference template is not venue confirmation",
     27: "Nature 573:117-121, 2019; institutional full text including supplementary information",
@@ -104,7 +102,8 @@ def main() -> None:
     old = {p["id"]: p for p in previous["papers"]}
     text = (ROOT / "docs/election-manipulation-literature-survey.md").read_text()
     records = re.findall(r"^\*\*S(\d+)\.\*\* (.+)$", text, re.M)
-    assert len(records) == 32
+    expected_ids = set(range(1, 24)) | set(range(25, 33))
+    assert len(records) == len(expected_ids) and {int(num) for num, _ in records} == expected_ids, "Unexpected corpus IDs"
     existing = list(REFS.glob("*.pdf"))
     original = {
         2: next(p for p in existing if p.name.startswith("How does uncertainty")),
@@ -199,7 +198,7 @@ def main() -> None:
     with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
         papers = list(executor.map(collect, records))
     payload = {"schema_version": 1, "audit_date": "2026-11-07",
-               "scope": "Earlier chat corpus S1-S32; existing filenames preserved; primary-source downloads.",
+               "scope": "31 retained works; stable source IDs; existing filenames preserved; primary-source downloads.",
                "papers": papers}
     local_files = []
     for path in sorted(REFS.glob("*.pdf")):

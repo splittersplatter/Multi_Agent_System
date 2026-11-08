@@ -7,12 +7,18 @@ from collections import defaultdict
 from typing import Mapping
 
 
-def proximity_edges(positions: Mapping[str, tuple[float, float]], radius: float | None) -> tuple[tuple[str, str], ...]:
-    if radius is None:
+def proximity_edges(positions: Mapping[str, tuple[float, float]], radius: float | None,
+                    radii: Mapping[str, float | None] | None = None) -> tuple[tuple[str, str], ...]:
+    """Arcs point sender -> receiver; each receiver's radius determines reach."""
+    effective = {person: radii.get(person, radius) if radii is not None else radius for person in positions}
+    active = [value for value in effective.values() if value is not None]
+    if not active:
         return ()
     grid: dict[tuple[int, int], list[str]] = defaultdict(list)
     # radius zero still connects coincident points, with a fixed cell size.
-    cell = radius if radius > 0 else 1.0
+    largest = max(active)
+    # Tiny positive floats can overflow x/cell; a larger cell preserves correctness.
+    cell = max(largest, 1e-9) if largest > 0 else 1.0
     edges = []
     for person in sorted(positions):
         x, y = positions[person]
@@ -21,8 +27,11 @@ def proximity_edges(positions: Mapping[str, tuple[float, float]], radius: float 
             for dy in (-1, 0, 1):
                 for other in grid[(gx + dx, gy + dy)]:
                     ox, oy = positions[other]
-                    if math.hypot(x - ox, y - oy) <= radius:
-                        edges.extend(((person, other), (other, person)))
+                    distance = math.hypot(x - ox, y - oy)
+                    if effective[person] is not None and distance <= effective[person]:
+                        edges.append((other, person))
+                    if effective[other] is not None and distance <= effective[other]:
+                        edges.append((person, other))
         grid[(gx, gy)].append(person)
     return tuple(sorted(edges))
 

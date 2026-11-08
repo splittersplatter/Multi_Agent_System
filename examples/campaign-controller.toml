@@ -1,0 +1,56 @@
+parties = ["A", "B"]
+k = 1
+seed = 75
+rounds = 4
+
+[groups.supporters]
+voting = "sincere"
+movement = "random_walk"
+max_step = 0.02
+communication = "truthful"
+
+[groups.residents]
+voting = "sensed_plurality"
+capabilities = { sense_public_ballots = true }
+
+[network]
+persistent_edges = [["2", "3"]]
+private_channels = { team = ["1", "4"] }
+
+[campaign_controller]
+target = "B"
+policy = "target_heuristic"
+lifetime_budget = 2
+per_round_budget = 1
+max_candidates = 100
+
+[[coalitions]]
+id = "campaign"
+members = ["1"]
+target = "B"
+report_budget_per_round = 0
+report_budget_total = 0
+
+[[people]]
+id = "1"
+group = "supporters"
+preference = ["B", "A"]
+position = [0.2, 0.2]
+
+[[people]]
+id = "2"
+group = "residents"
+preference = ["A", "B"]
+position = [0.6, 0.2]
+
+[[people]]
+id = "3"
+group = "residents"
+preference = ["A", "B"]
+position = [0.8, 0.2]
+
+[[people]]
+id = "4"
+group = "supporters"
+preference = ["B", "A"]
+position = [0.9, 0.2]

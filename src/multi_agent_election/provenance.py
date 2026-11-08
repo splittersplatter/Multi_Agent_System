@@ -15,8 +15,8 @@ def _digest(base: Path, names: tuple[str, ...]) -> str:
 
 def manifest() -> dict[str, str | int]:
     base = Path(__file__).resolve().parent
-    core = _digest(base, ("model.py", "engine.py", "network.py", "policies.py", "voting.py", "metrics.py", "provenance.py"))
-    pipeline = _digest(base, ("cli.py", "experiments.py", "render.py", "visual.py"))
+    core = _digest(base, ("model.py", "engine.py", "network.py", "policies.py", "voting.py", "metrics.py", "epistemic.py", "campaign.py", "signals.py", "nomination.py", "alignment.py", "detector.py", "leaders.py", "provenance.py"))
+    pipeline = _digest(base, ("cli.py", "experiments.py", "combined.py", "render.py", "visual.py"))
     return {"manifest_version": 1, "package": "multi-agent-election", "package_version": "0.1.0",
             "python": platform.python_version(), "implementation": platform.python_implementation(),
             "machine": platform.machine(), "core_sha256": core, "pipeline_sha256": pipeline,

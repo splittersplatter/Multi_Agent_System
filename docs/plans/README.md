@@ -4,6 +4,12 @@ Status: Stage 00 verified; Stage 01 in progress; later stages pending.
 Load [roadmap](../project-roadmap.md), this file, and only the active stage.
 Current workspace: [current state](../README.md#current-state).
 
+[Heuristic audit/evaluation plan](heuristic-evaluation.md): role-specific candidates,
+metrics and convergence gate. Full-model universal absorption refuted; scope
+now follows [confirmed restricted cases](../convergence-foundations.md).
+F1–F3 engine certification and scheduled F4/F5 implemented; comparative experiments
+and later stage gates pending. This is not a new completed stage.
+
 | Stage | Plan |
 | --- | --- |
 | 00 | [Baseline/scope](stage-00-baseline-and-scope.md) |

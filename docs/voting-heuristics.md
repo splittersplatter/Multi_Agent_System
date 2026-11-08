@@ -3,6 +3,10 @@
 Implemented 6 November 2026. One engine: CLI/browser/replay/exports. Plurality;
 ranked ballots retain global `k`; party order breaks election ties. These are
 explicit source-informed variants, not claims of exact paper reproduction.
+New permission-scoped epistemic policies and their distinct world-count limit:
+[epistemic guide](epistemic-voting.md), including bounded-signal variants.
+Certified sequential cases:
+[convergence foundation](convergence-foundations.md).
 
 ## Start
 

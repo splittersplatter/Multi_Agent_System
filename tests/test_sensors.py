@@ -95,7 +95,7 @@ class TrustedBallotSensorTests(unittest.TestCase):
         data["people"][3]["overrides"] = {"voting": "sensed_plurality", "capabilities": {"sense_public_ballots": True}}
         sim = Simulation(make_scenario(data))
         sim.run(3)
-        self.assertEqual(sim.checkpoint()["version"], 10)
+        self.assertEqual(sim.checkpoint()["version"], 21)
         sim.edit_after(1, "4", overrides={"voting": "sensed_plurality", "capabilities": {"sense_public_ballots": False}})
         frame = sim.step()
         self.assertEqual(frame.ballot_sensors, ())
@@ -118,9 +118,10 @@ class TrustedBallotSensorTests(unittest.TestCase):
         for frame in old["frames"]:
             frame.pop("ballot_sensors")
             frame.pop("campaign_edges")
+            frame.pop("report_provenance")
         restored = Simulation.from_checkpoint(old)
         self.assertEqual(restored.current, sim.current)
-        self.assertEqual(restored.checkpoint()["version"], 10)
+        self.assertEqual(restored.checkpoint()["version"], 21)
 
 
 if __name__ == "__main__":

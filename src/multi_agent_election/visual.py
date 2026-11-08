@@ -14,7 +14,8 @@ from urllib.parse import parse_qs, urlsplit
 from .engine import Simulation
 from .metrics import frame_metrics, series
 from .model import ElectionError
-from .voting import VOTING_POLICIES, configure_voting
+from .voting import VOTING_POLICIES, COALITION_POLICIES, SIGNAL_POLICIES, configure_voting
+from .epistemic import EPISTEMIC_POLICIES
 
 
 class Session:
@@ -29,10 +30,30 @@ class Session:
                 "k": self.simulation.scenario.k,
                 "group_names": [g.id for g in self.simulation.scenario.groups],
                 "group_capabilities": {g.id: asdict(g.capabilities) for g in self.simulation.scenario.groups},
-                "voting_policies": sorted({g.voting for g in self.simulation.scenario.groups} | set(VOTING_POLICIES)),
+                "proximity_radius": self.simulation.scenario.radius,
+                "proximity_mode": self.simulation.scenario.proximity_mode,
+                "group_proximity_radii": {g.id: g.proximity_radius for g in self.simulation.scenario.groups},
+                "campaign_controller": asdict(self.simulation.scenario.campaign_controller) if self.simulation.scenario.campaign_controller else None,
+                "signal_controller": asdict(self.simulation.scenario.signal_controller) if self.simulation.scenario.signal_controller else None,
+                "nomination": ({**self.simulation.scenario.nomination.as_dict(),
+                                "ideals": {p.id: p.ideal for p in self.simulation.scenario.people}}
+                               if self.simulation.scenario.nomination is not None else None),
+                "alignment": asdict(self.simulation.scenario.alignment) if self.simulation.scenario.alignment else None,
+                "detector": asdict(self.simulation.scenario.detector) if self.simulation.scenario.detector else None,
+                "leaders": asdict(self.simulation.scenario.leaders) if self.simulation.scenario.leaders else None,
+                "coalitions": [{"id":c.id,"members":list(c.members),"target":c.target,
+                                 "report_budget_per_round":c.report_budget_per_round,
+                                 "report_budget_total":c.report_budget_total,
+                                 **({"sight_targets":list(c.sight_targets),"sight_budget_per_round":c.sight_budget_per_round,
+                                     "sight_budget_total":c.sight_budget_total} if c.sight_targets else {}),
+                                 **({"eavesdrop_channels":list(c.eavesdrop_channels),"eavesdrop_budget_per_round":c.eavesdrop_budget_per_round,
+                                     "eavesdrop_budget_total":c.eavesdrop_budget_total} if c.eavesdrop_channels else {})} for c in self.simulation.scenario.coalitions],
+                "convergence_case": self.simulation.scenario.convergence_case,
+                "voting_policies": ([self.simulation.scenario.convergence_case] if self.simulation.scenario.convergence_case else
+                                    sorted(({g.voting for g in self.simulation.scenario.groups} | set(VOTING_POLICIES) | set(COALITION_POLICIES) | set(SIGNAL_POLICIES) | set(EPISTEMIC_POLICIES)) - {"direct_best_response"})),
                 "startup_voting": {g.id: {"policy": g.voting, "parameters": json.loads(g.parameters).get("voting", {})}
                                    for g in self.simulation.scenario.groups},
-                "startup_voting_locked": self.simulation.current.round != 0 or bool(self.simulation.manual_interventions),
+                "startup_voting_locked": bool(self.simulation.scenario.convergence_case) or self.simulation.current.round != 0 or bool(self.simulation.manual_interventions),
                 "frames": [frame.as_dict() for frame in self.simulation.frames],
                 "metrics": series(self.simulation.scenario, self.simulation.frames)}
 

@@ -12,6 +12,7 @@ import os
 
 from multi_agent_election import Simulation, make_scenario
 from multi_agent_election.cli import main
+from multi_agent_election.metrics import series
 from test_baseline import example
 
 
@@ -126,6 +127,11 @@ class ExportTests(unittest.TestCase):
             with (root / "metrics.csv").open(newline="") as handle:
                 rows = list(csv.DictReader(handle))
             self.assertEqual(rows[0]["ballot_switch_rate"], "")
+            self.assertEqual(rows[0]["proximity_edge_turnover"], "")
+            self.assertEqual(rows[0]["public_edge_additions"], "")
+            expected = series(sim.scenario, sim.frames)[1]
+            self.assertEqual(float(rows[1]["proximity_edge_turnover"]), expected["proximity_edge_turnover"])
+            self.assertEqual(int(rows[1]["public_edge_additions"]), expected["public_edge_additions"])
             self.assertEqual(rows[0]["group_size:empty%3Agroup"], "0")
             self.assertEqual(rows[0]["group_share:empty%3Agroup:A"], "")
             self.assertEqual(float(rows[0]["rank_frequency:1:A"]), 0.5)

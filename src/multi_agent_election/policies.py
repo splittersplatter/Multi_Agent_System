@@ -61,6 +61,23 @@ class Observation:
     own_channels: tuple[str, ...] = ()
     # (sender, source, completed_round, ballot); distinct from untrusted reports.
     sensed_ballots: tuple[tuple[str, str, int, tuple[str, ...]], ...] = ()
+    electorate: tuple[str, ...] = ()
+    # (sender, channel, generated_round, reference_ballot_round, delivered_round, ballot).
+    # The reference is a timestamp, not proof that the payload is truthful.
+    report_provenance: tuple[tuple[str, str, int, int, int, tuple[str, ...]], ...] = ()
+    # Present only during a coalition member's communication phase:
+    # (coalition ID, target, remaining round budget, remaining episode budget).
+    coalition_report_budget: tuple[str, str, int, int] | None = None
+    # (target, observation_round, strict private preference); sight permission required.
+    sighted_preferences: tuple[tuple[str, int, tuple[str, ...]], ...] = ()
+    # (sender, recipient, channel, generated_round, reference_round, intercepted_round, report).
+    # Intercepted reports are untrusted messages, not observed ballots.
+    overheard_reports: tuple[tuple[str, str, str, int, int, int, tuple[str, ...]], ...] = ()
+    # (source round, broadcast round, reported counts); never includes hidden truth.
+    public_signal: tuple[int, int, tuple[int, ...]] | None = None
+    # Spatial leader model only: own issue ideal and shared perceived platforms, never hidden truth.
+    own_ideal: tuple[float, ...] | None = None
+    perceived_leader_positions: tuple[tuple[str, tuple[float, ...]], ...] = ()
 
 
 def canonical_json(value: Any, label: str) -> str:

@@ -53,7 +53,7 @@ cycles/cutoffs. S-numbers reference the [survey](../election-manipulation-litera
 | 3 edges; S11,S15-S16 | Does strategic edge selection outperform equal-budget random selection? | Budgeted edges; controller's declared view | Zero and random edges | Target-win delta |
 | 4 polls; S12-S14 | Do epistemic and poll-confident responses differ under matched distorted polls? | Bounded public count report; true aggregate visible only to controller/evaluator | Truthful/random report; matched voter rules | Target-win difference |
 | 5 nomination; S22,S29-S30 | Does nominee composition change winner alignment? | Network nomination; allowed neighbor/self positions | Exogenous equal-sized set; same-nominee equivalence | Winner distance |
-| 6 detective; S18,S22-S24,S29 | Can aggregate-only detection precede three wins without excess false alarms? | Bounded voter-ideal shifts; detective sees aggregate history | Drift/no attack; random shifts | Early-alert recall + false-positive rate |
+| 6 detective; S18,S22-S23,S29 | Can aggregate-only detection precede three wins without excess false alarms? | Bounded voter-ideal shifts; detective sees aggregate history | Drift/no attack; random shifts | Early-alert recall + false-positive rate |
 | 7 leader; S22,S30 | Do indirect signals of hidden adaptation change votes? | Bounded leader movement; public behavior signals | Fixed/no-signal leader | Winner-change rate |
 
 ## Transition and information contract

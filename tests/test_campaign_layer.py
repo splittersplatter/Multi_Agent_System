@@ -84,6 +84,7 @@ class CampaignLayerTests(unittest.TestCase):
         old["scenario"]["network"].pop("campaign_edges")
         for frame in old["frames"]:
             frame.pop("campaign_edges")
+            frame.pop("report_provenance")
         self.assertEqual(Simulation.from_checkpoint(old).current, first.current)
 
 

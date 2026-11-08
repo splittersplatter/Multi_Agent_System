@@ -2,6 +2,11 @@
 
 Status: Stage 00 verified; Stage 01 in progress. [Stage plans](plans/README.md).
 
+[Heuristic evaluation](plans/heuristic-evaluation.md): audit/metrics specified;
+restricted [convergent foundation](convergence-foundations.md) adopted for future
+studies; full-model guarantee remains refuted. F1–F3 and scheduled F4/F5 implemented;
+research experiments and remaining stage gates pending.
+
 ## Scope
 
 - One cumulative simulator; seven controlled mechanism studies; integrated ablations; reproducible report.

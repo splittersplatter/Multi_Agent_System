@@ -4,6 +4,9 @@ Source/tests were deleted. Names below describe the former baseline, not current
 implementations or committed future signatures. Use as design references for
 Stages 00/02; implement and revalidate when requested. [Survey](election-manipulation-literature-survey.md).
 
+Current partial replacement: [finite knowledge and epistemic voting](epistemic-voting.md).
+The historical API names below are not compatibility guarantees.
+
 The supplied reference is Bakhtiari, van Ditmarsch, and Saffidine,
 “How does uncertainty about other voters determine a strategic vote?”
 (arXiv:1809.10489v2, 2019). Historical concept/API mapping:

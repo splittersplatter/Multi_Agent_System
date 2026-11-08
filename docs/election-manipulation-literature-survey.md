@@ -10,8 +10,7 @@ code availability is not assumed.
 
 **Full-text collection/method audit — 7 November 2026:**
 [paper-by-paper heuristics and metrics](literature-heuristics-and-metrics.md),
-[local PDFs and access status](../References/README.md). 31/32 works available;
-S24 still blocked. The 36 PDFs include five retained versions/prints, not 36
+[local PDFs and access status](../References/README.md). 31 works reviewed from full text. The 36 PDFs include five retained versions/prints, not 36
 independent papers. Original files and historical survey scope retained. This
 audit adds method/metric evidence and bibliographic corrections; it is not a
 fresh systematic search or a simulator replication. In particular, k-pragmatist
@@ -77,11 +76,10 @@ the later S14 explicitly positions itself against S12 and S13, while S25 cites
 network-control work. These trails supplemented the independent date sweep.
 This is search-based forward chasing, not a complete citation-index census.
 
-The 32 records below are deduplicated by work. Peer-reviewed proceedings and
+The 31 retained records below are deduplicated by work. Peer-reviewed proceedings and
 journals are preferred; preprints are explicitly labelled. Core comparisons
 were checked against the accessible paper's model and results sections,
-including [S9–S17, S19–S23, S27–S30]. S24 is based on its institutional
-abstract: its full text was not accessible in this pass. Other concise entries
+including [S9–S17, S19–S23, S27–S30]. Other concise entries
 use the linked text or abstract as indicated and do not imply a complete
 reproduction. A scholarly metadata service matched 24 of 25 checked
 identifier/title pairs; its identifier resolution for S13 was ambiguous, so
@@ -104,7 +102,7 @@ unreported variable is marked **not established here** instead of being inferred
 | 3. Strategic edge addition | Edge additions change strategic-voting information and, separately, diffusion paths; removal and different budgets are also studied. | S11, S15–S16 | Compare *equal-budget* edges under limited attacker knowledge and evolving voter information; no claim that any such comparison is absent across all literature. |
 | 4. Global-information manipulation | Manipulated one-off and repeated polls, plausibility and distance constraints, strategic updating, and complexity/experiments. | S12–S14 | Study a specified false-observation epistemic semantics and matched response rules against S12/S13. A formal knowledge/belief implementation with this exact combination was not found. |
 | 5. In-network leader selection and alignment vectors | Spatial voter/candidate vectors, adaptive parties, and manipulated candidate perceptions. | S22, S23, S29–S30 | Electing leaders *from the network in a first stage* and voting for them in a second, under strategic knowledge restrictions: exact mechanism not found in this targeted search. |
-| 6. Alignment alteration and detective | Alignment/opinion shifts and election robustness; attacker–defender games and misinformation detection interventions. | S18, S22–S24, S29 | Distinguish detectable anomalies from proof of manipulation; evaluate observability, false positives, and early warning before three consecutive wins in the same model. Exact full combination not found. |
+| 6. Alignment alteration and detective | Alignment/opinion shifts and election robustness; attacker–defender games and misinformation detection interventions. | S18, S22-S23, S29 | Distinguish detectable anomalies from proof of manipulation; evaluate observability, false positives, and early warning before three consecutive wins in the same model. Exact full combination not found. |
 | 7. Public-favoring leaders | Parties change public positions in response to election results, while party ideals may stay fixed. | S30; also S22 | Model hidden true leader shifts separately from perceived positions; compare indirect public behavior signals with a no-signal control. Public-position adaptation in prior work is adjacent, not the same hidden-state mechanism. |
 
 The “not found” entries are search results, not novelty certifications. In
@@ -124,7 +122,7 @@ row, not that no such work exists anywhere.
 | 3. Edge addition | S11 | S11 | S11, S15–S16 | S16 | — |
 | 4. Global information | S1–S3, S6 | S12–S14, S25 | S11–S13 | S18 | — |
 | 5. Network leader selection | S30 | — | S9–S10 | — | S22–S23, S30 |
-| 6. Altering alignments and detective | S18 | S18, S22 | S23–S24, S29 | S18 | S22–S23, S29 |
+| 6. Altering alignments and detective | S18 | S18, S22 | S23, S29 | S18 | S22–S23, S29 |
 | 7. Public-favoring leaders | S30 | S22 | — | — | S22, S30 |
 
 ## Source notes
@@ -185,8 +183,6 @@ boundary relevant here. “No network” describes the paper's model, not realit
 
 **S23.** Auletta, Carbone & Ferraioli, [Election Manipulation in Social Networks with Single-Peaked Agents](https://doi.org/10.1007/978-3-031-47546-7_32), 2023 proceedings; [full preprint](https://arxiv.org/abs/2308.10845). **D**, structured-preference network control. A/I: a controller influences voters whose rankings follow an ideological ordering. D/R: information diffusion on graphs and election objectives; algorithmic complexity plus heuristics. Result/limit: preference restrictions do not remove all hardness; the model does not provide a detective with knowledge of hidden interventions.
 
-**S24.** Liu, Kato, Gu, Ren, Su & Zhang, [Diffusion of Ordinal Opinions in Social Networks: An Agent-Based Model and Heuristics for Campaigning](https://doi.org/10.1109/TCSS.2024.3458950), *IEEE Transactions on Computational Social Systems* 12(1), 2025. **D**, ordinal opinion-diffusion simulation. A/I: voter agents carry rankings and external campaigning changes some nodes' opinions. D/R: non-progressive, multi-opinion network diffusion with personalized features; the abstract does not establish a voting rule or epistemic game. Result/limit: a heuristic is compared to greedy for margin/runtime. **Abstract/metadata only:** full text was unavailable, so update after reading it.
-
 **S25.** De, Dey & Sanyal, [Voter Participation Control in Online Polls](https://ifaamas.csc.liv.ac.uk/Proceedings/aamas2025/pdfs/p2484.pdf), AAMAS 2025 extended abstract. **P**, network poll control. A/I: a poll spreads from an initiator through participants; a budgeted controller induces selected non-participation. D/R: a graph and plurality poll outcome, with complexity analysis. Result/limit: information exposure and participation jointly bias the poll; it is not identical to a pollster falsifying reported counts or to a subsequent election.
 
 **S26.** Hota, Bandopadhyay & Dey, [Shift Bribery over Social Networks](https://arxiv.org/abs/2510.21200), arXiv preprint, 2025, version 3 June 2026. **P**, preference control and complexity. A/I: a budgeted agent pays for preference shifts, which propagate over a directed weighted network. D/R: ranking shifts with plurality/majority special cases and graph-parameter algorithms. Result/limit: theoretical complexity and restricted-case algorithms; publication status beyond the preprint is not established here and voter decisions are not DEL-based.
@@ -219,7 +215,7 @@ order or a semester deadline; the milestone roadmap includes all seven mechanism
 | 1. False signals and epistemic voter response | With matched electorates, network, and poll perturbations, do explicit possible-world decision rules change target-win frequency or winner-change rate compared with poll-confident and local-dominance voters? | S12–S14 already cover local, repeated and bounded poll manipulation; S1–S3 and S6 cover uncertainty/knowledge. Demonstrate a precisely specified false-observation model and an effect beyond their response baselines, not merely “poll manipulation with DEL.” | 4 / 4 |
 | 2. Capability ablation for adversarial minorities | At fixed coalition size and communication budget, how do sight, coordination, deceptive reports and expanded observation individually change simulated outcome impact? | S8, S11, S16–S18, S21 and S27 already study coalitions, networks, information asymmetry or bots. Demonstrate fair, one-capability-at-a-time comparisons under the same voter and budget model; test interaction only after individual effects. | 3 / 3 |
 | 3. Physical contact turnover under the same information budget | Does proximity-based edge turnover change intervention impact relative to a static graph with matched average degree and contact exposure? | S9–S12 and S28–S29 already cover networked strategic voting or mobility/opinion proximity. Show that any difference remains after controlling for degree, exposure and initial preferences; do not equate physical and ideological distance. | 3 / 3 |
-| 4. Early detection with limited observations | Can a detector using only allowed ballot aggregates reliably identify a bounded alignment shift before the target achieves three consecutive wins, relative to normal preference drift? | S18, S22–S24 and S29 cover defense, spatial manipulation or evolving opinions. Measure false-positive rate, recall and detection delay against no-attack drift and observation-matched controls. Treat a statistical alert as belief/evidence, not knowledge. | 2 / 4 |
+| 4. Early detection with limited observations | Can a detector using only allowed ballot aggregates reliably identify a bounded alignment shift before the target achieves three consecutive wins, relative to normal preference drift? | S18, S22-S23 and S29 cover defense, spatial manipulation or evolving opinions. Measure false-positive rate, recall and detection delay against no-attack drift and observation-matched controls. Treat a statistical alert as belief/evidence, not knowledge. | 2 / 4 |
 | 5. In-network nomination with candidate adaptation | How do endogenous nominee composition and signal-mediated hidden leader adaptation separately change outcomes compared with exogenous nomination and fixed leaders? | S22, S29–S30 cover spatial preferences or party adaptation. An identical-nominee/no-information-effect control should be equivalent; use different nominee sets to study composition effects. Separate true alignment, public signals and perceived position. | 2 / 3 |
 
 ## Research protocol for roadmap experiments

@@ -8,15 +8,19 @@ import tomllib
 from pathlib import Path
 from urllib.parse import quote
 from .engine import Simulation
-from .experiments import batch, compare_heuristics
+from .experiments import batch, compare_heuristics, compare_proximity, coalition_ablations, compare_campaign_policies, exhaustive_one_round_campaign, compare_signal_responses, compare_nominations, compare_alignment, calibrate_and_evaluate_detector, compare_leaders
 from .metrics import frame_metrics, series
 from .model import ElectionError, make_scenario
-from .voting import VOTING_POLICIES, STRATEGIC, configure_voting
+from .voting import VOTING_POLICIES, COALITION_POLICIES, SIGNAL_POLICIES, STRATEGIC, configure_voting
+from .epistemic import EPISTEMIC_POLICIES
+from .combined import combined_ablation
 
 
 def _write_jsonl(path: Path, data: dict) -> None:
     """Write a manifest followed by every metric and available recorded frame."""
     header = {key: data[key] for key in ("record_type", "record_version", "scenario", "manifest", "policy_digests", "recording")}
+    if "nomination" in data:
+        header["nomination"] = data["nomination"]
     if "stride" in data:
         header["stride"] = data["stride"]
     with path.open("x", encoding="utf-8") as handle:
@@ -44,7 +48,9 @@ def _write_metrics_csv(path: Path, scenario, rows: list[dict]) -> None:
     fixed = ("round", "winner", "winner_margin", "mean_winner_rank", "ballot_switch_count", "ballot_switch_rate",
              "public_edge_count", "persistent_edge_count", "proximity_edge_count", "campaign_edge_count",
              "private_channel_count", "private_membership_count", "mean_out_degree", "intervention_count",
-             "sensor_observation_count")
+             "sensor_observation_count", "proximity_edge_additions", "proximity_edge_removals",
+             "proximity_edge_turnover", "public_edge_additions", "public_edge_removals", "public_edge_turnover",
+             "proximity_mean_in_degree")
     names = list(fixed) + [f"count:{party}" for party in scenario.parties]
     names += [f"share:{quote(party, safe='')}" for party in scenario.parties]
     names += [f"{kind}:{rank + 1}:{quote(party, safe='')}" for kind in ("rank_count", "rank_frequency")
@@ -55,6 +61,36 @@ def _write_metrics_csv(path: Path, scenario, rows: list[dict]) -> None:
               for group in groups for party in scenario.parties]
     origins = ("scheduled", "interactive", "policy", "unknown")
     names += [f"intervention_origin:{origin}" for origin in origins]
+    if scenario.coalitions:
+        names += ["deceptive_report_count"] + [f"coalition_report_spend:{quote(c.id, safe='')}" for c in scenario.coalitions]
+    sight_coalitions = [c for c in scenario.coalitions if c.sight_targets]
+    if sight_coalitions:
+        names += ["preference_sight_count"] + [f"coalition_sight_spend:{quote(c.id, safe='')}" for c in sight_coalitions]
+    eavesdrop_coalitions = [c for c in scenario.coalitions if c.eavesdrop_channels]
+    if eavesdrop_coalitions:
+        names += ["eavesdrop_count"] + [f"coalition_eavesdrop_spend:{quote(c.id, safe='')}" for c in eavesdrop_coalitions]
+    if scenario.campaign_controller is not None:
+        names += ["campaign_controller_spend", "campaign_controller_added_count", "campaign_controller_eligible_count"]
+    if scenario.signal_controller is not None:
+        names += ["signal_spend","signal_broadcast_cost","signal_source_round","signal_broadcast_round"]
+        names += [f"signal_{kind}:{quote(party,safe='')}" for kind in ("report","truth") for party in scenario.parties]
+    if scenario.nomination is not None:
+        names += ["mean_winner_ideal_distance", "mean_nearest_nominee_distance"]
+    if scenario.alignment is not None:
+        names += ["mean_winner_current_ideal_distance", "mean_nearest_current_nominee_distance", "alignment_attack_spend",
+                  "alignment_attack_cost", "alignment_targeted_count", "alignment_natural_distance"]
+    if scenario.leaders is not None:
+        names += ["leader_total_spend", "mean_leader_perception_error", "mean_winner_true_current_distance", "mean_winner_perceived_current_distance"]
+        names += [f"leader_{kind}:{quote(party,safe='')}" for kind in ("spend", "perception_error") for party in scenario.parties]
+        names += [f"leader_{kind}:{quote(party,safe='')}:{axis+1}" for kind in ("true", "perceived", "signal")
+                  for party in scenario.parties for axis in range(len(scenario.people[0].ideal))]
+    detector_fields = ("detector_share_change", "detector_alert", "detector_first_alert_round",
+                       "detector_target_win_streak", "detector_first_triple_win_round")
+    if scenario.detector is not None:
+        names += list(detector_fields)
+    convergence_fields = ("case", "scheduler", "next_actor", "improving_voters", "status", "reason", "next_intervention_round")
+    if scenario.convergence_case:
+        names += [f"convergence:{field}" for field in convergence_fields]
     with path.open("x", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle); writer.writerow(names)
         for row in rows:
@@ -66,6 +102,33 @@ def _write_metrics_csv(path: Path, scenario, rows: list[dict]) -> None:
             values += [row["group_counts" if kind == "group_count" else "group_shares"][group][party]
                        for kind in ("group_count", "group_share") for group in groups for party in scenario.parties]
             values += [row["intervention_origin_counts"].get(origin, 0) for origin in origins]
+            if scenario.coalitions:
+                values += [row["deceptive_report_count"]] + [row["coalition_report_spend"][c.id] for c in scenario.coalitions]
+            if sight_coalitions:
+                values += [row["preference_sight_count"]] + [row["coalition_sight_spend"][c.id] for c in sight_coalitions]
+            if eavesdrop_coalitions:
+                values += [row["eavesdrop_count"]] + [row["coalition_eavesdrop_spend"][c.id] for c in eavesdrop_coalitions]
+            if scenario.campaign_controller is not None:
+                values += [row["campaign_controller_spend"],row["campaign_controller_added_count"],row["campaign_controller_eligible_count"]]
+            if scenario.signal_controller is not None:
+                values += [row["signal_spend"],row["signal_broadcast_cost"],row["signal_source_round"],row["signal_broadcast_round"]]
+                values += [(row["signal_report" if kind == "report" else "signal_source_truth"] or {}).get(party)
+                           for kind in ("report","truth") for party in scenario.parties]
+            if scenario.nomination is not None:
+                values += [row["mean_winner_ideal_distance"], row["mean_nearest_nominee_distance"]]
+            if scenario.alignment is not None:
+                values += [row[name] for name in ("mean_winner_current_ideal_distance", "mean_nearest_current_nominee_distance",
+                           "alignment_attack_spend", "alignment_attack_cost", "alignment_targeted_count", "alignment_natural_distance")]
+            if scenario.leaders is not None:
+                values += [row[name] for name in ("leader_total_spend", "mean_leader_perception_error", "mean_winner_true_current_distance", "mean_winner_perceived_current_distance")]
+                values += [row[f"leader_{kind}"][party] for kind in ("spend", "perception_error") for party in scenario.parties]
+                values += [(row["leader_signals"] or {}).get(party, [None] * len(scenario.people[0].ideal))[axis] if kind == "signal"
+                           else row[f"leader_{kind}"][party][axis] for kind in ("true", "perceived", "signal")
+                           for party in scenario.parties for axis in range(len(scenario.people[0].ideal))]
+            if scenario.detector is not None:
+                values += [row[name] for name in detector_fields]
+            if scenario.convergence_case:
+                values += [row["convergence"].get(field) for field in convergence_fields]
             writer.writerow(values)
 
 
@@ -79,9 +142,11 @@ def main(argv: list[str] | None = None) -> int:
     recording.add_argument("--summary", action="store_true", help="stream metrics without retaining frames")
     recording.add_argument("--sample", type=int, metavar="STRIDE", help="output every STRIDE frames plus the final frame")
     run.add_argument("--jsonl", type=Path, help="write manifest, metrics and recorded frames as JSONL")
+    run.add_argument("--until-equilibrium", action="store_true", help="stop a certified case at its proven equilibrium, up to the scenario round limit")
     resume = commands.add_parser("resume", help="verify and resume a JSON checkpoint")
     resume.add_argument("checkpoint", type=Path)
     resume.add_argument("--rounds", type=int, required=True, help="additional rounds")
+    resume.add_argument("--until-equilibrium", action="store_true", help="stop a certified case at its proven equilibrium, up to --rounds")
     resume.add_argument("--output", type=Path, help="write resumed JSON checkpoint")
     resume.add_argument("--allow-environment-change", action="store_true", help="replay and migrate after reviewing runtime/core changes")
     batches = commands.add_parser("batch", help="compare scheduled edits with a matched control")
@@ -108,19 +173,232 @@ def main(argv: list[str] | None = None) -> int:
     compare = commands.add_parser("compare", help="matched-seed voting heuristic comparison; stdout JSON")
     compare.add_argument("scenario", type=Path)
     compare.add_argument("--seeds", type=int, nargs="+", required=True)
-    compare.add_argument("--policies", nargs="+", choices=VOTING_POLICIES, default=["sincere","sensed_plurality",*STRATEGIC])
+    compare.add_argument("--policies", nargs="+", choices=VOTING_POLICIES + EPISTEMIC_POLICIES, default=["sincere","sensed_plurality",*STRATEGIC])
     compare.add_argument("--parameters", default="{}", help="JSON strategic parameters shared across policies")
     compare.add_argument("--rounds", type=int)
     compare.add_argument("--window", type=int, default=10)
     compare.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    networks = commands.add_parser("compare-networks", help="paired dynamic versus frozen-initial proximity; stdout JSON")
+    networks.add_argument("scenario", type=Path)
+    networks.add_argument("--seeds", type=int, nargs="+", required=True)
+    networks.add_argument("--calibration-seeds", type=int, nargs="+", help="disjoint one-to-one seeds for the optional static exposure control")
+    networks.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    ablations = commands.add_parser("coalition-ablations", help="matched coalition capability ablations; stdout JSON")
+    ablations.add_argument("scenario", type=Path)
+    ablations.add_argument("--seeds", type=int, nargs="+", required=True)
+    ablations.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    campaign = commands.add_parser("compare-campaign", help="matched campaign-controller policy comparisons; stdout JSON")
+    campaign.add_argument("scenario", type=Path)
+    campaign.add_argument("--seeds", type=int, nargs="+", required=True)
+    campaign.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    signals = commands.add_parser("compare-signals", help="paired truthful and distorted signals across voter responses; stdout JSON")
+    signals.add_argument("scenario", type=Path)
+    signals.add_argument("--seeds", type=int, nargs="+", required=True)
+    signals.add_argument("--groups", nargs="+", required=True, help="occupied groups whose voter response is compared")
+    signals.add_argument("--signal-distortion-bound", type=int, required=True, help="declared epistemic transfer bound")
+    signals.add_argument("--max-worlds", type=int, default=10000)
+    signals.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    nominations = commands.add_parser("compare-nominations", help="paired endogenous, identical fixed and random nominee controls")
+    nominations.add_argument("scenario", type=Path)
+    nominations.add_argument("--seeds", type=int, nargs="+", required=True)
+    nominations.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    alignments = commands.add_parser("compare-alignment", help="paired drift and bounded alignment attack controls")
+    alignments.add_argument("scenario", type=Path)
+    alignments.add_argument("--seeds", type=int, nargs="+", required=True)
+    alignments.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    detector = commands.add_parser("evaluate-detector", help="calibrate on no-alignment-attack seeds, then evaluate on disjoint seeds")
+    detector.add_argument("scenario", type=Path)
+    detector.add_argument("--calibration-seeds", type=int, nargs="+", required=True)
+    detector.add_argument("--evaluation-seeds", type=int, nargs="+", required=True)
+    detector.add_argument("--false-alarm-rate", type=float, required=True)
+    detector.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    leaders = commands.add_parser("compare-leaders", help="paired fixed/adaptive leaders with broadcast/frozen perceptions")
+    leaders.add_argument("scenario", type=Path)
+    leaders.add_argument("--seeds", type=int, nargs="+", required=True)
+    leaders.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    combined = commands.add_parser("combined-ablation", help="versioned seven-mechanism isolated and leave-one-out controls")
+    combined.add_argument("scenario", type=Path)
+    combined.add_argument("--seeds", type=int, nargs="+", required=True)
+    combined.add_argument("--target", required=True)
+    combined.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    exhaustive = commands.add_parser("campaign-exhaustive", help="exact evaluator-only one-round campaign bounds; stdout JSON")
+    exhaustive.add_argument("scenario", type=Path)
+    exhaustive.add_argument("--max-combinations", type=int, default=10000)
+    exhaustive.add_argument("--output", type=Path, help="new JSON output file; never overwrite")
+    knowledge = commands.add_parser("knowledge", help="analyze an explicitly specified finite knowledge model")
+    knowledge.add_argument("model", type=Path, help="JSON possible-world model")
+    knowledge.add_argument("--agent", help="agent for possible-world manipulation analysis")
+    knowledge.add_argument("--world", help="analyze another named world; default is actual")
+    knowledge.add_argument("--max-worlds", type=int, default=10000)
+    conditional = knowledge.add_mutually_exclusive_group()
+    conditional.add_argument("--conditional", type=Path, help="JSON conditional first-choice profile to check")
+    conditional.add_argument("--solve-conditional", action="store_true", help="enumerate all conditional equilibria within limits")
+    knowledge.add_argument("--max-profiles", type=int, default=10000)
+    knowledge.add_argument("--max-evaluations", type=int, default=1000000)
     for command in (run, batches, visual):
-        command.add_argument("--voting", choices=VOTING_POLICIES, help="episode-wide voting policy; preserves movement and permissions")
+        command.add_argument("--voting", choices=VOTING_POLICIES + COALITION_POLICIES + SIGNAL_POLICIES + EPISTEMIC_POLICIES, help="episode-wide voting policy; preserves movement and permissions")
         command.add_argument("--voting-parameters", default="{}", help="JSON parameters for selected voting policy")
     args = parser.parse_args(argv)
     try:
-        if args.command in ("run", "batch", "visual", "compare"):
+        if args.command == "knowledge":
+            from .epistemic import KnowledgeModel
+            with args.model.open(encoding="utf-8") as handle:
+                model = KnowledgeModel.from_dict(json.load(handle), max_worlds=args.max_worlds)
+            if args.conditional or args.solve_conditional:
+                if args.agent is not None or args.world is not None:
+                    raise ElectionError("conditional analysis covers all agents and worlds; omit --agent and --world")
+                if args.conditional:
+                    with args.conditional.open(encoding="utf-8") as handle:
+                        analysis = model.conditional_equilibrium(json.load(handle), max_evaluations=args.max_evaluations)
+                else:
+                    analysis = model.solve_conditional_equilibria(max_profiles=args.max_profiles,
+                                                                  max_evaluations=args.max_evaluations)
+                print(json.dumps({"record_type":"eclipse.conditional-equilibrium", "record_version":1,
+                                  "actual_world":model.actual, "analysis":analysis}, indent=2, allow_nan=False))
+                return 0
+            if args.agent is None:
+                raise ElectionError("knowledge analysis requires --agent or a conditional mode")
+            print(json.dumps({"record_type":"eclipse.knowledge-analysis", "record_version":1,
+                              "actual_world":model.actual, "analysis_world":args.world or model.actual,
+                              "analysis":model.analyze(args.agent, args.world)}, indent=2, allow_nan=False))
+            return 0
+        if args.command in ("run", "batch", "visual", "compare", "compare-networks", "coalition-ablations", "compare-campaign", "campaign-exhaustive", "compare-signals", "compare-nominations", "compare-alignment", "evaluate-detector", "compare-leaders", "combined-ablation"):
             with args.scenario.open("rb") as handle:
                 scenario = make_scenario(tomllib.load(handle))
+            if args.command == "combined-ablation":
+                _preflight_outputs([args.output])
+                result = combined_ablation(scenario, args.seeds, args.target)
+                if args.output:
+                    with args.output.open("x", encoding="utf-8") as handle:
+                        json.dump(result, handle, indent=2, allow_nan=False); handle.write("\n")
+                    runs = [run for row in result["rows"] for run in row["runs"].values()]
+                    print(json.dumps({"output": str(args.output), "seeds": len(result["rows"]), "arms_per_seed": len(result["arms"]),
+                                      "failed": sum(run["status"] != "ok" or run.get("movement_matched") is False or run.get("same_candidates") is False for run in runs),
+                                      "unpaired": sum(run["status"] == "ok" and "paired" not in run for run in runs),
+                                      "detector_invariant_failures": sum(run.get("detector_noninterference") is False for run in runs)}))
+                else:
+                    print(json.dumps(result, indent=2, allow_nan=False))
+                return 0
+            if args.command == "compare-leaders":
+                _preflight_outputs([args.output])
+                result = compare_leaders(scenario, args.seeds)
+                if args.output:
+                    with args.output.open("x", encoding="utf-8") as handle:
+                        json.dump(result, handle, indent=2, allow_nan=False); handle.write("\n")
+                    runs = [run for row in result["rows"] for run in row["runs"].values()]
+                    print(json.dumps({"output": str(args.output), "seeds": len(result["rows"]),
+                                      "failed": sum(run["status"] != "ok" or run.get("movement_matched") is False for run in runs),
+                                      "unpaired": sum(run["status"] == "ok" and "paired" not in run for run in runs),
+                                      "invariant_failures": sum(run.get("nonsignal_invariant") is False for run in runs)}))
+                else:
+                    print(json.dumps(result, indent=2, allow_nan=False))
+                return 0
+            if args.command == "evaluate-detector":
+                _preflight_outputs([args.output])
+                result = calibrate_and_evaluate_detector(scenario, args.calibration_seeds, args.evaluation_seeds, args.false_alarm_rate)
+                if args.output:
+                    with args.output.open("x", encoding="utf-8") as handle:
+                        json.dump(result, handle, indent=2, allow_nan=False); handle.write("\n")
+                    print(json.dumps({"output": str(args.output), "status": result["status"], "threshold": result["threshold"],
+                                      "calibration_failed": sum(r["status"] != "ok" for r in result["calibration"]),
+                                      "evaluation_failures": None if result["evaluation"] is None else
+                                      sum(run["status"] != "ok" for row in result["evaluation"]["rows"] for run in row["runs"].values()),
+                                      "evaluation_unpaired": None if result["evaluation"] is None else
+                                      sum(run["status"] == "ok" and "paired" not in run for row in result["evaluation"]["rows"] for run in row["runs"].values())}))
+                else:
+                    print(json.dumps(result, indent=2, allow_nan=False))
+                return 0
+            if args.command == "compare-alignment":
+                _preflight_outputs([args.output])
+                result = compare_alignment(scenario, args.seeds)
+                if args.output:
+                    with args.output.open("x", encoding="utf-8") as handle:
+                        json.dump(result, handle, indent=2, allow_nan=False); handle.write("\n")
+                    runs = [run for row in result["rows"] for run in row["runs"].values()]
+                    print(json.dumps({"output": str(args.output), "seeds": len(result["rows"]),
+                                      "failed": sum(run["status"] != "ok" or run.get("movement_matched") is False for run in runs),
+                                      "unpaired": sum(run["status"] == "ok" and "paired" not in run for run in runs)}))
+                else:
+                    print(json.dumps(result, indent=2, allow_nan=False))
+                return 0
+            if args.command == "compare-nominations":
+                _preflight_outputs([args.output])
+                result = compare_nominations(scenario, args.seeds)
+                if args.output:
+                    with args.output.open("x", encoding="utf-8") as handle:
+                        json.dump(result, handle, indent=2, allow_nan=False); handle.write("\n")
+                    runs = [run for row in result["rows"] for run in row["runs"].values()]
+                    print(json.dumps({"output": str(args.output), "seeds": len(result["rows"]),
+                                      "failed": sum(run["status"] != "ok" or run.get("movement_matched") is False for run in runs),
+                                      "unpaired": sum(run["status"] == "ok" and "paired" not in run for run in runs)}))
+                else:
+                    print(json.dumps(result, indent=2, allow_nan=False))
+                return 0
+            if args.command == "compare-signals":
+                _preflight_outputs([args.output])
+                result = compare_signal_responses(scenario, args.seeds, args.groups, args.signal_distortion_bound, args.max_worlds)
+                if args.output:
+                    with args.output.open("x", encoding="utf-8") as handle:
+                        json.dump(result, handle, indent=2, allow_nan=False); handle.write("\n")
+                    runs = [run for row in result["rows"] for response in row["runs"].values() for run in response.values()]
+                    print(json.dumps({"output": str(args.output), "seeds": len(result["rows"]),
+                                      "failed": sum(run["status"] != "ok" or run.get("movement_matched") is False
+                                                    or run.get("response_movement_matched") is False for run in runs),
+                                      "unpaired": sum(run["status"] == "ok" and "paired" not in run for run in runs),
+                                      "response_unpaired": sum(run["status"] == "ok" and "response_paired" not in run for run in runs)}))
+                else:
+                    print(json.dumps(result, indent=2, allow_nan=False))
+                return 0
+            if args.command == "campaign-exhaustive":
+                _preflight_outputs([args.output])
+                result = exhaustive_one_round_campaign(scenario,args.max_combinations)
+                if args.output:
+                    with args.output.open("x",encoding="utf-8") as handle:
+                        json.dump(result,handle,indent=2,allow_nan=False); handle.write("\n")
+                    print(json.dumps({"output":str(args.output),"combinations_checked":result["combinations_checked"]}))
+                else:
+                    print(json.dumps(result,indent=2,allow_nan=False))
+                return 0
+            if args.command == "compare-campaign":
+                _preflight_outputs([args.output])
+                result = compare_campaign_policies(scenario,args.seeds)
+                if args.output:
+                    with args.output.open("x",encoding="utf-8") as handle:
+                        json.dump(result,handle,indent=2,allow_nan=False); handle.write("\n")
+                    print(json.dumps({"output":str(args.output),"seeds":len(result["rows"]),
+                                      "failed":sum(run["status"] != "ok" or run.get("movement_matched") is False
+                                                   for row in result["rows"] for run in row["runs"].values()),
+                                      "unpaired":sum(run["status"] == "ok" and "paired" not in run
+                                                     for row in result["rows"] for run in row["runs"].values())}))
+                else:
+                    print(json.dumps(result,indent=2,allow_nan=False))
+                return 0
+            if args.command == "coalition-ablations":
+                _preflight_outputs([args.output])
+                result = coalition_ablations(scenario,args.seeds)
+                if args.output:
+                    with args.output.open("x",encoding="utf-8") as handle:
+                        json.dump(result,handle,indent=2,allow_nan=False); handle.write("\n")
+                    print(json.dumps({"output":str(args.output),"seeds":len(result["rows"]),
+                                      "failed":sum(run["status"] != "ok" or run.get("movement_matched") is False
+                                                   for row in result["rows"] for run in row["runs"].values()),
+                                      "unpaired":sum(run["status"] == "ok" and "paired_targets" not in run
+                                                     for row in result["rows"] for run in row["runs"].values())}))
+                else:
+                    print(json.dumps(result,indent=2,allow_nan=False))
+                return 0
+            if args.command == "compare-networks":
+                _preflight_outputs([args.output])
+                result = compare_proximity(scenario, args.seeds, args.calibration_seeds)
+                if args.output:
+                    with args.output.open("x", encoding="utf-8") as handle:
+                        json.dump(result,handle,indent=2,allow_nan=False); handle.write("\n")
+                    print(json.dumps({"output":str(args.output),"pairs":len(result["rows"]),
+                                      "failed":sum(row["status"] != "ok" for row in result["rows"]),
+                                      "matched_failed":sum(row["matched_static"]["status"] in ("failed", "movement_mismatch") for row in result["rows"])}))
+                else:
+                    print(json.dumps(result,indent=2,allow_nan=False))
+                return 0
             if args.command == "compare":
                 _preflight_outputs([args.output])
                 result=compare_heuristics(scenario,args.seeds,args.policies,json.loads(args.parameters),args.rounds,args.window)
@@ -175,36 +453,60 @@ def main(argv: list[str] | None = None) -> int:
                 raise ElectionError("summary recording cannot write a full-history checkpoint")
             _preflight_outputs([args.checkpoint, args.jsonl])
             simulation = Simulation(scenario)
+            if args.until_equilibrium and not scenario.convergence_case:
+                raise ElectionError("--until-equilibrium requires a certified convergence scenario")
             if args.summary or (args.sample is not None and args.checkpoint is None):
                 if args.checkpoint:
                     raise ElectionError("summary recording cannot write a full-history checkpoint")
                 measured = [frame_metrics(scenario, simulation.current)]
                 samples = [simulation.current.as_dict()] if args.sample is not None else []
                 for _ in range(scenario.rounds):
+                    if args.until_equilibrium and measured[-1]["convergence"]["status"] in ("certified_equilibrium", "certified_policy_equilibrium"):
+                        break
                     previous = simulation.current
                     current = simulation.step()
                     measured.append(frame_metrics(scenario, current, previous))
                     if args.sample is not None and (current.round % args.sample == 0 or current.round == scenario.rounds):
                         samples.append(current.as_dict())
                     simulation.frames = [current]
+                if args.sample is not None and samples[-1]["round"] != simulation.current.round:
+                    samples.append(simulation.current.as_dict())
                 output_data = {"record_type": "eclipse.run", "record_version": 2,
                                "seed": scenario.seed, "parties": scenario.parties, "k": scenario.k,
                                "scenario": scenario.as_dict(), "manifest": simulation.runtime_manifest,
                                "policy_digests": {name: digest for name, (_, digest, _) in simulation.plugins.items()},
                                "recording": "summary" if args.summary else "sampled", "metrics": measured}
+                if scenario.nomination is not None:
+                    output_data["nomination"] = scenario.nomination.as_dict()
                 if args.sample is not None:
                     output_data.update({"stride": args.sample, "frames": samples})
                 if args.jsonl:
                     _write_jsonl(args.jsonl, output_data)
                 print(json.dumps(output_data, indent=2))
                 return 0
-            simulation.run()
+            if args.until_equilibrium:
+                for _ in range(scenario.rounds):
+                    if frame_metrics(scenario, simulation.current)["convergence"]["status"] in ("certified_equilibrium", "certified_policy_equilibrium"):
+                        break
+                    simulation.step()
+            else:
+                simulation.run()
             output = args.checkpoint
         elif args.command == "resume":
             _preflight_outputs([args.output])
             with args.checkpoint.open(encoding="utf-8") as handle:
                 simulation = Simulation.from_checkpoint(json.load(handle), allow_environment_change=args.allow_environment_change)
-            simulation.run(args.rounds)
+            if args.until_equilibrium:
+                if not simulation.scenario.convergence_case:
+                    raise ElectionError("--until-equilibrium requires a certified convergence scenario")
+                if args.rounds < 0:
+                    raise ElectionError("rounds must be a non-negative integer")
+                for _ in range(args.rounds):
+                    if frame_metrics(simulation.scenario, simulation.current)["convergence"]["status"] in ("certified_equilibrium", "certified_policy_equilibrium"):
+                        break
+                    simulation.step()
+            else:
+                simulation.run(args.rounds)
             scenario = simulation.scenario
             output = args.output
         else:
@@ -244,6 +546,8 @@ def main(argv: list[str] | None = None) -> int:
               "scenario": scenario.as_dict(), "manifest": simulation.runtime_manifest,
               "policy_digests": {name: digest for name, (_, digest, _) in simulation.plugins.items()},
               "recording": "full", "metrics": series(scenario, simulation.frames)}
+    if scenario.nomination is not None:
+        result["nomination"] = scenario.nomination.as_dict()
     frames = simulation.frames
     if args.command == "run" and args.sample is not None:
         frames = frames[::args.sample]

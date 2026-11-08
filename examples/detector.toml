@@ -1,0 +1,53 @@
+k = 2
+seed = 2026
+rounds = 5
+
+[nomination]
+mode = "endogenous"
+m = 2
+eligible = ["alice", "bob", "cara"]
+
+[alignment]
+drift_max_step = 0.0
+
+[alignment.attack]
+target = "cara"
+policy = "toward_target"
+targets = ["bob"]
+per_person_round = 0.25
+total_budget = 0.35
+observe_target_ideals = true
+
+[detector]
+target = "cara"
+threshold = 0.1
+
+[groups.residents]
+voting = "sincere"
+
+[network]
+persistent_edges = [["bob", "dina"], ["cara", "dina"]]
+
+[[people]]
+id = "alice"
+group = "residents"
+ideal = [0.0, 0.5]
+position = [0.1, 0.1]
+
+[[people]]
+id = "bob"
+group = "residents"
+ideal = [0.4, 0.5]
+position = [0.4, 0.2]
+
+[[people]]
+id = "cara"
+group = "residents"
+ideal = [1.0, 0.5]
+position = [0.9, 0.9]
+
+[[people]]
+id = "dina"
+group = "residents"
+ideal = [0.9, 0.5]
+position = [0.2, 0.8]
