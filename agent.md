@@ -31,6 +31,12 @@ mechanism studies, combined experiments and reproducible report.
   production behavior or evidence of real integration. Report untested integrations.
 - Each stage extends the preceding system; retain earlier APIs, scenarios and evidence.
   One engine/state powers CLI/browser/replay; no disconnected prototypes.
+- Ownership: `engine` coordinates commits; `observations`/`coalitions` build scoped
+  inputs; `records` handles replay schemas; `exports` serves CLI/HTTP writers;
+  `*_experiments` owns studies behind the stable `experiments` imports.
+- Refactors: capture example/comparison fingerprints, preserve record fields and
+  public imports; fingerprint every new runtime module in `provenance`. Use keyword
+  `Frame` construction. Revalidate dataclass replacements before execution.
 - Preserve established defaults/checkpoints once implemented; legacy compatibility requires available artifacts.
   Change only necessary files; preserve unrelated user work.
 

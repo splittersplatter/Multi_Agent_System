@@ -4,9 +4,10 @@
 [Current state](docs/README.md#current-state)
 
 Goal: one political simulator, seven mechanism studies, combined experiments,
-reproducible report. Stage 00 is verified; Stage 01 is in progress. The current
-engine supports baseline and ten strategic voting heuristics, ranked ballots, movement,
-persistent/proximity graphs, delayed reports, scheduled edits and replay.
+reproducible report. Stage 00 is verified; Stage 01 acceptance is open; Stages
+02–10 have partial implementations. The engine includes ranked ballots, strategic
+and epistemic responses, movement, coalition abilities, campaign edges, bounded
+polls, nomination, voter/leader shifts, aggregate detection, edits and replay.
 It is research software, not a validated election model.
 
 [Voting heuristic selection and matched experiments](docs/voting-heuristics.md).
@@ -40,5 +41,6 @@ Trusted local plugins for voting, movement, graph and communication use
 `python:module:function`; [simulator guide](docs/simulator-guide.md) gives their
 contracts. Source hashes are checked for replay. Python plugins are **not sandboxed**.
 
-Stage 01 verification is ongoing; epistemic integration and seven mechanisms
-remain pending. Current progress: [Stage 01](docs/plans/stage-01-political-simulator.md#progress).
+Stage acceptance and formal research evaluation remain open.
+[Implementation audit and architecture](docs/code-audit-and-refinement-report.md) ·
+[Refinement plan](docs/plans/code-quality-refinement.md).

@@ -3,9 +3,8 @@
 import hashlib
 import json
 
-from .engine import Simulation
-from .metrics import series
 from .model import ElectionError, apply_overrides, make_scenario
+from .experiment_support import ExperimentRunner, movement_matched
 
 
 MECHANISMS = ("proximity", "coalition", "campaign_edges", "poll_distortion",
@@ -114,7 +113,7 @@ def _exposure(frames, people):
 def combined_ablation(scenario, seeds, target):
     """Produce fully specified 17-arm matched controls; no statistical inference."""
     _validate_source(scenario, seeds, target)
-    specifications = _arm_specifications(); rows = []; run_manifest = None
+    specifications = _arm_specifications(); rows = []; runner = ExperimentRunner("combined")
     people = sorted(p.id for p in scenario.people)
     for seed in seeds:
         seed_raw = scenario.as_dict(); seed_raw["seed"] = seed
@@ -134,27 +133,12 @@ def combined_ablation(scenario, seeds, target):
                              "completed_round": None, "frames": [], "metrics": [], "policy_digests": {}}
                 continue
             raw = _configure(raw, enabled, nominees, detector_off)
-            selected = None; sim = None; manifest_mismatch = False
-            try:
-                selected = make_scenario(raw); sim = Simulation(selected)
-                if run_manifest is not None and sim.runtime_manifest != run_manifest:
-                    manifest_mismatch = True
-                    raise ElectionError("runtime or core source changed between combined runs")
-                run_manifest = sim.runtime_manifest; sim.run()
-                config = selected.as_dict()
+            run, sim = runner.execute(raw)
+            if run["status"] == "ok":
+                config = run["scenario"]
                 digest = hashlib.sha256(json.dumps(config, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
-                run = {"status": "ok", "scenario": config, "scenario_sha256": digest,
-                       "nomination": selected.nomination.as_dict(), "parties": list(selected.parties),
-                       "frames": [f.as_dict() for f in sim.frames], "metrics": series(selected, sim.frames),
-                       "policy_digests": {name: digest for name, (_, digest, _) in sim.plugins.items()}}
-            except ElectionError as exc:
-                if manifest_mismatch:
-                    raise
-                run = {"status": "failed", "scenario": selected.as_dict() if selected else raw,
-                       "error": str(exc), "completed_round": sim.current.round if sim else None,
-                       "frames": [f.as_dict() for f in sim.frames] if sim else [],
-                       "metrics": series(selected, sim.frames) if sim else [],
-                       "policy_digests": {name: digest for name, (_, digest, _) in sim.plugins.items()} if sim else {}}
+                run.update(scenario_sha256=digest, nomination=sim.scenario.nomination.as_dict(),
+                           parties=list(sim.scenario.parties))
             runs[arm] = run
         for arm, enabled, detector_off in specifications:
             run = runs[arm]
@@ -163,9 +147,7 @@ def combined_ablation(scenario, seeds, target):
             baseline_name = ("all_disabled" if arm == "all_disabled" or arm.startswith("isolated_") else
                              "all_disabled" if arm == "all_enabled" else "all_enabled")
             baseline = runs[baseline_name]; run["baseline"] = baseline_name
-            run["movement_matched"] = (None if baseline["status"] != "ok" else
-                len(run["frames"]) == len(baseline["frames"]) and
-                all(a["positions"] == b["positions"] for a, b in zip(run["frames"], baseline["frames"])))
+            run["movement_matched"] = movement_matched(run, baseline)
             run["same_candidates"] = None if baseline["status"] != "ok" else run["parties"] == baseline["parties"]
             if not run["movement_matched"] or not run["same_candidates"]:
                 continue
@@ -187,7 +169,7 @@ def combined_ablation(scenario, seeds, target):
                                                       for a, b in zip(run["frames"], baseline["frames"]))
         rows.append({"seed": seed, "runs": runs})
     return {"record_type": "eclipse.combined-ablation", "record_version": 1,
-            "scenario": scenario.as_dict(), "target": target, "seeds": seeds, "manifest": run_manifest,
+            "scenario": scenario.as_dict(), "target": target, "seeds": seeds, "manifest": runner.manifest,
             "arms": [{"id": arm, "enabled": [name for name in MECHANISMS if name in enabled], "detector_off": detector_off}
                      for arm, enabled, detector_off in specifications], "rows": rows,
             "notes": ["Enabled means configured, not necessarily a realized action; inspect budgets and traces.",

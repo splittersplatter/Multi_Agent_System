@@ -1,6 +1,6 @@
 # 02: Information / epistemic reasoning
 
-Proposed; inherits 01. [Gates](README.md).
+Partly implemented; acceptance open; inherits 01. [Gates](README.md).
 References: survey S1-S3, S6, S9-S10, S12-S13.
 
 ## Deliverables

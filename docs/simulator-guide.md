@@ -5,6 +5,10 @@ Research simulation only; no claim of real election prediction.
 
 ## Setup and commands
 
+Architecture, verified scope and engineering limits:
+[code audit](code-audit-and-refinement-report.md). Existing experiment imports and
+commands remain stable after the module refinement.
+
 Python >=3.11; core and browser use standard library. PNG/GIF exports require
 `python3 -m pip install -r requirements-visualization.txt` (Pillow 12.1.1).
 From project root:

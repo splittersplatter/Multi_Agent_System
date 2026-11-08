@@ -14,6 +14,15 @@ def proximity_edges(positions: Mapping[str, tuple[float, float]], radius: float 
     active = [value for value in effective.values() if value is not None]
     if not active:
         return ()
+    if max(active) == 0:
+        # Zero reach observes only coincident senders. Partition by exact position
+        # instead of comparing every pair in the unit square.
+        coincident = defaultdict(list)
+        for person in sorted(positions):
+            coincident[positions[person]].append(person)
+        return tuple(sorted((sender, receiver) for members in coincident.values()
+                            for receiver in members if effective[receiver] is not None
+                            for sender in members if sender != receiver))
     grid: dict[tuple[int, int], list[str]] = defaultdict(list)
     # radius zero still connects coincident points, with a fixed cell size.
     largest = max(active)

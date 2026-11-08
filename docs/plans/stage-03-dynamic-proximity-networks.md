@@ -1,6 +1,6 @@
 # 03: Dynamic proximity — mechanism 1
 
-Proposed; inherits 02. [Gates](README.md).
+Partly implemented; acceptance open; inherits 02. [Gates](README.md).
 References: survey S9-S12, S28-S29.
 
 ## Deliverables

@@ -15,6 +15,9 @@ from .detector import update_detector
 from .leaders import advance_leaders, perceived_preferences
 from .policies import Observation, canonical_json, load_plugin, policy_rng
 from .provenance import manifest
+from .records import action_dict, legacy_frames
+from .observations import sense_ballots
+from .coalitions import acquire_information
 from .voting import STRATEGIC, decide, validate_parameters, direct_best_response, source_local_dominance, certified_conformity
 from .epistemic import EPISTEMIC_POLICIES, SIGNAL_EPISTEMIC_POLICIES, response_from_observation, validate_signal_epistemic_group
 
@@ -73,14 +76,19 @@ def _graph_after(frame: Frame, actions: Sequence[Intervention]) -> tuple[set[tup
 
 
 class Simulation:
-    """Honest stationary baseline; every step commits one validated frame."""
+    """Shared round pipeline; publish a frame only after every action validates."""
 
     def __init__(self, scenario: Scenario):
-        if scenario.convergence_case is not None or scenario.nomination is not None:
-            # Dataclass replacement bypasses the public parser; revalidate every
-            # certified composition before any convergence status is emitted.
-            if make_scenario(scenario.as_dict()) != scenario:
-                raise ElectionError("certified or nomination scenario is not canonically validated")
+        if not isinstance(scenario, Scenario):
+            raise ElectionError("simulation requires a validated Scenario")
+        # Dataclass replacement can bypass the parser in every mode, including
+        # duplicate IDs that would silently collapse the electorate into a dict.
+        try:
+            canonical = make_scenario(scenario.as_dict())
+        except (ValueError, TypeError, KeyError, AttributeError) as exc:
+            raise ElectionError(f"invalid scenario: {exc}") from exc
+        if canonical != scenario:
+            raise ElectionError("scenario is not canonically validated")
         self.scenario = scenario
         self._runtime_manifest = manifest()
         self.manual_interventions: tuple[Intervention, ...] = ()
@@ -102,24 +110,40 @@ class Simulation:
         radii = {person: value if value is not None else scenario.radius for person, value in radii.items()}
         self._initial_proximity = (scenario.static_proximity_edges if scenario.proximity_mode == "static"
                                    else proximity_edges(positions, scenario.radius, radii))
-        self.frames = [Frame(0, tuple(ballots.items()), counts, winner, tuple(positions.items()),
-                             scenario.persistent_edges, self._initial_proximity, (), (),
-                             tuple((p.id, p.preference) for p in scenario.people),
-                             tuple((p.id, p.group) for p in scenario.people), (),
-                             tuple((p.id, "null") for p in scenario.people),
-                             tuple((p.id, p.overrides) for p in scenario.people), scenario.private_channels, (), (), scenario.campaign_edges,
-                             tuple((coalition.id,0) for coalition in scenario.coalitions), (),
-                             tuple((coalition.id,0) for coalition in scenario.coalitions if coalition.sight_targets), (),
-                             tuple((coalition.id,0) for coalition in scenario.coalitions if coalition.eavesdrop_channels), (),
-                             () if scenario.campaign_controller is not None else None,
-                             signal_spend=0 if scenario.signal_controller is not None else None,
-                             alignment_ideals=tuple((p.id, p.ideal) for p in scenario.people) if scenario.alignment else None,
-                             alignment_spend=0.0 if scenario.alignment else None,
-                             detector=update_detector(scenario.detector, scenario.parties, dict(counts), 0) if scenario.detector else None,
-                             leader_true=tuple((party, next(p.ideal for p in scenario.people if p.id == party)) for party in scenario.parties) if scenario.leaders else None,
-                             leader_perceived=tuple((party, next(p.ideal for p in scenario.people if p.id == party)) for party in scenario.parties) if scenario.leaders else None,
-                             leader_spend=tuple((party, 0.0) for party in scenario.parties) if scenario.leaders else None,
-                             leader_memory=tuple((party, None, None) for party in scenario.parties) if scenario.leaders else ())]
+        self.frames = [Frame(
+            round=0,
+            ballots=tuple(ballots.items()),
+            counts=counts,
+            winner=winner,
+            positions=tuple(positions.items()),
+            persistent_edges=scenario.persistent_edges,
+            proximity_edges=self._initial_proximity,
+            delivered=(),
+            pending=(),
+            preferences=tuple((p.id, p.preference) for p in scenario.people),
+            groups=tuple((p.id, p.group) for p in scenario.people),
+            interventions=(),
+            policy_memory=tuple((p.id, "null") for p in scenario.people),
+            overrides=tuple((p.id, p.overrides) for p in scenario.people),
+            private_channels=scenario.private_channels,
+            phase_memory=(),
+            ballot_sensors=(),
+            campaign_edges=scenario.campaign_edges,
+            coalition_report_spend=tuple((coalition.id,0) for coalition in scenario.coalitions),
+            deceptive_reports=(),
+            coalition_sight_spend=tuple((coalition.id,0) for coalition in scenario.coalitions if coalition.sight_targets),
+            preference_sight=(),
+            coalition_eavesdrop_spend=tuple((coalition.id,0) for coalition in scenario.coalitions if coalition.eavesdrop_channels),
+            overheard_reports=(),
+            campaign_controller_purchased=() if scenario.campaign_controller is not None else None,
+            signal_spend=0 if scenario.signal_controller is not None else None,
+            alignment_ideals=tuple((p.id, p.ideal) for p in scenario.people) if scenario.alignment else None,
+            alignment_spend=0.0 if scenario.alignment else None,
+            detector=update_detector(scenario.detector, scenario.parties, dict(counts), 0) if scenario.detector else None,
+            leader_true=tuple((party, next(p.ideal for p in scenario.people if p.id == party)) for party in scenario.parties) if scenario.leaders else None,
+            leader_perceived=tuple((party, next(p.ideal for p in scenario.people if p.id == party)) for party in scenario.parties) if scenario.leaders else None,
+            leader_spend=tuple((party, 0.0) for party in scenario.parties) if scenario.leaders else None,
+            leader_memory=tuple((party, None, None) for party in scenario.parties) if scenario.leaders else ())]
 
     def _load_plugins(self, manual: Sequence[Intervention]) -> dict:
         references = {getattr(g, field) for g in self.scenario.groups for field in ("voting", "movement", "graph", "communication")}
@@ -224,22 +248,8 @@ class Simulation:
             if can_receive(recipient, channel):
                 prior_inbox[recipient].append((sender, channel, ballot))
         previous_ballots = dict(self.current.ballots)
-        sensing_enabled = any(cap.sense_public_ballots or cap.sense_private_ballots for cap in permissions.values())
         def sensed(edges, private_channels):
-            """Completed ballots visible through current authorized channels."""
-            if not sensing_enabled:
-                return {}
-            result = defaultdict(list)
-            for sender, recipient in sorted(edges):
-                if permissions[recipient].sense_public_ballots:
-                    result[recipient].append((sender, "public", self.current.round, previous_ballots[sender]))
-            for name, members in sorted(private_channels.items()):
-                members = sorted(members)
-                for recipient in members:
-                    if permissions[recipient].sense_private_ballots:
-                        result[recipient].extend((sender, name, self.current.round, previous_ballots[sender])
-                                                 for sender in members if sender != recipient)
-            return {person: tuple(sorted(records)) for person, records in result.items()}
+            return sense_ballots(edges, private_channels, permissions, previous_ballots, self.current.round)
         old_public = defaultdict(set)
         old_edges = set(self.current.persistent_edges) | set(self.current.proximity_edges) | set(self.current.campaign_edges)
         for sender, recipient in old_edges:
@@ -374,43 +384,12 @@ class Simulation:
         pending = []
         total_spend = dict(self.current.coalition_report_spend)
         round_spend = {coalition.id:0 for coalition in self.scenario.coalitions}
-        sight_spend = dict(self.current.coalition_sight_spend)
-        sight_round_spend = {coalition.id:0 for coalition in self.scenario.coalitions if coalition.sight_targets}
-        sight_events = []
-        for coalition in self.scenario.coalitions:
-            if not coalition.sight_targets:
-                continue
-            for observer in coalition.members:
-                if not permissions[observer].observe_target_preferences:
-                    continue
-                for target in coalition.sight_targets:
-                    if target == observer:
-                        continue
-                    if (sight_round_spend[coalition.id] >= coalition.sight_budget_per_round
-                            or sight_spend[coalition.id] >= coalition.sight_budget_total):
-                        break
-                    sight_round_spend[coalition.id] += 1; sight_spend[coalition.id] += 1
-                    sighted[observer].append((target,self.current.round + 1,preferences[target]))
-                    sight_events.append((coalition.id,observer,target,preferences[target]))
-        eavesdrop_spend = dict(self.current.coalition_eavesdrop_spend)
-        eavesdrop_round_spend = {coalition.id:0 for coalition in self.scenario.coalitions if coalition.eavesdrop_channels}
-        overheard_events = []
-        for coalition in self.scenario.coalitions:
-            if not coalition.eavesdrop_channels:
-                continue
-            for observer in coalition.members:
-                if not permissions[observer].intercept_private_reports:
-                    continue
-                for sender,recipient,channel,payload in sorted(self.current.pending):
-                    if channel not in coalition.eavesdrop_channels or observer in (sender,recipient):
-                        continue
-                    if (eavesdrop_round_spend[coalition.id] >= coalition.eavesdrop_budget_per_round
-                            or eavesdrop_spend[coalition.id] >= coalition.eavesdrop_budget_total):
-                        break
-                    eavesdrop_round_spend[coalition.id] += 1; eavesdrop_spend[coalition.id] += 1
-                    overheard[observer].append((sender,recipient,channel,self.current.round,
-                                               self.current.round-1,self.current.round+1,payload))
-                    overheard_events.append((coalition.id,observer,sender,recipient,channel,payload))
+        acquired = acquire_information(
+            self.scenario.coalitions, permissions, preferences, self.current.pending, self.current.round + 1,
+            self.current.coalition_sight_spend, self.current.coalition_eavesdrop_spend)
+        sighted, overheard = acquired.sighted, acquired.overheard
+        sight_spend, eavesdrop_spend = acquired.sight_spend, acquired.eavesdrop_spend
+        sight_events, overheard_events = acquired.sight_events, acquired.overheard_events
         deceptive_reports = []
         delivered = tuple(message for message in self.current.pending if can_receive(message[1], message[2]))
         inbox = defaultdict(list)
@@ -590,27 +569,48 @@ class Simulation:
         counts, winner = count_plurality(self.scenario.parties, self.scenario.k, ballots)
         detector = (update_detector(self.scenario.detector, self.scenario.parties, dict(counts), self.current.round + 1,
                                     self.current.detector, dict(self.current.counts)) if self.scenario.detector else None)
-        result = Frame(self.current.round + 1, tuple((p, tuple(ballot)) for p, ballot in ballots.items()), counts, winner, tuple(positions.items()),
-                       tuple(sorted(persistent)), proximity, delivered,
-                       tuple(sorted(pending)), tuple(preferences.items()), tuple(memberships.items()), actions,
-                       tuple(memory.items()), tuple(overrides.items()),
-                       tuple((name, tuple(sorted(members))) for name, members in sorted(channels.items())),
-                       tuple((person, phase, data) for (person, phase), data in sorted(phase_memory.items())),
-                       tuple((observer, sender, source, timestamp, ballot)
+        result = Frame(
+            round=self.current.round + 1,
+            ballots=tuple((p, tuple(ballot)) for p, ballot in ballots.items()),
+            counts=counts,
+            winner=winner,
+            positions=tuple(positions.items()),
+            persistent_edges=tuple(sorted(persistent)),
+            proximity_edges=proximity,
+            delivered=delivered,
+            pending=tuple(sorted(pending)),
+            preferences=tuple(preferences.items()),
+            groups=tuple(memberships.items()),
+            interventions=actions,
+            policy_memory=tuple(memory.items()),
+            overrides=tuple(overrides.items()),
+            private_channels=tuple((name, tuple(sorted(members))) for name, members in sorted(channels.items())),
+            phase_memory=tuple((person, phase, data) for (person, phase), data in sorted(phase_memory.items())),
+            ballot_sensors=tuple((observer, sender, source, timestamp, ballot)
                              for observer, observations in sorted(voting_sensors.items())
-                             for sender, source, timestamp, ballot in observations), tuple(sorted(campaign)),
-                       tuple(sorted(total_spend.items())),tuple(deceptive_reports),
-                       tuple(sorted(sight_spend.items())),tuple(sight_events),
-                       tuple(sorted(eavesdrop_spend.items())),tuple(overheard_events),
-                       tuple(sorted(purchased)) if controller is not None else None, controller_added, controller_eligible,
-                       signal_spend=signal_spend,signal_latest=latest_signal,signal_broadcast_cost=signal_broadcast_cost,
-                       alignment_ideals=tuple(alignment_ideals.items()) if alignment_ideals is not None else None,
-                       alignment_spend=alignment_spend, alignment_changes=alignment_changes, detector=detector,
-                       leader_true=tuple(leader_true.items()) if leader_true is not None else None,
-                       leader_perceived=tuple(leader_perceived.items()) if leader_perceived is not None else None,
-                       leader_spend=tuple(leader_spend.items()) if leader_spend is not None else None,
-                       leader_memory=tuple((p, *leader_memory[p]) for p in self.scenario.parties) if leader_memory is not None else (),
-                       leader_signals=tuple(leader_signals.items()) if leader_signals is not None else None)
+                             for sender, source, timestamp, ballot in observations),
+            campaign_edges=tuple(sorted(campaign)),
+            coalition_report_spend=tuple(sorted(total_spend.items())),
+            deceptive_reports=tuple(deceptive_reports),
+            coalition_sight_spend=tuple(sorted(sight_spend.items())),
+            preference_sight=tuple(sight_events),
+            coalition_eavesdrop_spend=tuple(sorted(eavesdrop_spend.items())),
+            overheard_reports=tuple(overheard_events),
+            campaign_controller_purchased=tuple(sorted(purchased)) if controller is not None else None,
+            campaign_controller_added=controller_added,
+            campaign_controller_eligible=controller_eligible,
+            signal_spend=signal_spend,
+            signal_latest=latest_signal,
+            signal_broadcast_cost=signal_broadcast_cost,
+            alignment_ideals=tuple(alignment_ideals.items()) if alignment_ideals is not None else None,
+            alignment_spend=alignment_spend,
+            alignment_changes=alignment_changes,
+            detector=detector,
+            leader_true=tuple(leader_true.items()) if leader_true is not None else None,
+            leader_perceived=tuple(leader_perceived.items()) if leader_perceived is not None else None,
+            leader_spend=tuple(leader_spend.items()) if leader_spend is not None else None,
+            leader_memory=tuple((p, *leader_memory[p]) for p in self.scenario.parties) if leader_memory is not None else (),
+            leader_signals=tuple(leader_signals.items()) if leader_signals is not None else None)
         self.frames.append(result)
         return result
 
@@ -630,20 +630,7 @@ class Simulation:
                 "manual_interventions": [self._action_dict(a) for a in self.manual_interventions],
                 "frames": [frame.as_dict() for frame in self.frames]}
 
-    @staticmethod
-    def _action_dict(action: Intervention) -> dict[str, Any]:
-        return {"round": action.round, "person": action.person,
-                **({"group": action.group} if action.group is not None else {}),
-                **({"preference": list(action.preference)} if action.preference is not None else {}),
-                **({"position": list(action.position)} if action.position is not None else {}),
-                **({"ballot": list(action.ballot)} if action.ballot is not None else {}),
-                **({"overrides": json.loads(action.overrides)} if action.overrides is not None else {}),
-                **({"add_edges": list(action.add_edges)} if action.add_edges else {}),
-                **({"remove_edges": list(action.remove_edges)} if action.remove_edges else {}),
-                **({"add_channels": list(action.add_channels)} if action.add_channels else {}),
-                **({"remove_channels": list(action.remove_channels)} if action.remove_channels else {}),
-                **({"add_campaign_edges": list(action.add_campaign_edges)} if action.add_campaign_edges else {}),
-                **({"remove_campaign_edges": list(action.remove_campaign_edges)} if action.remove_campaign_edges else {})}
+    _action_dict = staticmethod(action_dict)
 
     def edit_after(self, round_number: int, person: str, **changes: Any) -> None:
         """Rewind to a committed frame and queue an atomic edit for its next boundary."""
@@ -748,49 +735,7 @@ class Simulation:
             raise ElectionError("manual intervention is beyond the next boundary")
         simulation.run(len(frames) - 1)
         expected_frames = simulation.checkpoint()["frames"]
-        if payload["version"] < 11:
-            groups = {group.id: group for group in simulation.scenario.groups}
-            for frame in expected_frames:
-                for actor, memory in frame["policy_memory"].items():
-                    effective = apply_overrides(groups[frame["groups"][actor]], canonical_json(frame["overrides"][actor], "overrides"))
-                    if effective.voting in EPISTEMIC_POLICIES and isinstance(memory, dict):
-                        for event in memory.get("observation_history", []):
-                            for report in event.get("received_reports", []):
-                                report.pop("generated_round", None)
-                                report.pop("delivered_round", None)
-                                report["source_round"] = None
-                frame.pop("report_provenance")
-        if payload["version"] < 3:
-            for frame in expected_frames:
-                frame.pop("policy_memory")
-        if payload["version"] < 4:
-            for frame in expected_frames:
-                frame.pop("overrides")
-        if payload["version"] < 5:
-            for frame in expected_frames:
-                frame.pop("private_channels")
-        if payload["version"] < 7:
-            for frame in expected_frames:
-                frame.pop("phase_memory")
-        if payload["version"] < 8:
-            for frame in expected_frames:
-                frame.pop("ballot_sensors")
-        if payload["version"] < 9:
-            for frame in expected_frames:
-                frame.pop("campaign_edges")
-        if payload["version"] < 10:
-            for frame in expected_frames:
-                for event in frame["interventions"]:
-                    event.pop("origin", None)
-        if payload["version"] == 1 and frames:
-            layouts = [
-                {"round", "ballots", "counts", "winner", "positions", "persistent_edges", "proximity_edges"},
-                {"round", "ballots", "counts", "winner", "positions", "persistent_edges", "proximity_edges", "delivered", "pending"},
-                {"round", "ballots", "counts", "winner", "positions", "persistent_edges", "proximity_edges", "delivered", "pending", "preferences", "groups", "interventions"},
-            ]
-            if not isinstance(frames[0], dict) or set(frames[0]) not in layouts or any(not isinstance(f, dict) or set(f) != set(frames[0]) for f in frames):
-                raise ElectionError("unknown version 1 frame layout")
-            expected_frames = [{key: frame[key] for key in frames[0]} for frame in expected_frames]
+        expected_frames = legacy_frames(expected_frames, frames, payload["version"], simulation.scenario)
         if expected_frames != frames:
             raise ElectionError("checkpoint history does not match the scenario and seed")
         return simulation

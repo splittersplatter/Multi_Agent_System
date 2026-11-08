@@ -1,6 +1,6 @@
 # 06: Public signals — mechanism 4
 
-Proposed; inherits 05. [Gates](README.md).
+Partly implemented; acceptance open; inherits 05. [Gates](README.md).
 References: survey S12-S14; repeated/bounded manipulated polls already studied.
 
 ## Deliverables

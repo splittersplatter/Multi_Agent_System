@@ -1,6 +1,6 @@
 # 09: Adapting leaders — mechanism 7
 
-Proposed; inherits 08. [Gates](README.md).
+Partly implemented; acceptance open; inherits 08. [Gates](README.md).
 References: survey S22, S30.
 
 ## Deliverables

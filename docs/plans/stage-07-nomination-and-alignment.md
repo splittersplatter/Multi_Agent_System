@@ -1,6 +1,6 @@
 # 07: Nomination / alignment — mechanism 5
 
-Proposed; inherits 06. [Gates](README.md).
+Partly implemented; acceptance open; inherits 06. [Gates](README.md).
 References: survey S22-S23, S29-S30.
 
 ## Deliverables

@@ -1,6 +1,6 @@
 # 08: Alignment attacks / detective — mechanism 6
 
-Proposed; inherits 07. [Gates](README.md).
+Partly implemented; acceptance open; inherits 07. [Gates](README.md).
 References: survey S18, S22-S23, S29.
 
 ## Deliverables

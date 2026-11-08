@@ -15,26 +15,28 @@
 
 ## Current state
 
-Checked 6 November 2026. Stage 00 verified; Stage 01 in progress. Current Python
-source/tests cover ranked ballots, group policies, movement, scoped messages,
-edits, replay, exports and browser commands. The older deleted implementation
-and its artifacts remain absent. Core uses the standard library; optional image
-exports pin Pillow in `requirements-visualization.txt`.
+Checked 8 November 2026. Stage 00 verified; Stage 01 acceptance incomplete;
+Stages 02–10 implemented in part; Stage 11 formal experiments/delivery pending.
+All seven mechanisms run through one engine. F1–F5 convergence certificates cover
+only their declared restricted domains. Core uses the standard library; optional
+image exports pin Pillow in `requirements-visualization.txt`.
 
-Record progress, checks, setup and decisions in each stage's progress table.
-Stage 01 remains in verification; 1A–1D verified, 1E–1G and Stages 02–11 pending.
-Workspace audit: no tracked files missing; local documentation links resolve.
-Current suite: 134 tests pass; `python3 -S`: 131 pass, 3 optional-image skips. Browser inspector, keyboard focus, local draft isolation, preference proxy
-and overlapping-layer rendering tested. 1E saved-file download handoff remains unverified;
-the latest prepared file has a revision-labeled retry link, but the in-app
-download-event API also timed out on an independent plain-link probe.
-Actual preference beliefs are Stage 02 work. Earlier deleted-baseline results and unavailable
-artifacts are historical, not current evidence; do not restore deleted files.
-Current [simulator guide](simulator-guide.md).
+[Audit/refinement report](code-audit-and-refinement-report.md) ·
+[Refinement plan](plans/code-quality-refinement.md) · [Simulator guide](simulator-guide.md).
+Output/replay/observation/coalition code now has focused ownership; mechanism
+studies use separate modules behind the existing experiment API. Canonical scenario
+validation closes a duplicate-voter bypass; browser assets enter provenance hashes.
+Thirty example fingerprints and twelve comparison records match the baseline.
+Final verification: 319 tests pass; stdlib 315 pass + four optional-image skips;
+proof checker/playback harness pass. Combined 10k × 100 CLI: 90.768 s; 500 × 100
+HTTP: p95 104.12 ms; single workload/sample, browser rendering unmeasured.
+Detailed evidence and remaining limits are maintained in the audit report.
 
-User-requested extension: ten strategic plurality policies, startup selector and
-matched-seed comparison implemented. Source mappings/limits: [voting reference](voting-heuristics.md).
-This does not complete Stage 02: full epistemic models and knowledge checks remain pending.
+Remaining: complete stage gates, rejected-action audit, manual browser/download
+acceptance, frozen research protocol and held-out evaluation. Previous automatic
+approval limits interrupted live browser verification; HTTP and JS checks do not
+replace it. Older deleted source/artifacts remain absent. Dated evidence below
+records history, not the current completion state.
 
 ## Research
 

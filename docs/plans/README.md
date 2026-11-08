@@ -1,6 +1,7 @@
 # Stage plans
 
-Status: Stage 00 verified; Stage 01 in progress; later stages pending.
+Status: Stage 00 verified; Stage 01 acceptance open; Stages 02–10 partly implemented;
+Stage 11 pending. [Code refinement](code-quality-refinement.md).
 Load [roadmap](../project-roadmap.md), this file, and only the active stage.
 Current workspace: [current state](../README.md#current-state).
 

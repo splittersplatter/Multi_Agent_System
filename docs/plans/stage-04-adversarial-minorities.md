@@ -1,6 +1,6 @@
 # 04: Adversarial minorities — mechanism 2
 
-Proposed; inherits 03. [Gates](README.md).
+Partly implemented; acceptance open; inherits 03. [Gates](README.md).
 References: survey S8, S11, S16-S18, S21, S27.
 
 ## Deliverables

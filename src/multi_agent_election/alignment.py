@@ -50,6 +50,7 @@ def _random_direction(rng, dimensions):
 
 
 def _bounded_move(origin, direction, limit):
+    """Project a path into the cube with a hard bound on realized float distance."""
     if limit <= 0:
         return origin, 0.0
     scale = limit
@@ -59,7 +60,25 @@ def _bounded_move(origin, direction, limit):
         if distance <= limit:
             return result, distance
         scale *= (limit / distance) * (1 - 1e-12)
-    raise ElectionError("cannot realize bounded alignment movement within floating-point precision")
+    # Tiny residual budgets can straddle a coordinate-rounding threshold: the
+    # correction above keeps producing the same over-budget point. Distance from
+    # origin is monotone in nonnegative scale, including clipping and rounding.
+    # Bisect between a feasible zero and the original infeasible scale until the
+    # bounds are adjacent floats. This finite search retains a real feasible move
+    # whenever representable; it neither relaxes the budget nor drops the action.
+    low, high = 0.0, limit
+    best, best_distance = origin, 0.0
+    while math.nextafter(low, high) != high:
+        midpoint = low + (high - low) / 2
+        if midpoint == low or midpoint == high:
+            break
+        result = tuple(min(1.0, max(0.0, x + midpoint * d)) for x, d in zip(origin, direction))
+        distance = math.dist(origin, result)
+        if distance <= limit:
+            low, best, best_distance = midpoint, result, distance
+        else:
+            high = midpoint
+    return best, best_distance
 
 
 def advance_alignment(scenario, previous, previous_spend, round_number, target_platform=None):

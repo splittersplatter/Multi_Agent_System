@@ -1,6 +1,7 @@
 # Eclipse roadmap
 
-Status: Stage 00 verified; Stage 01 in progress. [Stage plans](plans/README.md).
+Status: Stage 00 verified; Stage 01 acceptance open; Stages 02–10 partly implemented;
+Stage 11 pending. [Stage plans](plans/README.md) · [Code audit](code-audit-and-refinement-report.md).
 
 [Heuristic evaluation](plans/heuristic-evaluation.md): audit/metrics specified;
 restricted [convergent foundation](convergence-foundations.md) adopted for future

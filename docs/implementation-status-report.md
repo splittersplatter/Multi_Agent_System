@@ -1,6 +1,7 @@
 # Implementation status and browser checks
 
-Updated: 6 November 2026. Scope: current workspace implementation.
+Updated: 8 November 2026. Scope: current workspace implementation.
+Current assessment/evidence: [audit report](code-audit-and-refinement-report.md).
 
 ## Status
 
@@ -14,10 +15,12 @@ Updated: 6 November 2026. Scope: current workspace implementation.
 | 1E: browser, inspection, playback, filters, downloads | Implemented; acceptance incomplete |
 | 1F: comprehensive interactive-edit acceptance | Features present; checkpoint pending |
 | 1G: documentation/examples/performance acceptance | Artifacts present; checkpoint pending |
-| Stages 02–11 | Pending |
+| Stages 02–10 | Implemented in part; shared acceptance incomplete |
+| Stage 11 | Formal experiments/delivery pending |
 
-The simulator foundation runs. Epistemic reasoning and the seven research
-mechanisms have not yet been completed or experimentally validated.
+The simulator, finite epistemic policies and all seven mechanisms run. Stage
+acceptance and scientific evaluation remain incomplete; source presence alone
+does not establish a validated research result.
 
 ## Implemented features
 
@@ -40,10 +43,15 @@ mechanisms have not yet been completed or experimentally validated.
 | Color modes | True preference, submitted vote, observer-specific vote-based preference proxy; missing/conflicting proxy evidence appears gray |
 | Editing safety | Per-agent/per-frame local drafts; validation failures retain drafts; successful edits/history refresh invalidate stale drafts; stale server revisions rejected |
 | Saving | Checkpoint/export buttons; persistent save link for latest prepared file, labeled by source revision; export link also labels displayed round |
+| Epistemics/convergence | Bounded finite worlds, conditional equilibrium and report provenance; separate guarded F1–F5 convergence domains |
+| Mechanisms 1–4 | Per-receiver proximity; coalition sight/deception/interception; campaign-edge budgets; bounded public signals and matched response controls |
+| Mechanisms 5–7 | Spatial nomination; voter-ideal shifts; aggregate detector/calibration; hidden leader adaptation and perceived signals |
+| Integration | All-enabled scenario; 17-arm matrix; shared CLI/HTTP/replay/export tests |
 
 Private channels are inspected through membership and message panels; the
 network drawing's layer toggles show public layers. The preference proxy is a
-display heuristic. Agent beliefs and exact knowledge models remain Stage 02.
+display heuristic. Finite exact knowledge models are available within explicit caps;
+general temporal/adversarial knowledge remains incomplete.
 Ballot length is global per scenario, not independently variable per person.
 
 ## Run the browser

@@ -1,6 +1,6 @@
 # 05: Strategic edges — mechanism 3
 
-Proposed; inherits 04. [Gates](README.md).
+Partly implemented; acceptance open; inherits 04. [Gates](README.md).
 References: survey S11, S15-S16.
 
 ## Deliverables

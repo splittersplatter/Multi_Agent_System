@@ -12,6 +12,7 @@ from typing import Any
 from urllib.parse import parse_qs, urlsplit
 
 from .engine import Simulation
+from .exports import write_metrics_csv
 from .metrics import frame_metrics, series
 from .model import ElectionError
 from .voting import VOTING_POLICIES, COALITION_POLICIES, SIGNAL_POLICIES, configure_voting
@@ -164,8 +165,7 @@ def make_server(simulation: Simulation, port: int = 0) -> ThreadingHTTPServer:
                     with tempfile.TemporaryDirectory(prefix="eclipse-export-") as directory:
                         path = Path(directory) / filename
                         if kind == "csv":
-                            from .cli import _write_metrics_csv
-                            _write_metrics_csv(path, scenario, series(scenario, frames))
+                            write_metrics_csv(path, scenario, series(scenario, frames))
                         else:
                             from .render import export_gif, export_network, export_plot
                             if kind == "plot-svg": export_plot(scenario, frames, path, "svg")
