@@ -16,6 +16,7 @@ Branch created from `main` at `86de48b` on 9 November 2026.
 | `scripts/suchit_sims/plugins/echo_campaign.py` | Movement and graph plugins: fortify, infiltrate, bridge and broadcast campaigns |
 | `scripts/suchit_sims/marl_demo.py` | 75-agent, 11-spy rollout through the new MARL environment |
 | `scripts/suchit_sims/README.md` | How to run everything |
+| `scripts/suchit_sims/slides_figs.py`, `slides_part2.py` | Slide figures and Experiments 5–8 slides in the team deck's format, merged into `docs/suchit_sims/slides/Who Wins Depends on Who You Hear-v2.pdf` |
 | `docs/suchit_sims/` | Results: one folder per study with a `README.md` report, figures, GIFs, `summary.json` and the saved TOML configs |
 
 The studies use only existing engine features and plugin hooks. The plugins

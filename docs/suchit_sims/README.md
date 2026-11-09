@@ -6,6 +6,10 @@ current vote**. Each study folder holds a report (`README.md`), figures, GIFs,
 `summary.json`, and the exact TOML configs of the showcase runs, so any of them
 can be replayed with the CLI.
 
+**Slides:** [Who Wins Depends on Who You Hear-v2.pdf](slides/Who%20Wins%20Depends%20on%20Who%20You%20Hear-v2.pdf)
+is the team deck with these studies added as Experiments 5–8 (26 pages; the new-only pages are in
+[part2_slides.pdf](slides/part2_slides.pdf)). Rebuild with `scripts/suchit_sims/slides_figs.py` then `slides_part2.py`.
+
 Code and run instructions: [`scripts/suchit_sims/`](../../scripts/suchit_sims/README.md) ·
 Change log: [suchit-sims-changes.md](../suchit-sims-changes.md) ·
 MARL interface: [marl-interface.md](../marl-interface.md)

@@ -54,7 +54,7 @@ GIFs: [W1 blitz](W1_issue_space.gif) · [W3 steady](W3_issue_space.gif) · [W5 h
 
 ## Finding the optimal strategy
 
-**Watchdog.** I searched 108 detectors that all use only public counts:
+**Watchdog.** I searched 101 detectors that all use only public counts:
 - single-round thresholds (the engine's detector);
 - multi-round windows (w = 2, 3, 5, 8);
 - CUSUM.
