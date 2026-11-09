@@ -8,7 +8,6 @@ import math
 from typing import Any, Mapping, Sequence
 from .model import ElectionError, Frame, Scenario, Intervention, apply_overrides, make_scenario
 from .network import proximity_edges, random_walk
-from . import grid
 from .campaign import select_campaign_edges
 from .signals import generate_signal, trusting_response
 from .alignment import advance_alignment
@@ -16,7 +15,8 @@ from .detector import update_detector
 from .leaders import advance_leaders, perceived_preferences
 from .policies import Observation, canonical_json, load_plugin, policy_rng
 from .provenance import manifest
-from .records import action_dict, legacy_frames
+from .records import action_dict, legacy_frames, checkpoint_scenario
+from .state_recording import active_recordings
 from .observations import sense_ballots
 from .population import require_simulation_population, current_verification_reason
 from .majority import MajorityState, advance_population
@@ -113,8 +113,7 @@ class Simulation:
         radii = {person.id: apply_overrides(groups[person.group], person.overrides).proximity_radius
                  for person in scenario.people}
         radii = {person: value if value is not None else scenario.radius for person, value in radii.items()}
-        self._initial_proximity = (grid.proximity(positions) if grid.enabled(scenario) else
-                                  scenario.static_proximity_edges if scenario.proximity_mode == "static"
+        self._initial_proximity = (scenario.static_proximity_edges if scenario.proximity_mode == "static"
                                    else proximity_edges(positions, scenario.radius, radii))
         self.frames = [Frame(
             round=0,
@@ -154,6 +153,8 @@ class Simulation:
             leader_perceived=tuple((party, next(p.ideal for p in scenario.people if p.id == party)) for party in scenario.parties) if scenario.leaders else None,
             leader_spend=tuple((party, 0.0) for party in scenario.parties) if scenario.leaders else None,
             leader_memory=tuple((party, None, None) for party in scenario.parties) if scenario.leaders else ())]
+        recording_group = active_recordings.get()
+        self.state_recorder = recording_group.register(self) if recording_group is not None else None
 
     def _load_plugins(self, manual: Sequence[Intervention]) -> dict:
         references = {getattr(g, field) for g in self.scenario.groups for field in ("voting", "movement", "graph", "communication")}
@@ -180,8 +181,6 @@ class Simulation:
         self._assert_runtime_unchanged()
         if self.scenario.convergence_case and self.manual_interventions:
             raise ElectionError("certified convergence episodes exclude interactive interventions")
-        if self.scenario.stochastic_case and self.manual_interventions:
-            raise ElectionError("finite-grid occupation domain excludes interactive interventions")
         previous = dict(self.current.positions)
         preferences = dict(self.current.preferences)
         memberships = dict(self.current.groups)
@@ -313,9 +312,6 @@ class Simulation:
                 phase_memory.pop((person.id, "movement"), None)
                 positions[person.id] = random_walk(pos, group.max_step, self.scenario.seed, person.id, self.current.round + 1,
                                                   json.loads(group.parameters).get("movement", {}))
-            elif group.movement == "grid_walk":
-                phase_memory.pop((person.id, "movement"), None)
-                positions[person.id] = grid.walk(pos, self.scenario.seed, person.id, self.current.round + 1)
             elif group.movement.startswith("python:"):
                 result = call_phase(person.id, group, "movement", observation(person.id, pos, prior_inbox[person.id], old_public[person.id], prior_channels[person.id], old_sensors, self.current.round))
                 candidate = result.get("position")
@@ -330,8 +326,7 @@ class Simulation:
         radii = {person.id: policy(memberships[person.id], overrides[person.id]).proximity_radius
                  for person in self.scenario.people}
         radii = {person: value if value is not None else self.scenario.radius for person, value in radii.items()}
-        proximity = (grid.proximity(positions) if grid.enabled(self.scenario) else
-                     self._initial_proximity if self.scenario.proximity_mode in ("frozen", "static")
+        proximity = (self._initial_proximity if self.scenario.proximity_mode in ("frozen", "static")
                      else proximity_edges(positions, self.scenario.radius, radii))
         majority_config = self.scenario.majority_estimation
         poll_publication = (tuple(dict(self.current.counts)[c] for c in self.scenario.parties)
@@ -648,6 +643,8 @@ class Simulation:
             leader_spend=tuple(leader_spend.items()) if leader_spend is not None else None,
             leader_memory=tuple((p, *leader_memory[p]) for p in self.scenario.parties) if leader_memory is not None else (),
             leader_signals=tuple(leader_signals.items()) if leader_signals is not None else None)
+        if self.state_recorder is not None:
+            self.state_recorder.append(result)
         self.frames.append(result)
         return result
 
@@ -661,8 +658,7 @@ class Simulation:
 
     def checkpoint(self) -> dict[str, Any]:
         """Capture the exact replayable history for the currently implemented policies."""
-        return {"version": (24 if grid.enabled(self.scenario) else 23 if self.scenario.majority_estimation is not None and self.scenario.majority_estimation.poll_refresh_rounds is not None
-                            else 22 if self.scenario.majority_estimation is not None else 21), "manifest": self.runtime_manifest, "scenario": self.scenario.as_dict(),
+        return {"version": 25, "manifest": self.runtime_manifest, "scenario": self.scenario.as_dict(),
                 **({"nomination": self.scenario.nomination.as_dict()} if self.scenario.nomination else {}),
                 "policy_digests": {name: digest for name, (_, digest, _) in sorted(self.plugins.items())},
                 "manual_interventions": [self._action_dict(a) for a in self.manual_interventions],
@@ -675,8 +671,6 @@ class Simulation:
         self._assert_runtime_unchanged()
         if self.scenario.convergence_case:
             raise ElectionError("certified convergence episodes exclude interactive interventions; start an unrestricted scenario to edit")
-        if self.scenario.stochastic_case:
-            raise ElectionError("finite-grid occupation domain excludes interactive interventions; use an undeclared exploratory control")
         if (self.scenario.alignment is not None or self.scenario.leaders is not None) and "preference" in changes:
             raise ElectionError("spatial dynamic scenarios derive preferences; ordinal preference interventions are unsupported")
         if isinstance(round_number, bool) or not isinstance(round_number, int) or not 0 <= round_number < len(self.frames):
@@ -713,6 +707,8 @@ class Simulation:
         scheduled = tuple(a for a in self.scenario.interventions if a.round == round_number + 1)
         _graph_after(self.frames[round_number], scheduled + tuple(a for a in updated if a.round == round_number + 1))
         plugins = self._load_plugins(updated)
+        if self.state_recorder is not None:
+            self.state_recorder.truncate(self.frames[round_number])
         self.frames = self.frames[:round_number + 1]
         self.manual_interventions = updated
         self.plugins = plugins
@@ -720,7 +716,7 @@ class Simulation:
     @classmethod
     def from_checkpoint(cls, payload: Mapping[str, Any], *, allow_environment_change: bool = False) -> "Simulation":
         """Recompute and verify history before accepting a checkpoint."""
-        if not isinstance(payload, Mapping) or type(payload.get("version")) is not int or payload["version"] not in (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24):
+        if not isinstance(payload, Mapping) or type(payload.get("version")) is not int or payload["version"] not in range(1, 26):
             raise ElectionError("unsupported or invalid checkpoint")
         expected = {"version", "scenario", "frames"} | ({"manual_interventions"} if payload["version"] >= 2 else set()) | ({"policy_digests"} if payload["version"] >= 3 else set()) | ({"manifest"} if payload["version"] >= 6 else set())
         if isinstance(payload.get("scenario"), Mapping) and "nomination" in payload["scenario"] and (payload["version"] >= 18 or "nomination" in payload):
@@ -732,9 +728,9 @@ class Simulation:
         frames = payload["frames"]
         if not isinstance(frames, list) or not frames:
             raise ElectionError("checkpoint must contain an initial frame")
-        simulation = cls(make_scenario(payload["scenario"]))
-        if payload["version"] < 24 and grid.enabled(simulation.scenario):
-            raise ElectionError("finite grid requires checkpoint version 24")
+        raw_scenario = (checkpoint_scenario(payload["scenario"], payload.get("manual_interventions", ()))
+                        if payload["version"] < 25 else payload["scenario"])
+        simulation = cls(make_scenario(raw_scenario))
         if payload["version"] < 23 and simulation.scenario.majority_estimation is not None and simulation.scenario.majority_estimation.poll_refresh_rounds is not None:
             raise ElectionError("periodic majority polls require checkpoint version 23")
         if payload["version"] < 22 and simulation.scenario.majority_estimation is not None:

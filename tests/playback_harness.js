@@ -310,4 +310,22 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
   assert.equal(networkItems.filter(item => item.getAttribute("data-network-series") === "proximity_edge_turnover").length, 1);
   assert.equal(networkItems.filter(item => item.getAttribute("data-network-point") === "proximity_edge_turnover").length, 2);
   assert.equal(networkItems.find(item => item.getAttribute("data-current-round") === "4").getAttribute("x1"), String(42 + 4*268/6));
+  // Recorded playback never asks the server for a new round, and scrubbing back
+  // from its end re-enables forward navigation.
+  vm.runInNewContext(`state = {revision:0, read_only:true, recording_closed:true,
+    parties:["A","B"],group_names:["g"],group_capabilities:{g:{}},startup_voting_locked:true,
+    frames:[${JSON.stringify(frame(0))},${JSON.stringify(frame(1))}],
+    metrics:[${JSON.stringify(metric(0))},${JSON.stringify(metric(1))}]}; cursor=1;render();`, sandbox);
+  assert.equal(element("download").disabled, true);
+  assert.equal(element("export").disabled, true);
+  assert.equal(element("next").disabled, true);
+  const beforeReplay = stepCalls;
+  await vm.runInNewContext("next()", sandbox);
+  assert.equal(stepCalls, beforeReplay);
+  element("previous").handlers.click();
+  assert.equal(element("round-label").textContent, "Round 0");
+  assert.equal(element("next").disabled, false);
+  await vm.runInNewContext("next()", sandbox);
+  assert.equal(element("round-label").textContent, "Round 1");
+  assert.equal(stepCalls, beforeReplay);
 })().catch(error => {console.error(error); process.exitCode = 1;});

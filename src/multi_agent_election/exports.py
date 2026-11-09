@@ -86,8 +86,6 @@ def write_metrics_csv(path: Path, scenario, rows: list[dict]) -> None:
     convergence_fields = ("case", "scheduler", "next_actor", "improving_voters", "status", "reason", "next_intervention_round")
     if scenario.convergence_case:
         names += [f"convergence:{field}" for field in convergence_fields]
-    if scenario.stochastic_case:
-        names += ["stochastic_case", "occupation_theorem_status", "poll_phase"]
     with path.open("x", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle); writer.writerow(names)
         for row in rows:
@@ -128,6 +126,4 @@ def write_metrics_csv(path: Path, scenario, rows: list[dict]) -> None:
                 values += [row[name] for name in detector_fields]
             if scenario.convergence_case:
                 values += [row["convergence"].get(field) for field in convergence_fields]
-            if scenario.stochastic_case:
-                values += [scenario.stochastic_case, row["stochastic_stability"]["status"], row["stochastic_stability"]["poll_phase"]]
             writer.writerow(values)

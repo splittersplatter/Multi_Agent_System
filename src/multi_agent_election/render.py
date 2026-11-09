@@ -90,6 +90,37 @@ def export_gif(scenario: Scenario, frames: list[Frame], path: Path, stride: int,
     _save(images[0], path, "GIF", save_all=True, append_images=images[1:], duration=round(1000/fps), loop=0)
 
 
+def export_metric_plot(parties, rows, path: Path) -> None:
+    """Plot recorded per-round first-choice shares, including streamed runs."""
+    if not rows:
+        raise ElectionError("cannot plot a run with no recorded rounds")
+    first, last = rows[0]["round"], rows[-1]["round"]
+    if any(a["round"] >= b["round"] for a, b in zip(rows, rows[1:])):
+        raise ElectionError("plot rounds must be strictly increasing")
+    height = max(540, 510 + ((len(parties) - 1) // 6) * 16)
+    lines = [f'<svg xmlns="http://www.w3.org/2000/svg" width="800" height="{height}" viewBox="0 0 800 {height}">',
+             f'<rect width="800" height="{height}" fill="white"/>',
+             '<text x="25" y="30" font-family="sans-serif" font-size="16">First-choice vote share by round</text>',
+             '<path d="M55 95 V455 H755" fill="none" stroke="#526b61"/>',
+             '<text x="15" y="100" font-family="sans-serif" font-size="12">1.0</text>',
+             '<text x="15" y="455" font-family="sans-serif" font-size="12">0.0</text>',
+             f'<text x="55" y="472" font-family="sans-serif" font-size="12">Round {first}</text>',
+             f'<text x="680" y="472" font-family="sans-serif" font-size="12">Round {last}</text>']
+    for i, party in enumerate(parties):
+        r, g, b = _palette(i)
+        points = [(55 + (row["round"] - first) * 700 / max(1, last - first),
+                   455 - row["shares"][party] * 360) for row in rows]
+        coords = ' '.join(f'{x:.2f},{y:.2f}' for x, y in points)
+        lines.append(f'<polyline points="{coords}" fill="none" stroke="rgb({r},{g},{b})" stroke-width="2"/>')
+        if len(points) == 1:
+            x, y = points[0]
+            lines.append(f'<circle cx="{x:.2f}" cy="{y:.2f}" r="3" fill="rgb({r},{g},{b})"/>')
+        lines.append(f'<text x="{55+(i%6)*120}" y="{490+(i//6)*16}" font-family="sans-serif" font-size="12" fill="rgb({r},{g},{b})">{html.escape(party)}</text>')
+    lines.append('</svg>')
+    with path.open("x", encoding="utf-8") as handle:
+        handle.write('\n'.join(lines) + '\n')
+
+
 def export_plot(scenario: Scenario, frames: list[Frame], path: Path, format: str) -> None:
     if not frames or any(a.round >= b.round for a, b in zip(frames, frames[1:])):
         raise ElectionError("plot frames must have strictly increasing rounds")

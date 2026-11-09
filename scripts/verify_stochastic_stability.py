@@ -1,7 +1,7 @@
 """Exact, verification-only finite-grid model; NOT a simulator or certificate.
 
-Enumerates reachable tiny states, not outcome trajectories. Independent review and
-shared-engine correspondence remain required before production implementation.
+Historical grid model: runtime retired in favour of Gaussian movement. Enumerates
+reachable tiny states, not current outcome trajectories or a Gaussian guarantee.
 """
 
 import argparse

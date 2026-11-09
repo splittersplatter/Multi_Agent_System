@@ -17,7 +17,7 @@ from .exports import write_metrics_csv
 from .metrics import frame_metrics, series
 from .model import ElectionError
 from .population import verification_scope
-from .grid import assessment as stochastic_assessment
+from .state_recording import active_recordings
 from .voting import VOTING_POLICIES, COALITION_POLICIES, SIGNAL_POLICIES, configure_voting
 from .epistemic import EPISTEMIC_POLICIES
 
@@ -55,13 +55,11 @@ class Session:
                                  **({"eavesdrop_channels":list(c.eavesdrop_channels),"eavesdrop_budget_per_round":c.eavesdrop_budget_per_round,
                                      "eavesdrop_budget_total":c.eavesdrop_budget_total} if c.eavesdrop_channels else {})} for c in self.simulation.scenario.coalitions],
                 "convergence_case": self.simulation.scenario.convergence_case,
-                **({"stochastic_stability": stochastic_assessment(self.simulation.scenario)}
-                   if self.simulation.scenario.stochastic_case else {}),
                 "voting_policies": ([self.simulation.scenario.convergence_case] if self.simulation.scenario.convergence_case else
                                     sorted(({g.voting for g in self.simulation.scenario.groups} | set(VOTING_POLICIES) | set(COALITION_POLICIES) | set(SIGNAL_POLICIES) | set(EPISTEMIC_POLICIES)) - {"direct_best_response"})),
                 "startup_voting": {g.id: {"policy": g.voting, "parameters": json.loads(g.parameters).get("voting", {})}
                                    for g in self.simulation.scenario.groups},
-                "startup_voting_locked": bool(self.simulation.scenario.convergence_case or self.simulation.scenario.stochastic_case) or self.simulation.current.round != 0 or bool(self.simulation.manual_interventions),
+                "startup_voting_locked": bool(self.simulation.scenario.convergence_case) or self.simulation.current.round != 0 or bool(self.simulation.manual_interventions),
                 "frames": [frame.as_dict() for frame in self.simulation.frames],
                 **({"majority_estimation": self.simulation.scenario.majority_estimation.as_dict()}
                    if self.simulation.scenario.majority_estimation is not None else {}),
@@ -79,8 +77,13 @@ class Session:
             # Preserve explicit verification purpose across HTTP worker threads;
             # clients cannot enable it through a command or scenario field.
             reason = self.simulation.verification_reason
-            with verification_scope(reason) if reason is not None else nullcontext():
-                self.simulation = Simulation(configured)
+            owner = self.simulation.state_recorder.owner if self.simulation.state_recorder else None
+            recording_token = active_recordings.set(owner)
+            try:
+                with verification_scope(reason) if reason is not None else nullcontext():
+                    self.simulation = Simulation(configured)
+            finally:
+                active_recordings.reset(recording_token)
         elif value.get("action") == "step" and set(value) == {"revision", "action"}:
             previous = self.simulation.current
             self.simulation.step()
@@ -213,4 +216,6 @@ def make_server(simulation: Simulation, port: int = 0) -> ThreadingHTTPServer:
         def log_message(self, format: str, *args: Any) -> None:
             pass
 
-    return ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server.session = session
+    return server

@@ -1,7 +1,11 @@
 # Stochastic-stability verification
 
 9 November2026. [Contract/proof](plans/stochastic-stability.md).
-**Analytic review passed; opt-in grid integration and streaming diagnostics implemented.**
+**Historical grid evidence; runtime retired9 November2026 by user decision.**
+Current runtime: Gaussian `random_walk`; `examples/gaussian-memory.toml`,
+checkpoint25, `frequencies --control baseline|sincere`. Streaming diagnostics,
+plots and state playback retained; no Gaussian occupation/mixing certificate.
+Below: dated proof/checker and former runtime evidence, not current capabilities.
 
 ## Scope and implementation
 
@@ -86,7 +90,7 @@ Generated evidence is local/ignored; commands and source are retained in Git.
   independent rational action checks. Runtime review found two defects, both fixed:
   effective-override grid detection; direct manual-queue guard. Re-review PASS,
   all16 integration tests passed. Review is not a machine-checked proof.
-- [Grid runtime](../src/multi_agent_election/grid.py): explicit `grid_position`,
+- Former grid runtime (removed): explicit `grid_position`,
   exact radius, categorical boundary-stay motion, strict declared-domain guards.
   One shared engine/CLI/browser/export/replay; version24; no silent snapping.
 - [Streaming diagnostics](../src/multi_agent_election/occupation.py): winner/share,
@@ -95,8 +99,9 @@ Generated evidence is local/ignored; commands and source are retained in Git.
   failures retain completed prefix. No independent-round confidence intervals.
 - `frequencies` options: `--rounds`, `--burn-in`, `--batch-size`, `--seed`, `--rows`,
   `--output`, `--control baseline|sincere-grid|continuous-normal`.
-  Default10000/1000/100; burn/batches must align to poll interval. Defaults do not
-  execute studies automatically. CSV/JSON outputs are exclusive.
+  Default10000/1000/100; burn/batches must align to poll interval. With neither
+  output flag, paired CSV/JSON files are created in `outputs/` using the UTC start
+  timestamp. Custom paths remain available; exclusive creation prevents overwrite.
 - Controls preserve rankings, initial physical coordinates and poll. Sincere-grid
   shares exact motion; continuous-normal shares initial conditions, not trajectories,
   and is explicitly uncertified. Configuration/source hashes and seed recorded.

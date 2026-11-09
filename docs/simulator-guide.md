@@ -36,6 +36,34 @@ Output paths must not exist, including dangling symlinks; parents must exist and
 multiple outputs must resolve to distinct paths. Preflight catches common
 conflicts before writing; exclusive creation prevents overwrites. Multi-file
 output is not transactional: an I/O failure or race can leave partial files.
+Normal CLI simulation commands save timestamped output under `outputs/` by
+default. Full `run`/`resume` save checkpoints; summary/sample `run` saves JSONL;
+comparison commands and `batch` save JSON; `estimate-majority` saves a directory;
+`visual` saves its current session checkpoint when stopped with Ctrl+C. Explicit
+paths remain supported. `--save-plots` creates SVG plots: vote shares for ordinary
+runs and estimator pilots, paired share change for batch, and one vote-share plot
+per recorded comparison trajectory (with an index). No plot is invented when a
+comparison has no recorded trajectories. Browser plots/checkpoints save at orderly
+shutdown; abrupt process termination can lose the session.
+
+`--save-states` streams committed frames to timestamped `*-states.jsonl` files:
+initial round0 plus every round, including rounds excluded by `--sample` or
+frequency burn-in. Frame maps: `positions[id]`, `preferences[id]` (current true
+ranking), `ballots[id]` (submitted ranked ballot; first entry is plurality vote).
+Edges, policy/estimator inspector data and per-round metrics accompany each frame.
+Separate simulations/controls/restarts get separate files. Browser edits append
+rewind markers; playback discards the replaced future. Failed rounds are absent.
+I/O errors stop the run; earlier flushed records remain available where recoverable.
+
+Open a recording with `view PATH --port 8000`, or use `view --latest --port 8000`
+for the most recently modified state file in `outputs/`. This serves the existing
+network/timeline/agent browser read-only, without rerunning agents or plugins.
+Edits, stepping beyond the recording and checkpoint/export downloads are disabled.
+Use `--save-plots` for plots and ordinary checkpoints for verified resume.
+An interrupted last JSON line is ignored and the available prefix is labelled.
+Files scale with rounds and frame size; frequency recording streams one frame at
+a time, but this viewer loads the timeline into memory. Disk size/large-history
+browser performance are not bounded guarantees.
 `--summary` keeps metrics only
 and cannot create a checkpoint; `--sample N` retains every Nth frame plus the
 last, and can create a separate full checkpoint. Missing frames cannot be
@@ -74,6 +102,8 @@ Only the quickstart demo is promised as a ready-to-run200-person estimator scena
 | Command | Required scenario / purpose |
 | --- | --- |
 | `run`, `visual`, `resume`, `export` | General shared engine; checkpoint/export needs full recorded state |
+| `frequencies` | Fixed-horizon diagnostics; automatically saves timestamped CSV/JSON in `outputs/` when no paths are supplied |
+| `view PATH` / `view --latest` | Read-only browser playback of `--save-states` JSONL; no simulation rerun |
 | `batch` | Scheduled intervention/control; `--seeds`, `--target` |
 | `compare` | Compatible voter policies, observations and computation limits; seeds/window/horizon |
 | `compare-networks` | Built-in motion, no graph plugins; optional disjoint calibration seeds |
@@ -110,7 +140,14 @@ Normal-step example: `max_step=0.05` with
 `parameters={movement={distribution="normal",mean_step=0.025,std_step=0.00625}}`.
 Length is normal conditioned on `[0,max_step]`, direction uniform; reflective bounds.
 Mean is configured length, not previous displacement; spread defaults to mean/4.
-Missing movement parameters preserve legacy uniform lengths.
+Missing random-walk parameters select Gaussian length: mean=max_step/2,
+std=max_step/8. Explicit `distribution="uniform"` remains a compatibility option;
+explicit stationary policies remain stationary. Grid movement/coordinates and its
+stochastic declaration are retired; use `examples/gaussian-memory.toml`.
+Checkpoint25 pins resolved group defaults. Legacy non-grid group defaults are
+replayed as uniform; ambiguous legacy overrides require the archived runtime.
+Source/environment migrations still require explicit review. No Gaussian mixing
+or occupation-frequency theorem is claimed.
 [Motion and future-contact stability](dynamic-network-stability.md).
 `local_plurality` chooses the most-reported first choice, breaking ties by own
 preference; no reports means sincere voting.

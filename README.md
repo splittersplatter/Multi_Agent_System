@@ -28,7 +28,7 @@ fixtures, not outcome workloads. Never silently pad or duplicate them.
 mkdir -p outputs
 # Efficient run; metrics only.
 PYTHONPATH=src python3 -m multi_agent_election.cli run examples/recent-majority.toml --summary
-# Full checkpoint; choose new output names on subsequent runs.
+# Full checkpoint; explicit paths are optional.
 PYTHONPATH=src python3 -m multi_agent_election.cli run examples/recent-majority.toml --checkpoint outputs/demo.json
 PYTHONPATH=src python3 -m multi_agent_election.cli resume outputs/demo.json --rounds 10 --output outputs/demo-resumed.json
 PYTHONPATH=src python3 -m multi_agent_election.cli export outputs/demo.json --csv outputs/demo.csv --plot-svg outputs/demo.svg
@@ -46,8 +46,8 @@ PYTHONPATH=src python3 -S -m unittest discover -s tests -v
 node tests/playback_harness.js
 ```
 
-Latest recorded verification: **414 tests pass**; stdlib-only410 pass/4 optional
-image skips. [Evidence and limits](docs/implementation-status-report.md#verification).
+Current verification and historical checks:
+[evidence and limits](docs/implementation-status-report.md#verification).
 
 ## Documentation
 
@@ -58,6 +58,25 @@ image skips. [Evidence and limits](docs/implementation-status-report.md#verifica
 - [Roadmap](docs/project-roadmap.md) · [Stage plans](docs/plans/README.md)
 - [Literature survey](docs/election-manipulation-literature-survey.md) · [Method audit](docs/literature-heuristics-and-metrics.md)
 
+CLI simulations automatically save timestamped artifacts in `outputs/`: full
+runs/resumes save checkpoints, summary/sample runs save JSONL, comparisons save
+JSON, and estimator pilots save a directory. Browser sessions save a checkpoint
+when stopped with Ctrl+C. Explicit output paths remain supported; existing files
+are never overwritten. `--save-plots` also saves SVG vote-share plots (batch:
+paired target-share change; comparisons: one SVG per available trajectory).
+Add `--save-states` to stream every completed round (including round zero) to a
+timestamped `*-states.jsonl` file. It records nodes, positions, true rankings,
+submitted ballots, edges and inspector data. Each episode/control has its own
+file. Open the newest recording with:
+
+```bash
+PYTHONPATH=src python3 -m multi_agent_election.cli view --latest --port 8000
+```
+
+The browser supports play/pause, timeline scrubbing and agent inspection. Saved
+playback is read-only; use checkpoints for verified resume. Recording streams to
+disk; playback currently loads the saved timeline into memory.
+
 Run the exploratory memory-based voter with the200-person estimator scenario:
 
 ```bash
@@ -67,23 +86,26 @@ PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/recent-majori
 `memory_pivotal` uses the moving recent-contact estimate; it is not convergence
 certified. Convergence proofs remain required for certified claims, while labelled
 finite-horizon exploratory studies may investigate nonconvergent dynamics.
-The [finite-grid occupation model](docs/stochastic-stability-verification.md)
-is opt-in; continuous defaults remain unchanged. Run its200-voter browser preset:
+Grid movement is retired. Gaussian random walk is the default moving kernel;
+explicit stationary policies remain stationary. Run the200-voter strategic preset:
 
 ```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/stochastic-grid.toml --port 8000
+PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/gaussian-memory.toml --port 8000 --save-plots --save-states
 ```
 
 For fixed-horizon frequency/phase summaries and streamed raw rows:
 
 ```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli frequencies examples/stochastic-grid.toml \
-  --rounds 10000 --burn-in 1000 --batch-size 100 --seed 2000 \
-  --rows outputs/grid-2000.csv --output outputs/grid-2000.json
+PYTHONPATH=src python3 -m multi_agent_election.cli frequencies examples/gaussian-memory.toml \
+  --rounds 10000 --burn-in 1000 --batch-size 100 --seed 2000 --save-plots --save-states
 ```
 
-Add `--control sincere-grid` or `--control continuous-normal` with different output
-names. Only the grid arms share motion trajectories. The theorem assumes ideal IID
-motion; seeded replay and finite plots do not prove stationarity, absorption or
-a unique limit. Fixed-domain grid episodes disallow edits/policy changes; playback
-and exports remain available. Full evaluation campaign has not been run.
+The command creates `outputs/` if needed and prints the generated CSV and JSON
+paths, named with the UTC start time. Pass `--rows` and `--output` for custom paths;
+existing files are never overwritten. Add `--control sincere` for a sincere-voter
+control with identical Gaussian motion. View recorded rounds with `view --latest`.
+Frequency summaries are exploratory: no occupation-frequency, absorption or
+mixing-time guarantee. Gaussian steps do not establish faster mixing. The retired
+[grid proof/checker](docs/stochastic-stability-verification.md) remains historical
+evidence only; grid scenarios/checkpoints fail explicitly rather than being
+silently converted. Full evaluation campaign has not been run.

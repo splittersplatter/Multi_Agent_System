@@ -23,7 +23,12 @@ class NormalWalkTests(VerificationTestCase):
             rng = random.Random(int.from_bytes(hashlib.sha256(payload).digest(), "big"))
             angle, length = rng.random()*2*math.pi, rng.random()*.05
             expected = (.5+length*math.cos(angle), .5+length*math.sin(angle))
-            self.assertEqual(random_walk((.5,.5),.05,101,"person",round_number), expected)
+            self.assertEqual(random_walk((.5,.5),.05,101,"person",round_number,{"distribution":"uniform"}), expected)
+
+    def test_gaussian_is_default_not_uniform_or_previous_step(self):
+        for tick in range(1, 101):
+            self.assertEqual(random_walk((.5,.5), .05, 101, "person", tick),
+                             random_walk((.5,.5), .05, 101, "person", tick, NORMAL))
 
     def test_normal_moments_bounds_and_repeatability(self):
         lengths = []
@@ -52,7 +57,7 @@ class NormalWalkTests(VerificationTestCase):
         self.assertEqual(random_walk((.3,.7),0,1,"x",1,{"distribution":"normal"}),(.3,.7))
         point = random_walk((.5,.5),.05,1,"x",1,dict(NORMAL,std_step=0))
         self.assertAlmostEqual(math.dist(point,(.5,.5)),.025)
-        invalid = [None, [], {"distribution":"unknown"}, {"std_step":.01},
+        invalid = [None, [], {"distribution":"unknown"}, {"distribution":"uniform", "std_step":.01},
                    dict(NORMAL,mean_step=True), dict(NORMAL,mean_step=-1),
                    dict(NORMAL,mean_step=.06), dict(NORMAL,std_step=float("nan")),
                    dict(NORMAL,std_step=True), dict(NORMAL,std_step=-.01),

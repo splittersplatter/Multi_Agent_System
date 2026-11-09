@@ -7,17 +7,19 @@ Updated 9 November 2026. [Quickstart](../README.md#run).
 - Shared engine: ranked ballots/plurality; strategic and bounded epistemic policies;
   movement/graphs; coalition abilities; campaign edges; public signals; nomination;
   voter/leader shifts; aggregate detector; browser editing; exports/replay.
+- `--save-states`: streamed per-round node/graph/inspector snapshots; `view --latest`
+  opens read-only browser playback with timeline scrubbing and agent details.
 - Normal simulations **N>=100**; demo200. Tiny formal/unit/regression fixtures
   require explicit verification scope. No silent electorate padding.
 - Rolling-majority estimator: unique recent contacts; demo K10, public completed
   tally every10 rounds and linear 1.0→0.1 poll weight between updates. Estimates
   are beliefs; `memory_pivotal` can use them to choose a ballot.
-- Demo motion: bounded normal lengths, configured mean0.025/std0.00625;
-  legacy scenarios retain uniform lengths. Quiet periods remain uncertified.
-- Selected statistical target: long-run occupation frequencies. Opt-in finite-grid
-  runtime, strict guards, checkpoint24 and streaming diagnostics implemented;
-  independent analytic/runtime reviews and scoped correspondence tests passed.
-  The theorem assumes ideal IID motion; seeded replay is not a stationarity proof.
+- Default random-walk motion: Gaussian lengths, demo mean0.025/std0.00625/cap0.05;
+  stationary remains explicit; uniform is an explicit compatibility option.
+- Grid runtime retired; use `examples/gaussian-memory.toml`. Frequency diagnostics,
+  CLI/browser/replay/plots/state recording retained. Checkpoint25 records resolved
+  defaults; retired grid inputs fail explicitly. Grid proof/checker is historical,
+  not applicable to Gaussian motion. Quietness/mixing/occupation remain uncertified.
 - Stage00 baseline contract complete; Stage01 acceptance open; Stages02–10 partly
   implemented; Stage11 formal evaluation/delivery pending. Source presence != stage acceptance.
 - F1–F5 certify restricted compositions only. `memory_pivotal` is implemented for
@@ -50,7 +52,7 @@ Updated 9 November 2026. [Quickstart](../README.md#run).
 | [Memory-voting dossier](memory-voting-convergence.md) | Candidate contract, original counterexample and domain limits |
 | [Convergence foundation](convergence-foundations.md) | Guarded F1–F5 proofs and implementation obligations |
 | [Moving-network stability](dynamic-network-stability.md) | Normal walk;24-work evidence matrix; future-contact proof limits |
-| [Stochastic stability contract](plans/stochastic-stability.md) | Reviewed finite-grid proof; class-conditioned frequencies; deferred research evaluation |
+| [Historical grid contract](plans/stochastic-stability.md) | Retired model/proof; not a Gaussian guarantee |
 | [Stochastic verification](stochastic-stability-verification.md) | Formal/runtime checks, reviews, streaming commands and remaining limits |
 | [Full-model dossier](heuristic-convergence.md) | Why unrestricted guarantees fail |
 | [Candidate/evaluation plan](plans/heuristic-evaluation.md) | Role-specific eligibility and experiment contract |

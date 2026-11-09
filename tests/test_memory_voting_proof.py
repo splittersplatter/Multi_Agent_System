@@ -188,7 +188,7 @@ class MemoryConvergenceGateTests(VerificationTestCase):
         with self.assertRaises(ElectionError):
             make_scenario(raw)
         simulation = Simulation(make_scenario(example()))
-        self.assertEqual(simulation.checkpoint()["version"], 21)
+        self.assertEqual(simulation.checkpoint()["version"], 25)
 
     def test_evidence_output_is_exclusive_and_invalid_rounds_create_nothing(self):
         with tempfile.TemporaryDirectory() as directory:

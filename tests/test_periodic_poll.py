@@ -42,7 +42,7 @@ class PeriodicPollTests(VerificationTestCase):
         raw["interventions"] = [{"round": 10, "person": "0", "ballot": ["C"]}]
         sim = Simulation(make_scenario(raw))
         sim.run(12)
-        self.assertEqual(sim.checkpoint()["version"], 23)
+        self.assertEqual(sim.checkpoint()["version"], 25)
         for tick in (1, 2, 10, 11, 12):
             record = sim.frames[tick].as_dict()["majority_estimation"]["2"]
             trace = json.loads(dict(sim.frames[tick].policy_memory)["2"])

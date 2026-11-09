@@ -8,31 +8,38 @@ import math
 
 from .engine import Simulation
 from .exports import preflight_outputs
-from .grid import assessment, CASE
 from .model import ElectionError, make_scenario
 
 
 def configure_control(scenario, control):
-    if control not in ("baseline", "sincere-grid", "continuous-normal"):
+    if control not in ("baseline", "sincere"):
         raise ElectionError("unknown occupation control")
     if control == "baseline":
         return scenario
-    if scenario.stochastic_case != CASE:
-        raise ElectionError("occupation controls require the declared finite-grid baseline")
     raw = scenario.as_dict()
-    raw.pop("stochastic_stability")
     for group in raw["groups"].values():
-        if control == "sincere-grid":
-            group["voting"] = "sincere"
-        else:
-            group.update(movement="random_walk", max_step=.05,
-                         parameters={"movement": {"distribution": "normal", "mean_step": .025, "std_step": .00625}})
-    if control == "continuous-normal":
-        positions = {p.id: p.position for p in scenario.people}
-        for person in raw["people"]:
-            person.pop("grid_position")
-            person["position"] = list(positions[person["id"]])
+        group["voting"] = "sincere"
+        group["parameters"].pop("voting", None)
+    for person in raw["people"]:
+        if "voting" in person["overrides"]:
+            person["overrides"]["voting"] = "sincere"
+        person["overrides"].get("parameters", {}).pop("voting", None)
+    # Preserve movement and every exogenous draw; scheduled policy overrides too.
+    for action in raw["interventions"]:
+        overrides = action.get("overrides", {})
+        if "voting" in overrides:
+            overrides["voting"] = "sincere"
+        overrides.get("parameters", {}).pop("voting", None)
     return make_scenario(raw)
+
+
+def assessment(scenario):
+    return {"case": None, "status": "uncertified_exploration",
+            "target": "empirical_long_run_outcome_frequencies",
+            "motion": sorted({g.movement for g in scenario.groups}),
+            "ballot_absorption": False, "distributional_convergence": False,
+            "occupation_frequency_guarantee": False, "mixing_time_bound": None,
+            "recurrent_class_identified": False}
 
 
 class Means:
@@ -131,7 +138,7 @@ def run_frequencies(scenario, *, rounds, burn_in=1000, batch_size=100, rows_path
         batches.append({"start_round": all_rounds.count - batch.count + 1,
                         "end_round": all_rounds.count, "complete": False, **batch.summary()})
     raw_scenario = scenario.as_dict()
-    return {"record_type": "eclipse.occupation-diagnostics", "version": 1,
+    return {"record_type": "eclipse.occupation-diagnostics", "version": 2,
             "status": status, "error": error, "requested_rounds": rounds, "completed_rounds": all_rounds.count,
             "seed": scenario.seed, "scenario": raw_scenario, "manifest": simulation.runtime_manifest,
             "scenario_sha256": hashlib.sha256(json.dumps(raw_scenario, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),

@@ -12,10 +12,10 @@ Its original unrestricted-size composition has an inductive
 [counterexample](../memory-voting-convergence.md). Proof remains required for
 certified-convergence claims; exploratory finite-horizon comparisons are allowed.
 
-Selected statistical follow-up: [finite-grid occupation frequencies](stochastic-stability.md).
-This is a separately specified proof domain, not a runtime heuristic change or a
-replacement ballot-absorption certificate. Immediate strict response retained;
-independent review/engine mapping pending. Keep class/phase dependence in evaluation.
+Current statistical baseline: Gaussian movement and exploratory frequency/phase
+diagnostics. [Grid proof](stochastic-stability.md) retained as historical evidence;
+grid runtime retired. Immediate strict response retained; no Gaussian occupation,
+mixing or ballot-absorption certificate. Held-out evaluation remains required.
 
 ## 1. Scope and gates
 

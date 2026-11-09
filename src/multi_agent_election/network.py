@@ -56,14 +56,14 @@ def _reflect(value: float) -> float:
 def validate_walk_parameters(parameters, max_step):
     if not isinstance(parameters, dict) or set(parameters) - {"distribution", "mean_step", "std_step"}:
         raise ElectionError("random-walk movement parameters require distribution, mean_step and std_step only")
-    distribution = parameters.get("distribution", "uniform")
+    distribution = parameters.get("distribution", "normal")
     if distribution not in ("uniform", "normal"):
         raise ElectionError("random-walk distribution must be uniform or normal")
     if distribution == "uniform":
         if set(parameters) - {"distribution"}:
             raise ElectionError("mean_step/std_step require normal movement")
         return distribution, 0.0, 0.0
-    mean = parameters.get("mean_step", max_step)
+    mean = parameters.get("mean_step", max_step / 2)
     if type(mean) not in (int, float) or not math.isfinite(mean) or not 0 <= mean <= max_step:
         raise ElectionError("normal mean_step must be finite within [0,max_step]")
     spread = parameters.get("std_step", mean * .25)

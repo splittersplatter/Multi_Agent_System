@@ -22,11 +22,11 @@ Current extension: [recent-encounter majority estimates](plans/recent-encounter-
 also provide the information used by `memory_pivotal`.
 
 Selected follow-up: [stochastic-stability contract](plans/stochastic-stability.md).
-Statistical target = almost-sure long-run occupation frequencies with continuing
-contacts, not ballot absorption. Opt-in grid runtime and
-[formal/runtime verification](stochastic-stability-verification.md) implemented;
-independent analytic/runtime review passed; full outcome studies pending. Continuous normal walks
-remain exploratory; no noisy worse ballots or voter inertia introduced.
+Current baseline = Gaussian motion with exploratory long-run frequency diagnostics,
+not ballot absorption or a convergence certificate. Grid runtime retired by user
+decision; retain its [historical proof/checker](stochastic-stability-verification.md).
+Gaussian mixing/occupation guarantees and full outcome studies remain open;
+no noisy worse ballots or voter inertia introduced.
 
 - One cumulative simulator; seven controlled mechanism studies; integrated ablations; reproducible report.
 - People: group policies, capability permissions, movement, messaging, ranked voting.
@@ -90,7 +90,7 @@ finite-state/clock-quotient proof draft and phase-conditioned evaluation contrac
 Observed quietness != occupation-frequency guarantee != distributional convergence
 != ballot absorption. No simulator changes or new outcome experiments in this update.
 
-Follow-up:8 exact formal kernels/classes/stationary solves complete; opt-in grid
+Historical follow-up:8 exact formal kernels/classes/stationary solves complete; opt-in grid
 integration, strict guards and streaming frequency diagnostics verified. Independent
 review found two guard gaps, fixed/re-reviewed. No stage acceptance or seeded-path
 stationarity certification inferred from finite checks.

@@ -1,8 +1,10 @@
 # Stochastic stability: contract and proof dossier
 
-9 November2026. **Analytic review passed; opt-in grid runtime and verification implemented.**
+9 November2026. **Historical contract: grid runtime retired by user decision.**
+Current baseline: Gaussian motion; exploratory frequencies only. This dossier and
+standalone checker preserve the reviewed grid proof, not a current-model guarantee.
 [Evidence matrix](../dynamic-network-stability.md#24-work-evidence-matrix).
-Existing continuous-walk results/defaults and F1–F5 certificates remain unchanged.
+F1–F5 restricted certificates remain separate. New random walks default to Gaussian.
 
 ## 1. Selected target and scope
 

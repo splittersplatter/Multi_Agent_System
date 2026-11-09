@@ -2,8 +2,8 @@
 
 [Moving-network analysis](dynamic-network-stability.md): quiet ballots are not a
 certificate; existing guarded cases below remain unchanged.
-The [grid occupation-frequency contract](plans/stochastic-stability.md) is a
-separate, unimplemented mathematical model. Its time-average result does not
+The [retired grid occupation-frequency contract](plans/stochastic-stability.md) is
+historical evidence, not a current runtime model. Its time-average result does not
 establish ballot absorption, F1–F5 membership or convergence of the current normal walk.
 
 Adopted scope: **restricted, explicitly certified cases**, requested 7 November

@@ -5,11 +5,10 @@ simultaneous decisions for exploratory simulations. Proof is mandatory for
 certified convergence claims, optional for explicitly labelled exploratory runs.
 Status: **contract implemented; original-size guarantee refuted; N>=100 uncertified**.
 
-9 November follow-up: [statistical-stability track](stochastic-stability.md) now
-targets almost-sure occupation frequencies on a separately specified finite grid.
-Strict immediate response/memory/polls retained; no grid code yet. The ballot
-absorption gate below remains a different, stronger research question, not an
-acceptance requirement silently substituted for the selected statistical target.
+Latest9 November: Gaussian moving baseline adopted; grid runtime retired. The
+[grid proof](stochastic-stability.md) is historical only. Strict response/memory/
+polls retained; frequency diagnostics are exploratory. Gaussian mixing/occupation
+guarantees and the stronger ballot-absorption question remain open.
 
 Population follow-up: outcome runs N>=100; small cases remain formal verification.
 The prior four-voter refutation covers the original size-unrestricted contract;

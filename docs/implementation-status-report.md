@@ -29,21 +29,46 @@ Implemented != accepted stage != validated scientific result.
   public signals and perceived positions are separate.
 - One engine powers CLI/browser/replay/export. Timeline reads do not execute
   policies; edits replace future history. Plugins are trusted, not sandboxed.
-- Periodic majority polls use checkpoint23; fixed-poll estimates use22; disabled
-  state retains21.
+- Current checkpoints use25, with explicit resolved Gaussian group parameters.
+  Legacy non-grid group kernels are pinned before replay; ambiguous implicit
+  overrides require the archived runtime. Retired grid inputs fail explicitly.
   Earlier supported schemas require successful replay; reviewed environment/source
   changes require explicit migration approval. No fabricated legacy compatibility.
 - Estimates alone do not manipulate ballots. Opt-in `memory_pivotal` uses them
   for exploratory simultaneous response and records decision traces.
   F1–F5 guarantees apply only inside guarded proof domains; moving/mixed/continuing
   attacker compositions are not certified by a quiet winner/ballot window.
-- Statistical follow-up is [specified, not implemented](plans/stochastic-stability.md):
-  finite-grid occupation-frequency proof draft. Current continuous engine has no
-  new stationary-law/absorption certificate; literature or proof text is not code acceptance.
+- Default random-walk kernel is Gaussian (mean=cap/2, std=cap/8 unless configured).
+  Grid runtime removed; Gaussian memory-pivotal preset replaces it. Streaming
+  frequencies/phase summaries, plots, states and playback remain available.
+  [Historical grid proof](plans/stochastic-stability.md) does not certify this model.
 
 ## Verification
 
-Latest recorded code checks,9 November2026:
+Latest Gaussian-default update,9 November:427 full-suite tests pass
+(`/tmp/eclipse-gaussian-final.log`);20 Gaussian integration tests pass under
+stdlib-only Python (`/tmp/eclipse-gaussian-stdlib.log`); JS playback harness and
+`git diff --check` pass. Retired grid correspondence tests replaced with Gaussian
+runtime/replay/bounds/HTTP/rejection checks; standalone historical proof tests retained.
+New checkpoint25 and diagnostics2 distinguish current contracts. Legacy uniform
+group replay, implicit normal parameters, ambiguous overrides, control matching,
+99/100/101 boundary, rewind/tamper and state playback covered.
+
+200-voter/30-round CLI smoke, seed2000, completed; JSON/CSV/SVG plus31 saved frames
+validated through playback loader:
+`outputs/frequencies-20261109T085404-432726Z*`.
+Command: `PYTHONPATH=src python3 -m multi_agent_election.cli frequencies examples/gaussian-memory.toml --rounds 30 --burn-in 0 --batch-size 10 --seed 2000 --save-plots --save-states`.
+Validation only, not mixing evidence or a research comparison. Prior plot/state/
+browser integration preserved; cache10, poll10 and ballot policy unchanged.
+
+Historical state-recording/playback extension,9 November:427 tests pass;8 focused
+state tests pass under stdlib-only Python; JS playback harness passes. Streamed
+frames match engine outcomes, browser rewinds replace future records, I/O failure
+blocks round commit, malformed recordings fail validation. Actual200-node saved
+timeline inspected in-browser across rounds0/12/11. See
+[recording contract and commands](simulator-guide.md#setup-and-commands).
+
+Earlier recorded code checks,9 November2026:
 
 | Check | Result / local evidence |
 | --- | --- |
@@ -81,9 +106,9 @@ above. Review and finite-model/engine equivalence are still pending; no outcome 
 - Complete rejected/conflicting-action actor/phase/reason audit without corrupting state.
 - Intended memory-voter convergence scope; original four-person refutation does
   not itself certify/refute the new N>=100-only domain.
-- Independent review of the separate grid occupation theorem and its implementation
-  obligations; only afterward create a simulator implementation plan. Time averages
-  may converge while ballots flip forever or the per-round law remains periodic.
+- Gaussian mixing/occupation guarantees: open; retired grid theorem cannot apply.
+  Measure contact coverage, autocorrelation and seed sensitivity before claiming
+  improved mixing. Finite-window agreement is not a convergence certificate.
 - Frozen calibration/evaluation protocol,>=30 held-out seeds/cell, run-level
   uncertainty; native intervention costs; failures/censoring retained.
 - Bounded dense-graph/history resources, expensive-policy limits, trusted-plugin

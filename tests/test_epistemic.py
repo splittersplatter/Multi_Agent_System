@@ -421,7 +421,7 @@ class KnowledgeModelTests(VerificationTestCase):
                             entry.pop("generated_round"); entry.pop("delivered_round"); entry["source_round"] = None
         restored = Simulation.from_checkpoint(old)
         self.assertEqual(restored.current, sim.current)
-        self.assertEqual(restored.checkpoint()["version"], 21)
+        self.assertEqual(restored.checkpoint()["version"], 25)
         old["frames"][2]["policy_memory"]["1"]["observation_history"][1]["received_reports"][0]["ballot"] = ["C"]
         with self.assertRaisesRegex(ElectionError, "history does not match"):
             Simulation.from_checkpoint(old)

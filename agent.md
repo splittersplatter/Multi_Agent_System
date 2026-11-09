@@ -96,6 +96,9 @@ mechanism studies, combined experiments and reproducible report.
   random state and edits. Replays/resumes must match recorded versions.
 - UI rewind/edit replaces future; retain valid prefix state; reject stale revisions.
   Playback/rendering must not change model dynamics.
+- Physical random-walk default: truncated Gaussian; demo mean.025/std.00625/cap.05.
+  Grid runtime retired; preserve historical proof/checker, never transfer its
+  occupation theorem to Gaussian motion. Stationary certified cases stay explicit.
 - Record environment/commands in the active stage; lock dependencies when introduced.
   Generated data/checkpoints/logs stay outside source folders and ignored.
 - Multi-seed comparisons, uncertainty, controls and sensitivity precede broad claims.

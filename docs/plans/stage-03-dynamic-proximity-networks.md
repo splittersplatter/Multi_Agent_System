@@ -1,6 +1,9 @@
 # 03: Dynamic proximity — mechanism 1
 
 Partly implemented; acceptance open; inherits 02. [Gates](README.md).
+Current9 November: Gaussian default, mean=cap/2/std=cap/8; grid runtime retired.
+Memory10/polls10/strict response unchanged; frequency diagnostics exploratory.
+Historical grid proof/checker retained; no Gaussian mixing certificate.
 References: survey S9-S12, S28-S29.
 
 ## Deliverables
@@ -34,7 +37,7 @@ All outcome workloads N>=100; small linked examples are verification fixtures.
 Retain prior-stage APIs/evidence; no broader stage completion or convergence inferred.
 
 Later9 November: normal-length random walks added through shared motion parameters;
-demo mean0.025/std0.00625/cap0.05. Legacy uniform walks retained. Replay/overrides,
+demo mean0.025/std0.00625/cap0.05. Uniform remains an explicit option. Replay/overrides,
 distribution/bounds and quiet-then-contact reactivation checks added. Comparison
 diagnostics/browser copy reject quietness-as-proof. [Research findings and conditional
 moving-contact invariant](../dynamic-network-stability.md); no new runtime certificate.

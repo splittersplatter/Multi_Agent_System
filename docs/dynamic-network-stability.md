@@ -3,12 +3,11 @@
 9 November2026. Normal-step motion, rolling contacts, periodic polls,
 simultaneous `memory_pivotal`. Research findings; no new runtime certificate.
 
-Later9 November: selected target is now **almost-sure long-run occupation
-frequencies**, not frozen ballots. An opt-in finite-grid model is specified in the
-[contract/proof dossier](plans/stochastic-stability.md); opt-in grid runtime now implemented.
-Tiny formal [verification tooling](stochastic-stability-verification.md) now
-checks eight scoped models; independent analytic/runtime reviews passed. The
-ideal-IID theorem is not an infinite seeded-replay certificate.
+Latest9 November: grid runtime retired; Gaussian motion is the default moving
+kernel. Frequency diagnostics are exploratory, not an almost-sure occupation or
+mixing guarantee. The [grid dossier](plans/stochastic-stability.md), independent
+reviews and tiny [checker](stochastic-stability-verification.md) remain historical
+evidence only; their finite-state theorem does not transfer to Gaussian motion.
 Keep immediate strict improvement and continuing motion; no voter inertia/noisy
 worse choices. Existing normal-walk behavior and evidence below are preserved.
 
@@ -30,8 +29,9 @@ parameters = { movement = { distribution = "normal", mean_step = 0.025, std_step
   Reflection can shorten actual displacement.
 - Zero spread gives fixed path length; zero mean/default spread gives no motion.
   Mean within `[0,max_step]`, spread within `[0,1]`; invalid/unrepresentable inputs fail.
-- Missing parameters preserve the old uniform-length walk exactly. No speed decay;
-  later movement remains possible, not guaranteed ballot flips.
+- Missing random-walk parameters now select Gaussian lengths, mean=cap/2,
+  std=cap/8. Uniform remains explicit; old non-grid checkpoints pin group kernels
+  or reject ambiguous overrides. No speed decay or guaranteed ballot flips.
 - Matched actor/round motion across policies; existing configuration/checkpoints
   retain parameters. Restart servers after source changes.
 

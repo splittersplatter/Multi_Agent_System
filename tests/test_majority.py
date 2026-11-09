@@ -249,7 +249,7 @@ class MajorityIntegrationTests(VerificationTestCase):
         data = configured(); data["network"] = {"radius": 0.5}
         sim = Simulation(make_scenario(data)); sim.run(3)
         original = copy.deepcopy(sim.frames[1].as_dict())
-        self.assertEqual(sim.checkpoint()["version"], 22)
+        self.assertEqual(sim.checkpoint()["version"], 25)
         restored = Simulation.from_checkpoint(sim.checkpoint())
         self.assertEqual(restored.step(), sim.step())
         sim.edit_after(1, "1", position=[0, 0])
@@ -264,7 +264,7 @@ class MajorityIntegrationTests(VerificationTestCase):
         with self.assertRaisesRegex(ElectionError, "version 22"):
             Simulation.from_checkpoint(old)
         disabled = Simulation(make_scenario(example())); disabled.run(2)
-        self.assertEqual(disabled.checkpoint()["version"], 21)
+        self.assertEqual(disabled.checkpoint()["version"], 25)
         self.assertEqual(Simulation.from_checkpoint(disabled.checkpoint()).current, disabled.current)
 
     def test_session_cli_json_csv_and_inspector(self):

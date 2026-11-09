@@ -19,12 +19,11 @@ now follows [confirmed restricted cases](../convergence-foundations.md).
 F1–F3 engine certification and scheduled F4/F5 implemented; comparative experiments
 and later stage gates pending. This is not a new completed stage.
 
-[Stochastic stability](stochastic-stability.md): selected long-run occupation target;
-24-work audit, finite-grid transition contract and conditional mathematical proof
-draft plus [exact tiny-model checks](../stochastic-stability-verification.md).
-Independent analytic review passed; [implementation](stochastic-stability-implementation.md)
-completed: opt-in grid, guards, replay/browser/export and streaming diagnostics.
-Current F1–F5/continuous defaults unchanged; full outcome evaluation pending.
+[Stochastic stability](stochastic-stability.md): historical grid proof/checker;
+grid runtime retired. Current Gaussian baseline retains streaming frequency
+diagnostics and CLI/browser/replay/export without a convergence/mixing certificate.
+[Implementation record](stochastic-stability-implementation.md). F1–F5 restricted
+models remain separate; Gaussian outcome evaluation pending.
 
 | Stage | Plan |
 | --- | --- |
@@ -81,3 +80,8 @@ still gates the separate runtime implementation plan. [Evidence](../stochastic-s
 Subsequent execution: independent review passed; runtime integration completed.
 414 tests pass, stdlib410/4 skips;32 fixture replay checks; review defects fixed.
 No infinite seeded-path guarantee or full evaluation campaign claimed.
+
+Latest9 November: user retired grid movement; Gaussian is the default random-walk
+kernel. Replaced preset with200-person `gaussian-memory.toml`; diagnostics/plots/
+states/playback retained, checkpoint25. No poll/cache/voting-policy changes or
+Gaussian mixing guarantee. Historical grid proof/checker/evidence preserved.

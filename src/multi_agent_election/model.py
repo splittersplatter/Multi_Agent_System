@@ -33,7 +33,6 @@ class Person:
     position: tuple[float, float]
     overrides: str
     ideal: tuple[float, ...] | None = None
-    grid_position: tuple[int, int] | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -200,7 +199,6 @@ class Scenario:
     detector: DetectorConfig | None = None
     leaders: LeaderConfig | None = None
     majority_estimation: "MajorityConfig | None" = None
-    stochastic_case: str | None = None
 
     def as_dict(self) -> dict[str, Any]:
         result: dict[str, Any] = {
@@ -211,7 +209,7 @@ class Scenario:
                                "capabilities": asdict(g.capabilities),
                                **({"proximity_radius": g.proximity_radius} if g.proximity_radius is not None else {})} for g in self.groups},
             "people": [{"id": p.id, "group": p.group, "preference": list(p.preference),
-                        **({"grid_position": list(p.grid_position)} if p.grid_position is not None else {"position": list(p.position)}),
+                        "position": list(p.position),
                         "overrides": json.loads(p.overrides)} for p in self.people],
             "network": {"persistent_edges": [list(e) for e in self.persistent_edges],
                         "campaign_edges": [list(e) for e in self.campaign_edges],
@@ -269,8 +267,6 @@ class Scenario:
             result["leaders"]["adaptors"] = list(self.leaders.adaptors)
         if self.majority_estimation is not None:
             result["majority_estimation"] = self.majority_estimation.as_dict()
-        if self.stochastic_case is not None:
-            result["stochastic_stability"] = {"case": self.stochastic_case}
         return result
 
 
@@ -420,7 +416,9 @@ def _make_group(group: str, policy: Mapping[str, Any]) -> Group:
     if not isinstance(policy, dict) or set(policy) - {"voting", "movement", "max_step", "proximity_radius", "communication", "graph", "parameters", "capabilities"} or not isinstance(policy.get("voting"), str) or not (policy["voting"] in VOTING_POLICIES + COALITION_POLICIES + SIGNAL_POLICIES + CERTIFIED_POLICIES + EPISTEMIC_POLICIES or policy["voting"].startswith("python:")):
         raise ElectionError(f"group {group!r}: expected supported voting and movement")
     movement = policy.get("movement", "stationary")
-    if not isinstance(movement, str) or not (movement in ("stationary", "random_walk", "grid_walk") or movement.startswith("python:")):
+    if movement == "grid_walk":
+        raise ElectionError("grid_walk retired; use random_walk with normal movement parameters")
+    if not isinstance(movement, str) or not (movement in ("stationary", "random_walk") or movement.startswith("python:")):
         raise ElectionError(f"group {group!r}: unsupported movement {movement!r}")
     max_step = _number(policy.get("max_step", 0), "max_step", 0, 1)
     proximity_radius = _number(policy["proximity_radius"], "proximity_radius", 0, math.sqrt(2)) if "proximity_radius" in policy else None
@@ -435,9 +433,10 @@ def _make_group(group: str, policy: Mapping[str, Any]) -> Group:
         raise ElectionError(f"group {group!r}: parameters must be a table")
     if movement == "random_walk":
         from .network import validate_walk_parameters
-        validate_walk_parameters(params.get("movement", {}), max_step)
-    if movement == "grid_walk" and (max_step != .025 or params.get("movement", {}) != {}):
-        raise ElectionError("grid_walk requires max_step=.025 and no movement parameters")
+        distribution, mean, spread = validate_walk_parameters(params.get("movement", {}), max_step)
+        # Serialize defaults explicitly: checkpoints never depend on parser defaults.
+        params = {**params, "movement": ({"distribution": "normal", "mean_step": mean, "std_step": spread}
+                                        if distribution == "normal" else {"distribution": "uniform"})}
     if policy["voting"] in STRATEGIC:
         validate_parameters(params.get("voting", {}))
     if policy["voting"] in EPISTEMIC_POLICIES:
@@ -489,11 +488,9 @@ def make_scenario(raw: Mapping[str, Any]) -> Scenario:
     unknown = set(raw) - allowed
     if unknown:
         raise ElectionError(f"unknown scenario keys: {sorted(unknown)}")
-    stochastic = raw.get("stochastic_stability")
     if "stochastic_stability" in raw:
-        from .grid import CASE
-        if not isinstance(stochastic, dict) or set(stochastic) != {"case"} or stochastic["case"] != CASE:
-            raise ElectionError("stochastic_stability requires case=finite_grid_occupation_v1")
+        raise ElectionError("finite-grid stochastic_stability retired; use examples/gaussian-memory.toml; "
+                            "Gaussian frequency summaries are exploratory, not certified")
     party_data = raw.get("parties")
     if not isinstance(party_data, list) or not party_data:
         raise ElectionError("parties must be a non-empty list")
@@ -567,21 +564,15 @@ def make_scenario(raw: Mapping[str, Any]) -> Scenario:
             raise ElectionError(f"person {person_id!r}: preference must rank every party once")
         if set(pref) != set(parties):
             raise ElectionError(f"person {person_id!r}: preference must rank every party once")
-        grid_position = None
         if "grid_position" in item:
-            from .grid import physical
-            if "position" in item:
-                raise ElectionError("choose grid_position or position, not both")
-            coords = physical(item["grid_position"])
-            grid_position = tuple(item["grid_position"])
+            raise ElectionError("grid_position retired; provide explicit position=[x,y] in [0,1]")
         position = item.get("position", [0.5, 0.5])
         if not isinstance(position, list) or len(position) != 2:
             raise ElectionError(f"person {person_id!r}: position must have two coordinates")
-        if grid_position is None:
-            coords = tuple(_number(value, "coordinate", 0, 1) for value in position)
+        coords = tuple(_number(value, "coordinate", 0, 1) for value in position)
         overrides = _overrides(item.get("overrides", {}))
         apply_overrides(groups_by_id[group], overrides)
-        people.append(Person(person_id, group, tuple(pref), coords, overrides, grid_position=grid_position))
+        people.append(Person(person_id, group, tuple(pref), coords, overrides))
     if len({person.id for person in people}) != len(people):
         raise ElectionError("person ids must be unique")
     network = raw.get("network", {})
@@ -789,7 +780,5 @@ def make_scenario(raw: Mapping[str, Any]) -> Scenario:
                     tuple(sorted(normalized_interventions, key=lambda action: (action.round, action.person))), normalized_campaign,
                     convergence["case"] if convergence else None, proximity_mode, normalized_static,
                     tuple(sorted(coalitions, key=lambda coalition: coalition.id)), controller, signal_controller,
-                    detector=detector, majority_estimation=majority, stochastic_case=stochastic["case"] if stochastic else None)
-    from .grid import validate_domain
-    validate_domain(result)
+                    detector=detector, majority_estimation=majority)
     return result

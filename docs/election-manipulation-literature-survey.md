@@ -9,7 +9,8 @@ competing roadmap. It maps published models, not verified open-source implementa
 code availability is not assumed.
 
 9 November focused supplement: [24-work stability audit](dynamic-network-stability.md#24-work-evidence-matrix)
-and [finite-grid occupation contract](plans/stochastic-stability.md). This adds
+and [historical finite-grid contract](plans/stochastic-stability.md), whose runtime
+is now retired in favour of Gaussian movement. This adds
 conditional mathematical scope, not simulator implementation, absorption proof
 for the continuous model or a new main-corpus collection count.
 
