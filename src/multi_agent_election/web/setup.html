@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="session-token" content="__SESSION_TOKEN__">
+  <title>Eclipse · Set up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/eclipse.css">
+  <style>
+    .groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:18px}
+    .gcard{background:var(--card);border-radius:var(--r-lg);padding:18px 20px;display:grid;gap:14px;align-content:start}
+    .gcard header{display:flex;gap:10px;align-items:center}
+    .gcard header input{font:800 20px var(--display);border-color:transparent;background:transparent;padding:4px 8px;min-height:40px}
+    .gcard header input:hover{border-color:var(--line)}
+    .count{font:800 15px var(--display);background:var(--ink);color:#fff;border-radius:999px;padding:5px 11px;white-space:nowrap}
+    .powers{display:flex;flex-wrap:wrap;gap:6px}
+    .powers .pill{min-height:36px;font-size:14px}
+    .new-group{border:3px dashed var(--line);background:transparent;border-radius:var(--r-lg);min-height:160px;font:800 20px var(--display);color:var(--mute);cursor:pointer}
+    .new-group:hover{border-color:var(--ink);color:var(--ink)}
+    .extras{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+    .extra{background:var(--card);border-radius:var(--r-lg);padding:18px 20px;display:grid;gap:12px;align-content:start}
+    .extra[data-on=false] .body{display:none}
+    .switch{display:flex;align-items:center;gap:12px;cursor:pointer;font:800 18px var(--display)}
+    .switch input{width:22px;height:22px;accent-color:var(--ink)}
+    .party{display:inline-flex;align-items:center;gap:6px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:3px 6px 3px 12px}
+    .party input{width:70px;border:0;min-height:36px;padding:4px;font-weight:800}
+    .party button{border:0;background:var(--card-2);border-radius:50%;width:32px;height:32px;cursor:pointer;font-weight:800}
+    pre.code{background:#20232c;color:#e7ebf3;border-radius:18px;padding:16px 18px;max-height:460px;overflow:auto;font:13px/1.5 var(--mono);white-space:pre}
+    .meter{height:12px;border-radius:6px;background:var(--line);overflow:hidden;display:flex}
+    .meter span{display:block}
+    .mix{display:grid;grid-template-columns:auto 1fr 64px;gap:8px 12px;align-items:center}
+  </style>
+  <script src="/shared.js" defer></script>
+  <script src="/setup.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <span class="brand"><i></i>Eclipse</span>
+  <nav class="tabs" aria-label="Pages"><a href="/setup" aria-current="page">Set up</a><a href="/sim">Watch</a><a href="/classic">Classic view</a></nav>
+  <span class="grow"></span>
+  <button class="btn ghost" id="undo" title="Undo (Ctrl+Z)">↶ Undo</button><button class="btn ghost" id="redo" title="Redo (Ctrl+Shift+Z)">↷ Redo</button>
+  <span class="meta" id="meta"></span>
+</header>
+
+<h1>Build a town, then watch it vote.</h1>
+<p class="lede">Every choice here becomes part of one scenario file. It lists every person's starting spot and beliefs plus the random seed, so anyone who opens it gets exactly the same run.</p>
+<div id="banner"></div>
+
+<div class="section-q"><span class="step">1</span><h2>What's on the ballot?</h2></div>
+<div class="card">
+  <div class="cols" style="align-items:start">
+    <div style="display:grid;gap:18px">
+      <div class="field"><b>Parties</b><div class="row" id="parties"></div><small class="hint">Rename by typing. Colours follow the order.</small></div>
+      <div class="field"><b>Ballot size</b><div class="seg" id="k" role="group" aria-label="Ballot size"></div><small class="hint" id="k-hint"></small></div>
+    </div>
+    <div style="display:grid;gap:18px">
+      <label class="field">How many rounds?<div class="slider"><input type="range" id="rounds-r" min="1" max="200"><input type="number" id="rounds" min="0" max="10000"></div></label>
+      <label class="field">Random seed<div class="row"><input type="number" id="seed" min="0" style="flex:1"><button class="btn" id="reseed" type="button">🎲 New seed</button></div><small>Same seed and same file: identical run, every time.</small></label>
+    </div>
+  </div>
+</div>
+
+<div class="section-q"><span class="step">2</span><h2>Who lives in town?</h2><span class="kicker">Each group shares a voting rule, a way of moving, a hearing range and powers.</span></div>
+<div class="groups" id="groups"></div>
+
+<div class="section-q"><span class="step">3</span><h2>Where do they start, and what do they believe?</h2><span class="kicker">Drag people to move them. Drag on empty ground to pick a crowd.</span></div>
+<div class="cols">
+  <section class="town" aria-label="Starting positions">
+    <div class="toolbar">
+      <span class="small mute">Colour by</span>
+      <div class="seg" role="group" aria-label="Colour people by"><button data-color="fav" aria-pressed="true">Favourite</button><button data-color="group" aria-pressed="false">Group</button></div>
+      <span class="spacer"></span>
+      <button class="pill" id="show-links" aria-pressed="true">Who hears whom</button>
+      <button class="btn" id="add-people" type="button">+ Add people</button>
+    </div>
+    <canvas id="town" role="img" aria-label="Starting positions of every person; drag to move"></canvas>
+    <div class="picked" id="picked" hidden>
+      <b id="seln">0</b><span>picked</span><span class="spacer"></span>
+      <button class="btn go" id="make-group" type="button">Make them a group</button>
+      <button class="btn" id="bulk" type="button">Change them…</button>
+      <button class="btn danger" id="remove" type="button">Remove</button>
+      <button class="btn ghost" id="clear" type="button">Clear</button>
+    </div>
+    <p class="hint" style="margin:10px 6px 2px">Click to pick · Shift-click to add · drag empty ground for a box · drag a picked person to move the whole crowd · Esc clears</p>
+  </section>
+  <div>
+    <div class="card"><h2>The population</h2><div id="pop"></div></div>
+    <div class="card" id="person-card"><h2 id="person-title">Pick someone</h2><div id="person"></div></div>
+  </div>
+</div>
+
+<div class="section-q"><span class="step">4</span><h2>Is anyone pulling strings?</h2><span class="kicker">Optional powers that act on the whole town.</span></div>
+<div class="extras" id="extras"></div>
+
+<div class="section-q"><span class="step">5</span><h2>Save, share, run</h2></div>
+<div class="cols">
+  <div class="card">
+    <div class="row"><div class="seg" role="group" aria-label="File format"><button data-fmt="toml" aria-pressed="true">TOML</button><button data-fmt="json" aria-pressed="false">JSON</button></div><span class="spacer"></span>
+      <button class="btn" id="copy" type="button">Copy</button><button class="btn" id="download" type="button">Download</button><button class="btn go" id="paste" type="button">Paste or open…</button></div>
+    <pre class="code" id="code" tabindex="0" aria-label="Scenario file" style="margin-top:14px"></pre>
+  </div>
+  <div class="card" style="display:grid;gap:14px">
+    <h2>Ready to run?</h2>
+    <div class="status wait" id="check" role="status">Checking…</div>
+    <button class="btn go big" id="launch" type="button">Run this experiment →</button>
+    <p class="hint">Running replaces the simulation that's open on the Watch page. Its history is still saved when the server stops.</p>
+    <div class="row"><span class="mute small">Start again from</span><button class="btn ghost" id="from-running" type="button">the running simulation</button><button class="btn ghost" id="from-fresh" type="button">a fresh town</button></div>
+  </div>
+</div>
+
+<dialog id="paste-dialog" aria-labelledby="paste-title"><form method="dialog" id="paste-form">
+  <h2 id="paste-title">Paste or open a scenario</h2><p class="mute">TOML or JSON. Everything in it replaces what's on this page (you can undo).</p>
+  <div class="grid"><textarea id="paste-text" rows="12" placeholder='parties = ["A", "B", "C"]&#10;k = 1&#10;seed = 7&#10;...'></textarea>
+    <label class="field">…or open a file <input type="file" id="paste-file" accept=".toml,.json,.txt"></label></div>
+  <div class="row end"><button class="btn ghost" value="cancel" formnovalidate>Cancel</button><button class="btn go" value="load">Load it</button></div>
+</form></dialog>
+
+<dialog id="add-dialog" aria-labelledby="add-title"><form method="dialog" id="add-form">
+  <h2 id="add-title">Add people</h2><p class="mute">New people get explicit spots and beliefs drawn from the seed, so the file stays exact.</p>
+  <div class="grid">
+    <label class="field">Into which group? <select id="a-group"></select></label>
+    <label class="field">How many?<div class="slider"><input type="range" id="a-n-r" min="1" max="200" value="20"><input type="number" id="a-n" min="1" max="2000" value="20"></div></label>
+    <div class="field"><span>Favourite mix <small>(how many prefer each party first)</small></span><div class="mix" id="a-mix"></div></div>
+    <div class="field"><span>The rest of their ranking</span><div class="seg" role="group"><button type="button" data-rest="random" aria-pressed="true">Random</button><button type="button" data-rest="near" aria-pressed="false">Neighbouring parties next</button></div></div>
+    <div class="field"><span>Where do they live?</span><div class="seg" role="group"><button type="button" data-place="any" aria-pressed="true">Anywhere</button><button type="button" data-place="spot" aria-pressed="false">Around a spot</button></div>
+      <div class="row" id="a-spot" hidden><label class="field" style="flex:1">x <input type="number" id="a-x" min="0" max="1" step="0.01" value="0.5"></label><label class="field" style="flex:1">y <input type="number" id="a-y" min="0" max="1" step="0.01" value="0.5"></label><label class="field" style="flex:1">spread <input type="number" id="a-spread" min="0" max="0.5" step="0.01" value="0.08"></label></div></div>
+    <label class="field">Name them <input type="text" id="a-prefix" value="p"><small>IDs become prefix + number, skipping ones already taken.</small></label>
+  </div>
+  <div class="row end"><button class="btn ghost" value="cancel" formnovalidate>Cancel</button><button class="btn go" value="add">Add them</button></div>
+</form></dialog>
+
+<dialog id="group-dialog" aria-labelledby="group-title"><form method="dialog" id="group-form">
+  <h2 id="group-title">Make them a group</h2><p class="mute">They keep their spots and beliefs; the new group starts with a copy of another group's settings.</p>
+  <div class="grid"><label class="field">Group name <input type="text" id="g-name" required pattern="[A-Za-z0-9_\-]+"></label>
+    <label class="field">Copy settings from <select id="g-from"></select></label></div>
+  <div class="row end"><button class="btn ghost" value="cancel" formnovalidate>Cancel</button><button class="btn go" value="make">Make group</button></div>
+</form></dialog>
+
+<dialog id="bulk-dialog" aria-labelledby="bulk-title"><form method="dialog" id="bulk-form">
+  <h2 id="bulk-title">Change people</h2>
+  <div class="grid">
+    <label class="field">Group <select id="m-group"></select></label>
+    <div class="field"><span>What they believe</span><div class="seg" role="group"><button type="button" data-mpref="keep" aria-pressed="true">Keep</button><button type="button" data-mpref="set" aria-pressed="false">Everyone ranks…</button><button type="button" data-mpref="shuffle" aria-pressed="false">Shuffle (seeded)</button></div><div class="rank" id="m-rank" hidden></div></div>
+    <div class="field"><span>Where they stand</span><div class="seg" role="group"><button type="button" data-mpos="keep" aria-pressed="true">Keep</button><button type="button" data-mpos="gather" aria-pressed="false">Gather together</button><button type="button" data-mpos="spot" aria-pressed="false">Move to a spot</button><button type="button" data-mpos="any" aria-pressed="false">Scatter anywhere</button></div>
+      <div class="row" id="m-spot" hidden><label class="field" style="flex:1">x <input type="number" id="m-x" min="0" max="1" step="0.01" value="0.5"></label><label class="field" style="flex:1">y <input type="number" id="m-y" min="0" max="1" step="0.01" value="0.5"></label><label class="field" style="flex:1">spread <input type="number" id="m-spread" min="0" max="0.5" step="0.01" value="0.05"></label></div></div>
+    <div class="field"><span>Personal hearing range</span><div class="seg" role="group"><button type="button" data-mrad="keep" aria-pressed="true">Keep</button><button type="button" data-mrad="set" aria-pressed="false">Set</button><button type="button" data-mrad="clear" aria-pressed="false">Use group's</button></div>
+      <div class="slider" id="m-rad-row" hidden><input type="range" id="m-rad-r" min="0" max="0.6" step="0.01" value="0.15"><input type="number" id="m-rad" min="0" max="1.4142" step="0.01" value="0.15"></div></div>
+  </div>
+  <div class="row end"><button class="btn ghost" value="cancel" formnovalidate>Cancel</button><button class="btn go" value="apply">Apply</button></div>
+</form></dialog>
+</body>
+</html>

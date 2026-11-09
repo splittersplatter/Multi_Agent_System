@@ -46,6 +46,7 @@ Updated 9 November 2026. [Quickstart](../README.md#run).
 | [Scenario studies (suchit-sims)](suchit_sims/README.md) | Watchdog, foreign intelligence, long-term propaganda, echo-chamber campaigns: reports, figures, GIFs, slides |
 | [MARL interface](marl-interface.md) | `movement = "external"`, `Simulation.step(external_moves=...)`, `MovementEnv` |
 | [suchit-sims change log](suchit-sims-changes.md) | Everything added on the branch, merge notes and caveats |
+| [Set up and Watch pages](frontend-redesign/README.md) | Click-to-build experiments with exact import/export, and the new watch view (hearing ranges, ego networks, many charts, bulk edits) |
 
 ## Research and planning
 

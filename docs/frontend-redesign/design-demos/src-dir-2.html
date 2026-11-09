@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eclipse · Atlas (direction 2)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef0ec;--paper:#fbfcfa;--line:#d5d9d2;--ink:#1c2420;--mute:#56625c;--faint:#87918b;--A:#2f6bbf;--B:#cf5d22;--C:#1d8a5f;--follow:#7a55b0;--camp:#c2304f}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 "IBM Plex Sans",system-ui,sans-serif;min-height:100vh}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+header{display:flex;align-items:baseline;gap:16px;padding:22px 32px 14px}
+header h1{font:700 26px/1 "Familjen Grotesk",sans-serif;letter-spacing:-.3px}
+header p{color:var(--mute)}
+.wrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;padding:0 32px 18px}
+.plate{background:var(--paper);border:1px solid var(--line);padding:14px;position:relative}
+.plate .cap{display:flex;justify-content:space-between;color:var(--mute);font-size:13px;margin-bottom:8px}
+#net{width:100%;aspect-ratio:1/1;display:block;cursor:crosshair}
+.callout{position:absolute;pointer-events:none;background:var(--paper);border:1px solid var(--ink);padding:8px 11px;font-size:13px;line-height:1.35;min-width:190px;box-shadow:3px 3px 0 rgba(28,36,32,.12);display:none}
+.callout b{font-family:"Familjen Grotesk",sans-serif;font-size:15px}
+.callout .bar{display:flex;height:8px;margin:6px 0 3px}
+.callout .bar span{display:block}
+.wall{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid var(--ink)}
+.cell{padding:12px 12px 10px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.cell:nth-child(3n){border-right:0}
+.cell h3{font:600 13.5px/1.25 "Familjen Grotesk",sans-serif}
+.cell .now{font:500 22px/1.2 "IBM Plex Mono",monospace;margin:4px 0 2px}
+.cell canvas{width:100%;height:58px;display:block;cursor:pointer}
+.cell .sub{color:var(--faint);font-size:12px}
+.side h2{font:600 15px/1.2 "Familjen Grotesk",sans-serif;margin:18px 0 8px}
+.keyrow{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--mute);font-size:13px}
+.keyrow label{display:flex;align-items:center;gap:7px;cursor:pointer}
+.keyrow input{accent-color:var(--ink);width:16px;height:16px}
+.keyrow svg{width:16px;height:16px}
+.timeline{display:flex;align-items:center;gap:14px;padding:12px 32px 26px}
+.timeline input{flex:1;accent-color:var(--ink)}
+button{font:inherit;border:1px solid var(--ink);background:var(--paper);color:var(--ink);min-height:40px;padding:0 16px;cursor:pointer}
+button.solid{background:var(--ink);color:var(--paper)}
+.selbar{display:flex;align-items:center;gap:10px;margin-top:14px;padding:10px 12px;border:1px dashed var(--ink);background:var(--paper)}
+.selbar b{font:600 18px/1 "IBM Plex Mono",monospace}
+</style></head>
+<body>
+<header><h1>Eclipse</h1><p>Town of 100 · three parties · campaigns, a rigged poll and a watchdog · seed 7</p></header>
+<div class="wrap">
+  <div class="plate" id="plate">
+    <div class="cap"><span>The town at round <b class="mono" id="rnum">24</b></span><span class="mono">x, y ∈ [0, 1]</span></div>
+    <canvas id="net"></canvas>
+    <div class="callout" id="callout"></div>
+  </div>
+  <div class="side">
+    <div class="wall" id="wall"></div>
+    <h2>Map key</h2>
+    <div class="keyrow" id="key"></div>
+    <div class="selbar"><b id="seln">0</b><span>selected</span><span style="flex:1"></span><button id="mk">Make group</button><button class="solid" id="bulk">Bulk edit…</button></div>
+    <div style="color:var(--faint);font-size:12px;margin-top:6px">Click to pick · Shift-click adds · Shift-drag draws a box · Esc clears</div>
+  </div>
+</div>
+<div class="timeline"><button class="solid" id="playbtn">Play</button><button id="back">Previous</button><button id="fwd">Next</button><input type="range" id="slider" min="0" max="40" value="24" aria-label="Round"><span class="mono">round <b id="rnum2">24</b> of 40</span></div>
+<script id="demo-data" type="application/json">/*DATA*/</script>
+<script>/*CORE*/</script>
+<script>
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const PC = { A: css("--A"), B: css("--B"), C: css("--C") };
+const net = makeNetwork(document.getElementById("net"), { pad: 30, size: 4.2, stroke: 1, dim: .16, party: PC, agentStroke: "#fbfcfa", campStroke: "#1c2420", select: "#1c2420", focusStroke: "#1c2420",
+  proxAlpha: .45, linkAlpha: .6,
+  edge: { prox: "#c4cac2", follow: css("--follow"), campaign: css("--camp") }, ego: { inc: { prox: "#1c2420", follow: css("--follow"), campaign: css("--camp") }, out: "#87918b" },
+  background(ctx, W, H, pad) {
+    ctx.strokeStyle = "#e3e6e0"; ctx.lineWidth = 1; ctx.fillStyle = "#87918b"; ctx.font = "11px IBM Plex Mono";
+    for (let k = 0; k <= 4; k++) { const v = k / 4, x = pad + v * (W - 2 * pad), y = H - pad - v * (H - 2 * pad);
+      ctx.beginPath(); ctx.moveTo(x, pad); ctx.lineTo(x, H - pad); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke();
+      ctx.fillText(v.toFixed(2), x - 12, H - pad + 16); ctx.fillText(v.toFixed(2), 2, y + 4); }
+    ctx.strokeStyle = "#1c2420"; ctx.strokeRect(pad, pad, W - 2 * pad, H - 2 * pad); },
+  halo(ctx, [x, y], r) { ctx.fillStyle = "rgba(28,36,32,.05)"; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.strokeStyle = "#1c2420"; ctx.setLineDash([2, 4]); ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]); } });
+
+const CELLS = [
+  ["Vote share", () => PARTIES.map(p => ({ data: S.share[p], color: PC[p], width: 1.6 })), [.15, .55], () => PARTIES.map(p => `<span style="color:${PC[p]}">${pct(S.share[p][state.t])}</span>`).join(" "), "first choices"],
+  ["Lead margin", () => [{ data: S.margin, color: "#1c2420", fill: "rgba(28,36,32,.08)" }], [0, .15], () => pct(S.margin[state.t]), "leader minus runner-up"],
+  ["Voters switching", () => [{ data: S.switches, color: "#1c2420" }], [0, .3], () => pct(S.switches[state.t]), "changed vote this round"],
+  ["Contact turnover", () => [{ data: S.turnover, color: "#56625c" }], [0, .5], () => pct(S.turnover[state.t]), "proximity links changed"],
+  ["People heard", () => [{ data: S.heard, color: "#56625c" }], [0, 14], () => S.heard[state.t].toFixed(1), "average per voter"],
+  ["Hearing the other side", () => [{ data: S.exposure, color: "#1c2420" }], [.4, 1], () => pct(S.exposure[state.t]), "see ≥1 different vote"],
+  ["Follow links", () => [{ data: S.follow, color: css("--follow") }], [0, 80], () => S.follow[state.t], "bought by campaigners"],
+  ["Paid links for B", () => [{ data: S.campaign, color: css("--camp") }], [0, 16], () => S.campaign[state.t], "campaign controller"],
+  ["Poll vs truth, C", () => [{ data: S.pollGap, color: PC.C }], [-.05, .05], () => (S.pollGap[state.t] * 100).toFixed(0) + " pts", "published minus true"],
+];
+const wall = document.getElementById("wall"), nows = [];
+for (const [title, mk, range, now, sub] of CELLS) {
+  const c = document.createElement("div"); c.className = "cell";
+  c.innerHTML = `<h3>${title}</h3><div class="now"></div><canvas></canvas><div class="sub">${sub}</div>`; wall.appendChild(c);
+  lineChart(c.querySelector("canvas"), mk(), { range, pad: 2, padY: 4, playhead: "#1c2420" });
+  nows.push(() => c.querySelector(".now").innerHTML = now());
+}
+const shapeSvg = (g, col) => { const k = SHAPE[g]; const s = k === "square" ? '<rect x="3" y="3" width="10" height="10"/>' : k === "diamond" ? '<path d="M8 1 15 8 8 15 1 8z"/>' : k === "tri" ? '<path d="M8 1 15 14H1z"/>' : '<circle cx="8" cy="8" r="6"/>'; return `<svg viewBox="0 0 16 16" fill="${col}">${s}</svg>`; };
+document.getElementById("key").innerHTML = D.groups.filter(g => !g.startsWith("team_B") && !g.startsWith("team_C")).map(g => `<label>${shapeSvg(g, "#56625c")}${g.startsWith("team") ? "Campaigner" : GROUP_LABEL[g]}</label>`).join("") +
+  `<label><input type="checkbox" data-k="prox" checked>proximity</label><label><input type="checkbox" data-k="follow" checked><span style="color:${css("--follow")}">follow links</span></label><label><input type="checkbox" data-k="campaign" checked><span style="color:${css("--camp")}">paid links</span></label>`;
+document.querySelectorAll("#key input").forEach(i => i.onchange = () => { state.layers[i.dataset.k] = i.checked; emit(); });
+function callout() {
+  const el = document.getElementById("callout"), i = state.hover;
+  if (i < 0) { el.style.display = "none"; return; }
+  const p = D.people[i], hv = heardVotes(state.t, i), l = links(state.t, i), [x, y] = net.toPx(D.frames[state.t].xy[i]);
+  el.innerHTML = `<b>${p.id}</b> · ${GROUP_LABEL[p.group]}<br><span style="color:var(--mute)">votes <b style="color:${PC[D.frames[state.t].v[i]]}">${D.frames[state.t].v[i]}</b> · prefers ${p.pref.join(" › ")}</span>
+    <div class="bar">${PARTIES.map(q => `<span style="width:${hv.n ? hv.tally[q] / hv.n * 100 : 0}%;background:${PC[q]}"></span>`).join("")}</div>
+    <span class="mono" style="font-size:12px">hears ${hv.n} (${l.inc.follow.length} via follows) · heard by ${new Set([...l.out.prox, ...l.out.follow]).size}</span><br>
+    <span class="mono" style="font-size:12px;color:var(--mute)">radius ${p.radius.toFixed(2)} · ${p.voting}</span>`;
+  el.style.display = "block"; el.style.left = Math.min(x + 26, net.toPx([1, 0])[0] - 150) + "px"; el.style.top = (y + 18) + "px";
+}
+state.listeners.push(() => { for (const id of ["rnum", "rnum2"]) document.getElementById(id).textContent = state.t; document.getElementById("slider").value = state.t; document.getElementById("seln").textContent = state.sel.size; nows.forEach(n => n()); callout(); });
+document.getElementById("slider").oninput = e => setRound(+e.target.value);
+document.getElementById("back").onclick = () => setRound(state.t - 1); document.getElementById("fwd").onclick = () => setRound(state.t + 1);
+document.getElementById("playbtn").onclick = e => { play(); e.target.textContent = state.playing ? "Pause" : "Play"; };
+[3, 17, 42, 58, 77].forEach(i => state.sel.add(i)); state.hover = 12; emit();
+</script></body></html>

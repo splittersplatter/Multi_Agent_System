@@ -98,3 +98,32 @@ the 11 MARL tests). The same 12 tests error on an untouched `main` checkout on t
 the merge adds no regressions. All 12 are Windows-only issues: the Unix-only `resource` module
 (5) and subprocess tests that set `PYTHONPATH` with `:` (7). The merged browser server starts and
 records states for `showcase100.toml`.
+
+## Set up and Watch pages (Explorable redesign)
+
+Two new browser pages, served alongside the classic page; full guide in
+[frontend-redesign/README.md](frontend-redesign/README.md).
+
+- `/setup` builds a scenario by clicking. It covers:
+  - parties, ballot size, rounds and seed;
+  - group cards: voting rule, movement, hearing range, powers;
+  - a draggable map of every person's starting spot and beliefs, with box-select, make-group, bulk edit and seeded add-people;
+  - optional campaign, poll and watchdog controls.
+
+  Scenarios import and export as TOML or JSON (copy, paste or file) and are checked live by the real engine. Exports list every person explicitly, so seed plus file reproduces a run exactly.
+- `/sim` is the new watch view:
+  - hearing-range halo, incoming and outgoing ego network by edge type;
+  - new and broken links per round, plus an optional two-steps-out subgraph;
+  - a plain-English "Right now" card and per-group vote mixes;
+  - up to 11 time-series charts that click to seek;
+  - all-or-nothing bulk edits mid-run, and handing a crowd back to `/setup` as a new group.
+- Server additions in `visual.py`:
+  - `GET /scenario` and `POST /scenario/{convert,validate,launch}`;
+  - a `bulk_edit` command that rebuilds the exact pre-edit history if any edit fails.
+
+  New module `scenario_io.py` (TOML writer and TOML/JSON parser). The new files are registered in the provenance manifest.
+- The design direction was chosen via the huashu-design three-draft gate:
+  [frontend-redesign/direction-approved.md](frontend-redesign/direction-approved.md).
+- Tests:
+  - `tests/test_setup_pages.py` (7 tests). The full suite is now 409 tests, with the same 12 Windows-only errors as `main`.
+  - `scripts/frontend/e2e.mjs` runs 31 browser checks through both pages in headless Edge; all pass with no page errors.

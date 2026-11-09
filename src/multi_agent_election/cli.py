@@ -548,7 +548,8 @@ def _main(argv: list[str] | None = None) -> int:
                 visual_checkpoint = auto_base.with_suffix(".json")
                 _preflight_outputs([visual_checkpoint, plot_path])
                 server = make_server(simulation, args.port)
-                print(f"Open http://127.0.0.1:{server.server_port}/ (Ctrl-C to stop)", flush=True)
+                url = f"http://127.0.0.1:{server.server_port}"
+                print(f"Open {url}/sim to watch, {url}/setup to build an experiment, {url}/ for the classic view (Ctrl-C to stop)", flush=True)
                 try:
                     server.serve_forever()
                 except KeyboardInterrupt:

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eclipse · Explorable (direction 3)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ffffff;--card:#f1f4f9;--ink:#20232c;--mute:#565b6b;--A:#2f7df6;--B:#ff7433;--C:#21ad6b;--follow:#9a5cf0;--camp:#f0447a}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 "Atkinson Hyperlegible",system-ui,sans-serif;padding:28px 36px 132px}
+h1{font:800 44px/1.05 "Bricolage Grotesque",sans-serif;letter-spacing:-.6px;max-width:16ch}
+.lede{color:var(--mute);font-size:17px;max-width:62ch;margin:12px 0 22px}
+.grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px}
+.town{background:var(--card);border-radius:26px;padding:12px 12px 92px;position:relative}
+#net{width:100%;aspect-ratio:1/1;display:block;cursor:crosshair}
+.card{background:var(--card);border-radius:22px;padding:20px 22px;margin-bottom:18px}
+.card h2{font:800 22px/1.2 "Bricolage Grotesque",sans-serif;margin-bottom:8px}
+.say{font-size:19px;line-height:1.55}
+.say .tag{display:inline-block;padding:0 10px;border-radius:999px;color:#fff;font-weight:700}
+.tally{display:flex;gap:8px;margin-top:14px}
+.tally div{flex:1;border-radius:14px;padding:8px 10px;color:#fff;font-weight:700;font-size:15px}
+.tally div span{display:block;font:800 26px/1 "Bricolage Grotesque",sans-serif}
+canvas.chart{width:100%;height:150px;display:block;cursor:pointer}
+.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--mute);font-size:15px;margin-top:6px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.dock{position:fixed;left:24px;right:24px;bottom:18px;background:var(--ink);color:#fff;border-radius:22px;display:flex;align-items:center;gap:14px;padding:12px 16px;box-shadow:0 10px 30px rgba(32,35,44,.25)}
+.dock button{font:700 16px "Atkinson Hyperlegible",sans-serif;border:0;border-radius:14px;min-height:46px;padding:0 18px;cursor:pointer;background:#353946;color:#fff}
+.dock .play{background:#fff;color:var(--ink);width:56px;border-radius:50%;padding:0;font-size:20px}
+.dock input{flex:1;accent-color:#fff;min-width:120px}
+.dock .r{font:800 22px "Bricolage Grotesque",sans-serif;min-width:110px}
+.pill[aria-pressed=false]{opacity:.45}
+.pill b{display:inline-block;width:18px;height:3px;border-radius:2px;vertical-align:4px;margin-right:6px}
+.picked{position:absolute;left:16px;right:16px;bottom:16px;background:#fff;border-radius:16px;padding:12px 14px;display:flex;gap:8px;align-items:center;box-shadow:0 6px 18px rgba(32,35,44,.15)}
+.picked b{font:800 20px "Bricolage Grotesque",sans-serif;margin-right:6px}
+.picked button{font:700 15px "Atkinson Hyperlegible",sans-serif;border:2px solid var(--ink);background:#fff;border-radius:12px;min-height:44px;padding:0 14px;cursor:pointer}
+.picked button.go{background:var(--ink);color:#fff}
+</style></head>
+<body>
+<h1>Who does each voter hear?</h1>
+<p class="lede">Point at anyone in town. The shaded circle is everyone they can hear; arrows show who they listen to and who listens to them. Drag a box with Shift held to pick a crowd.</p>
+<div class="grid">
+  <div class="town"><canvas id="net"></canvas>
+    <div class="picked" id="picked"><b id="seln">0</b>voters picked<span style="flex:1"></span><button class="go">Make them a group</button><button>Change how they vote</button><button>Clear</button></div></div>
+  <div>
+    <div class="card"><h2>Right now</h2><div class="say" id="say"></div><div class="tally" id="tally"></div></div>
+    <div class="card"><h2>Who's winning</h2><canvas class="chart" id="c1"></canvas><div class="legend" id="lg1"></div></div>
+    <div class="card"><h2>How much is changing</h2><canvas class="chart" id="c2"></canvas><div class="legend"><span><i style="background:var(--ink)"></i>voters switching</span><span><i style="background:#9aa0b0"></i>contacts changing</span></div></div>
+  </div>
+</div>
+<div class="dock">
+  <button class="play" id="playbtn" aria-label="Play">▶</button><button id="back">Back</button><button id="fwd">Next</button>
+  <span class="r">Round <span id="rnum">24</span></span><input type="range" id="slider" min="0" max="40" value="24" aria-label="Round">
+  <button class="pill" data-k="prox" aria-pressed="true"><b style="background:#c9cfdb"></b>nearby</button>
+  <button class="pill" data-k="follow" aria-pressed="true"><b style="background:var(--follow)"></b>follows</button>
+  <button class="pill" data-k="campaign" aria-pressed="true"><b style="background:var(--camp)"></b>paid</button>
+</div>
+<script id="demo-data" type="application/json">/*DATA*/</script>
+<script>/*CORE*/</script>
+<script>
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const PC = { A: css("--A"), B: css("--B"), C: css("--C") };
+makeNetwork(document.getElementById("net"), { pad: 22, size: 6.2, stroke: 2, dim: .22, party: PC, agentStroke: "#20232c", campStroke: "#20232c", select: "#20232c", focusStroke: "#20232c",
+  proxAlpha: .55, linkAlpha: .6, edge: { prox: "#c9cfdb", follow: css("--follow"), campaign: css("--camp") }, ego: { inc: { prox: "#20232c", follow: css("--follow"), campaign: css("--camp") }, out: "#8b90a0" },
+  halo(ctx, [x, y], r, p) { ctx.fillStyle = "rgba(47,125,246,.10)"; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.strokeStyle = "#20232c"; ctx.lineWidth = 2; ctx.setLineDash([6, 6]); ctx.stroke(); ctx.setLineDash([]); } });
+lineChart(document.getElementById("c1"), PARTIES.map(p => ({ data: S.share[p], color: PC[p], width: 3.2 })), { range: [.15, .55], pad: 6, padY: 8, playhead: "#20232c", grid: "#dfe4ee", gridAt: [1 / 3] });
+lineChart(document.getElementById("c2"), [{ data: S.switches, color: "#20232c", width: 3 }, { data: S.turnover, color: "#9aa0b0", width: 3 }], { range: [0, .5], pad: 6, padY: 8, playhead: "#20232c" });
+const RULE = { sensed_plurality: "copy the most common vote they hear", sincere: "always vote for their favourite", signal_confident: "trust the published poll" };
+function say() {
+  const i = state.hover >= 0 ? state.hover : 12, p = D.people[i], f = D.frames[state.t], hv = heardVotes(state.t, i), l = links(state.t, i);
+  const top = PARTIES.reduce((a, b) => hv.tally[b] > hv.tally[a] ? b : a);
+  const tag = q => `<span class="tag" style="background:${PC[q]}">${q}</span>`;
+  const who = p.group.startsWith("team") ? `<b>${p.id}</b> is a campaigner for ${tag(p.group.slice(-1))}. They walk the town and get voters to follow them; ${l.out.follow.length} people follow them right now.`
+    : `<b>${p.id}</b> is a ${GROUP_LABEL[p.group].toLowerCase()}: they ${RULE[p.voting] || p.voting}. They can hear <b>${hv.n}</b> people${l.inc.follow.length ? `, ${l.inc.follow.length} of them because they follow a campaigner` : ""}. Most of what they heard was ${tag(top)}, and they vote ${tag(f.v[i])}.`;
+  document.getElementById("say").innerHTML = who + ` Their favourite is ${tag(p.pref[0])}.`;
+  document.getElementById("tally").innerHTML = PARTIES.map(q => `<div style="background:${PC[q]}"><span>${hv.tally[q]}</span>hear ${q}</div>`).join("");
+}
+document.getElementById("lg1").innerHTML = PARTIES.map(p => `<span><i style="background:${PC[p]}"></i>${p} <b id="sh-${p}"></b></span>`).join("");
+document.querySelectorAll(".pill").forEach(b => b.onclick = () => { state.layers[b.dataset.k] = !state.layers[b.dataset.k]; b.setAttribute("aria-pressed", state.layers[b.dataset.k]); emit(); });
+state.listeners.push(() => { document.getElementById("rnum").textContent = state.t; document.getElementById("slider").value = state.t; document.getElementById("seln").textContent = state.sel.size;
+  document.getElementById("picked").style.display = state.sel.size ? "flex" : "none"; PARTIES.forEach(p => document.getElementById("sh-" + p).textContent = pct(S.share[p][state.t])); say(); });
+document.getElementById("slider").oninput = e => setRound(+e.target.value);
+document.getElementById("back").onclick = () => setRound(state.t - 1); document.getElementById("fwd").onclick = () => setRound(state.t + 1);
+document.getElementById("playbtn").onclick = e => { play(); e.target.textContent = state.playing ? "❚❚" : "▶"; };
+[3, 17, 42, 58, 77].forEach(i => state.sel.add(i)); state.hover = 12; emit();
+</script></body></html>

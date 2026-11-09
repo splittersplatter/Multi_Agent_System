@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="session-token" content="__SESSION_TOKEN__">
+  <title>Eclipse · Watch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/eclipse.css">
+  <script src="/shared.js" defer></script>
+  <script src="/sim.js" defer></script>
+</head>
+<body>
+<header class="top">
+  <span class="brand"><i></i>Eclipse</span>
+  <nav class="tabs" aria-label="Pages"><a href="/setup">Set up</a><a href="/sim" aria-current="page">Watch</a><a href="/classic">Classic view</a></nav>
+  <span class="grow"></span><span class="meta" id="meta">Connecting…</span>
+</header>
+
+<h1>Who does each voter hear?</h1>
+<p class="lede">Point at anyone in town. The shaded circle is how far they can hear; solid arrows are voices reaching them, dashed arrows are people hearing them. Glowing links are new this round, dotted ones just broke. Drag a box to pick a crowd.</p>
+
+<div class="cols">
+  <section class="town" aria-label="Town map">
+    <div class="toolbar">
+      <span class="small mute">Colour by</span>
+      <div class="seg" role="group" aria-label="Colour people by"><button data-color="vote" aria-pressed="true">Vote now</button><button data-color="favourite" aria-pressed="false">Favourite</button></div>
+      <span class="spacer"></span>
+      <button class="pill" id="two-hop" aria-pressed="false" title="Also show who reaches the people they hear">Two steps out</button>
+      <button class="pill" id="changes" aria-pressed="true" title="Glow new links, dot broken ones">Show changes</button>
+    </div>
+    <canvas id="town" role="img" aria-label="Map of the town: people as shapes coloured by party, with links between them"></canvas>
+    <div class="picked" id="picked" hidden>
+      <b id="seln">0</b><span>picked</span><span class="spacer"></span>
+      <button class="btn go" id="bulk">Change them…</button>
+      <button class="btn" id="fork">Make them a group</button>
+      <button class="btn ghost" id="clear">Clear</button>
+    </div>
+    <p class="hint" style="margin:10px 6px 2px">Click someone to pin them · Shift-click to add · drag a box to pick a crowd · Esc clears</p>
+  </section>
+
+  <div>
+    <div class="card" aria-live="polite"><h2 id="now-title">Right now</h2><div class="say" id="say"></div><div class="tally" id="tally"></div><dl class="kv" id="kv"></dl><div class="row" id="powers" style="margin-top:12px"></div></div>
+    <div class="card"><h2>Who's winning</h2><div class="big" id="share-big" style="font:800 28px/1.1 var(--display);display:flex;gap:14px;flex-wrap:wrap;margin:2px 0 6px"></div><canvas class="chart tall" id="c-share"></canvas><div class="legend" id="share-legend"></div></div>
+    <div class="card"><h2>Groups in town</h2><p class="kicker">How each group is voting this round. Pick a whole group to change it.</p><div id="groups" style="display:grid;gap:12px;margin-top:12px"></div></div>
+  </div>
+</div>
+
+<div class="section-q"><h2>How is the town changing?</h2><span class="kicker">Click or drag any chart to jump to that round.</span></div>
+<div class="charts" id="charts"></div>
+
+<dialog id="bulk-dialog" aria-labelledby="bulk-title">
+  <form method="dialog" id="bulk-form">
+    <h2 id="bulk-title">Change people</h2>
+    <p class="mute" id="bulk-note"></p>
+    <div class="grid">
+      <label class="field">Move them to a group <select id="b-group"></select></label>
+      <div class="field"><span>Change what they believe (favourite order)</span>
+        <div class="row"><div class="seg" role="group" aria-label="Favourite order"><button type="button" data-pref="keep" aria-pressed="true">Keep</button><button type="button" data-pref="set" aria-pressed="false">Set to…</button></div><div class="rank" id="b-rank" hidden></div></div>
+        <small class="hint">Tap parties in order, first is their favourite.</small></div>
+      <div class="field"><span>Force their next ballot</span>
+        <div class="row"><div class="seg" role="group" aria-label="Next ballot"><button type="button" data-ballot="keep" aria-pressed="true">Keep</button><button type="button" data-ballot="set" aria-pressed="false">Use the order above</button></div></div>
+        <small class="hint">Their next ballot becomes the first <span id="b-k">k</span> parties of the order. Applies once.</small></div>
+      <div class="field"><span>Where they stand</span>
+        <div class="seg" role="group" aria-label="Position"><button type="button" data-pos="keep" aria-pressed="true">Keep</button><button type="button" data-pos="gather" aria-pressed="false">Gather together</button><button type="button" data-pos="spot" aria-pressed="false">Move to a spot</button></div>
+        <div class="row" id="b-spot" hidden><label class="field" style="flex:1">x <input type="number" id="b-x" min="0" max="1" step="0.01" value="0.5"></label><label class="field" style="flex:1">y <input type="number" id="b-y" min="0" max="1" step="0.01" value="0.5"></label><label class="field" style="flex:1">spread <input type="number" id="b-spread" min="0" max="0.5" step="0.01" value="0.04"></label></div></div>
+    </div>
+    <div class="row end"><button class="btn ghost" value="cancel" formnovalidate>Cancel</button><button class="btn go" id="b-apply" value="apply">Apply</button></div>
+  </form>
+</dialog>
+
+<div class="dock" role="group" aria-label="Playback">
+  <button class="play" id="play" aria-label="Play">▶</button>
+  <button id="back">Back</button><button id="fwd">Next</button>
+  <span class="r">Round <span id="rnum">0</span> <small id="rof"></small></span>
+  <label class="sr-only" for="slider">Round</label><input type="range" id="slider" min="0" max="0" value="0">
+  <label class="sr-only" for="speed">Speed</label><select id="speed"><option value="900">Slow</option><option value="420" selected>Normal</option><option value="150">Fast</option></select>
+  <button class="pill" data-layer="prox" aria-pressed="true"><span class="sw" style="background:#c9cfdb"></span>nearby</button>
+  <button class="pill" data-layer="follow" aria-pressed="true"><span class="sw" style="background:#8a4fe6"></span>follows</button>
+  <button class="pill" data-layer="campaign" aria-pressed="true"><span class="sw" style="background:#e8336d"></span>paid</button>
+</div>
+</body>
+</html>

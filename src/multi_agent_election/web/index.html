@@ -12,7 +12,7 @@
   <script src="/app.js" defer></script>
 </head>
 <body>
-  <header><div><span class="eyebrow">ECLIPSE / RESEARCH SIMULATION</span><h1>Election dynamics</h1></div><div class="status" id="status">Connecting…</div></header>
+  <header><div><span class="eyebrow">ECLIPSE / RESEARCH SIMULATION</span><h1>Election dynamics</h1><nav class="classic-nav"><a href="/setup">Set up an experiment</a> · <a href="/sim">Watch view</a></nav></div><div class="status" id="status">Connecting…</div></header>
   <main>
     <section class="panel network"><div class="section-head"><div><h2>Population network</h2><p id="color-label">Researcher view · node color: true first preference</p></div><span id="round-label" class="badge">Round 0</span></div>
       <form id="voting-setup"><label>Startup voting heuristic <select id="startup-policy"><option value="">Keep scenario policies</option></select></label><label>Voting parameters (JSON; defaults shown on selection) <input id="startup-parameters" value="{}"></label><button id="apply-voting" type="submit">Apply voting choice</button><small id="voting-description">Before first step/edit only; applies to all agents. Permissions unchanged. Strategic rules use trusted ballot sensors; pivotal additionally receives the initial public poll. Epistemic rules require electorate-observation permission and a bounded world count. Simultaneous updates; no convergence guarantee.</small><p id="active-voting"></p><p id="convergence-status"></p></form>

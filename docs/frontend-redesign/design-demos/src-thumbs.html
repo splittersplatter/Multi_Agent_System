@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Eclipse · six candidates</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800&family=Archivo+Narrow:wght@500;700&family=Long+Cang&family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:#d9dbd6;font:14px/1.4 "Noto Sans",sans-serif;padding:24px}
+h1{font:700 20px "Noto Sans",sans-serif;margin-bottom:14px}
+.board{display:grid;grid-template-columns:repeat(3,480px);gap:18px}
+figure{background:#fff}
+figure .frame{width:480px;height:300px;overflow:hidden;position:relative}
+figure iframe{width:1440px;height:900px;border:0;transform:scale(.3333);transform-origin:0 0;pointer-events:none}
+figcaption{padding:8px 10px;font-size:13px}
+figcaption b{margin-right:6px}
+/* candidate 5: cinematic sound-viz */
+.sv{background:#000;color:#fff;font-family:Sora,sans-serif;height:300px;position:relative}
+.sv h2{position:absolute;left:22px;top:18px;font:800 30px/1 Sora;letter-spacing:-.5px;z-index:2}
+.sv p{position:absolute;left:22px;top:56px;color:#a9a9b8;font-size:12px;z-index:2}
+.sv canvas{position:absolute;inset:0;width:100%;height:100%}
+/* candidate 6: dense magazine */
+.mg{background:#fff;height:300px;display:grid;grid-template-columns:270px 1fr;font-family:"Noto Sans",sans-serif}
+.mg .l{position:relative;border-right:2px solid #111}
+.mg h2{font:700 19px/1.1 "Archivo Narrow";padding:10px 12px 0;background:linear-gradient(transparent 62%,#ffe14d 62%);display:inline-block;margin:0 12px}
+.mg canvas{width:270px;height:255px;display:block}
+.mg .note{position:absolute;font:22px/1 "Long Cang",cursive;color:#d1242f}
+.mg .note.b{color:#1f4fd1}
+.mg .g{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);border-left:0}
+.mg .g div{border:1.5px solid #111;margin:-.75px;padding:6px;font:700 11px "Archivo Narrow"}
+.mg .g div span{display:block;font:700 22px "Archivo Narrow"}
+.mg .g .y{background:#ffe14d}.mg .g .k{background:#111;color:#fff}
+</style></head><body>
+<h1>Six candidates · three built in full (1, 2, 3+4) · two alternates (5, 6)</h1>
+<div class="board">
+  <figure><div class="frame"><iframe src="dir-3.html" title="Explorable"></iframe></div><figcaption><b>1 · Explorable</b>Best designer: Nicky Case → full draft dir-3</figcaption></figure>
+  <figure><div class="frame"><iframe src="dir-2.html" title="Atlas"></iframe></div><figcaption><b>2 · Atlas</b>Best designer: Stamen Design → full draft dir-2</figcaption></figure>
+  <figure><div class="frame"><iframe src="dir-1.html" title="Observatory"></iframe></div><figcaption><b>3 + 4 · Observatory</b>References: Kepler.gl + Ableton arrangement → full draft dir-1</figcaption></figure>
+  <figure><div class="sv"><h2>The town, heard.</h2><p>Vote shares as sound · round 0–40</p><canvas id="sv"></canvas></div><figcaption><b>5 · Sound-viz</b>Roulette web No. 8 · alternate (metaphor risks overdoing it)</figcaption></figure>
+  <figure><div class="mg"><div class="l"><h2>Round 24 field notes</h2><canvas id="mg"></canvas>
+      <span class="note" style="left:150px;top:70px">B ← 5 follow links</span><span class="note b" style="left:24px;top:225px">C bloc holds</span></div>
+    <div class="g" id="mgg"></div></div><figcaption><b>6 · Field notebook</b>Roulette East No. 12 (dense magazine) · alternate</figcaption></figure>
+</div>
+<script id="demo-data" type="application/json">/*DATA*/</script>
+<script>/*CORE*/</script>
+<script>
+// candidate 5: shares drawn as mirrored waveforms
+(function () {
+  const c = document.getElementById("sv"), ctx = c.getContext("2d"), W = 480, H = 300; c.width = W * 2; c.height = H * 2; ctx.scale(2, 2);
+  const cols = { A: "#5b7cff", B: "#a35bff", C: "#3fd3ff" };
+  PARTIES.forEach((p, k) => {
+    const mid = 130 + k * 55; ctx.fillStyle = cols[p];
+    for (let x = 0; x < W; x += 3) { const t = Math.round(x / W * T), a = S.share[p][t] * 70 * (0.55 + 0.45 * Math.abs(Math.sin(x * 0.31 + k))); ctx.globalAlpha = .9; ctx.fillRect(x, mid - a / 2, 2, a); }
+    ctx.globalAlpha = 1; ctx.font = "700 12px Sora"; ctx.fillStyle = "#fff"; ctx.fillText(`${p}  ${pct(S.share[p][24])}`, W - 70, mid - 20);
+  });
+})();
+// candidate 6: annotated map + bold 3x3 grid
+(function () {
+  const c = document.getElementById("mg"), ctx = c.getContext("2d"); c.width = 540; c.height = 510; ctx.scale(2, 2);
+  const f = D.frames[24], col = { A: "#1f4fd1", B: "#111", C: "#d1242f" };
+  f.xy.forEach(([x, y], i) => { ctx.fillStyle = col[f.v[i]]; ctx.beginPath(); ctx.arc(14 + x * 242, 10 + (1 - y) * 232, D.people[i].group.startsWith("team") ? 4 : 2.4, 0, 7); ctx.fill(); });
+  [[12, "1"], [40, "2"], [88, "3"]].forEach(([i, n]) => { const [x, y] = f.xy[i]; ctx.strokeStyle = "#111"; ctx.beginPath(); ctx.arc(14 + x * 242, 10 + (1 - y) * 232, 9, 0, 7); ctx.stroke(); ctx.font = "700 11px Archivo Narrow"; ctx.fillStyle = "#111"; ctx.fillText(n, 14 + x * 242 + 10, 10 + (1 - y) * 232 - 8); });
+  const cells = [["A share", pct(S.share.A[24])], ["B share", pct(S.share.B[24]), "y"], ["C share", pct(S.share.C[24])], ["switching", pct(S.switches[24])], ["turnover", pct(S.turnover[24])], ["follow links", S.follow[24], "k"], ["paid links", S.campaign[24]], ["heard / voter", S.heard[24].toFixed(1)], ["other side", pct(S.exposure[24])]];
+  document.getElementById("mgg").innerHTML = cells.map(([a, b, k]) => `<div class="${k || ""}">${a}<span>${b}</span></div>`).join("");
+})();
+</script></body></html>

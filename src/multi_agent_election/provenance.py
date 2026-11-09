@@ -18,9 +18,10 @@ def manifest() -> dict[str, str | int]:
     core = _digest(base, ("model.py", "engine.py", "network.py", "policies.py", "voting.py", "metrics.py", "epistemic.py", "campaign.py", "signals.py", "nomination.py", "alignment.py", "detector.py", "leaders.py", "records.py", "state_recording.py", "observations.py", "coalitions.py", "majority.py", "population.py", "provenance.py"))
     pipeline = _digest(base, ("cli.py", "experiments.py", "combined.py", "experiment_support.py",
                               "spatial_experiments.py", "signal_experiments.py", "network_experiments.py", "majority_experiments.py",
-                              "render.py", "visual.py", "playback.py", "exports.py", "occupation.py", "marl.py",
+                              "render.py", "visual.py", "playback.py", "exports.py", "occupation.py", "marl.py", "scenario_io.py",
                               "__init__.py", "web/index.html", "web/app.js", "web/edit.js", "web/download.js",
-                              "web/inspector.js", "web/style.css"))
+                              "web/inspector.js", "web/style.css", "web/setup.html", "web/sim.html", "web/eclipse.css",
+                              "web/shared.js", "web/setup.js", "web/sim.js"))
     return {"manifest_version": 1, "package": "multi-agent-election", "package_version": "0.1.0",
             "python": platform.python_version(), "implementation": platform.python_implementation(),
             "machine": platform.machine(), "core_sha256": core, "pipeline_sha256": pipeline,

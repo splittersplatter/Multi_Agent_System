@@ -15,11 +15,22 @@ from urllib.parse import parse_qs, urlsplit
 from .engine import Simulation
 from .exports import write_metrics_csv
 from .metrics import frame_metrics, series
-from .model import ElectionError
+from .model import ElectionError, make_scenario
 from .population import verification_scope
+from .scenario_io import MAX_SCENARIO_TEXT, parse_scenario_text, to_toml
 from .state_recording import active_recordings
 from .voting import VOTING_POLICIES, COALITION_POLICIES, SIGNAL_POLICIES, configure_voting
 from .epistemic import EPISTEMIC_POLICIES
+
+# Browser files: path -> (package file, content type). Pages get the session token injected.
+STATIC = {"/": ("index.html", "text/html"), "/classic": ("index.html", "text/html"),
+          "/setup": ("setup.html", "text/html"), "/sim": ("sim.html", "text/html"),
+          "/app.js": ("app.js", "text/javascript"), "/edit.js": ("edit.js", "text/javascript"),
+          "/download.js": ("download.js", "text/javascript"), "/inspector.js": ("inspector.js", "text/javascript"),
+          "/style.css": ("style.css", "text/css"), "/eclipse.css": ("eclipse.css", "text/css"),
+          "/shared.js": ("shared.js", "text/javascript"), "/setup.js": ("setup.js", "text/javascript"),
+          "/sim.js": ("sim.js", "text/javascript")}
+EDITABLE = {"group", "preference", "position", "ballot", "overrides"}
 
 
 class Session:
@@ -65,6 +76,65 @@ class Session:
                    if self.simulation.scenario.majority_estimation is not None else {}),
                 "metrics": series(self.simulation.scenario, self.simulation.frames)}
 
+    def _build(self, source: Any, *, checkpoint: bool = False) -> Simulation:
+        """Construct under the session's explicit verification purpose (tests only)."""
+        reason = self.simulation.verification_reason
+        with verification_scope(reason) if reason is not None else nullcontext():
+            return Simulation.from_checkpoint(source) if checkpoint else Simulation(source)
+
+    def scenario(self) -> dict[str, Any]:
+        config = self.simulation.scenario.as_dict()
+        return {"revision": self.revision, "config": config, "toml": to_toml(config)}
+
+    @staticmethod
+    def convert(value: Any) -> dict[str, Any]:
+        if isinstance(value, dict) and set(value) == {"text"}:
+            config = parse_scenario_text(value["text"])
+        elif isinstance(value, dict) and set(value) == {"config"} and isinstance(value["config"], dict):
+            config = value["config"]
+        else:
+            raise ElectionError("send {text} or {config}")
+        return {"config": config, "toml": to_toml(config), "json": json.dumps(config, indent=2, allow_nan=False)}
+
+    def validate(self, config: Any) -> tuple[Simulation, dict[str, Any]]:
+        if not isinstance(config, dict):
+            raise ElectionError("config must be an object")
+        simulation = self._build(make_scenario(config))
+        scenario = simulation.scenario
+        groups: dict[str, int] = {}
+        for person in scenario.people:
+            groups[person.group] = groups.get(person.group, 0) + 1
+        return simulation, {"ok": True, "people": len(scenario.people), "groups": groups,
+                            "parties": list(scenario.parties), "rounds": scenario.rounds, "seed": scenario.seed}
+
+    def launch(self, value: Any) -> dict[str, Any]:
+        if not isinstance(value, dict) or set(value) != {"config"}:
+            raise ElectionError("launch requires a config")
+        simulation, summary = self.validate(value["config"])
+        self.simulation = simulation
+        self.revision += 1
+        return {**summary, "revision": self.revision}
+
+    def _bulk_edit(self, value: dict[str, Any]) -> None:
+        """Apply several per-person edits at one boundary, all or nothing."""
+        edits = value["edits"]
+        if not isinstance(edits, list) or not 0 < len(edits) <= 2000:
+            raise ElectionError("edits must be a non-empty list")
+        seen = set()
+        for edit in edits:
+            if (not isinstance(edit, dict) or set(edit) != {"person", "changes"} or not isinstance(edit["person"], str)
+                    or edit["person"] in seen or not isinstance(edit["changes"], dict) or not edit["changes"]
+                    or set(edit["changes"]) - EDITABLE):
+                raise ElectionError(f"each edit needs a distinct person and changes from {sorted(EDITABLE)}")
+            seen.add(edit["person"])
+        before = self.simulation.checkpoint()
+        try:
+            for edit in edits:
+                self.simulation.edit_after(value["round"], edit["person"], **edit["changes"])
+        except Exception:
+            self.simulation = self._build(before, checkpoint=True)   # exact pre-edit history
+            raise
+
     def command(self, value: Any) -> dict[str, Any]:
         if not isinstance(value, dict) or type(value.get("revision")) is not int:
             raise ElectionError("command requires a revision")
@@ -87,6 +157,8 @@ class Session:
         elif value.get("action") == "step" and set(value) == {"revision", "action"}:
             previous = self.simulation.current
             self.simulation.step()
+        elif value.get("action") == "bulk_edit" and set(value) == {"revision", "action", "round", "edits"}:
+            self._bulk_edit(value)
         elif value.get("action") == "edit" and set(value) == {"revision", "action", "round", "person", "changes"}:
             if not isinstance(value["changes"], dict):
                 raise ElectionError("changes must be an object")
@@ -120,13 +192,20 @@ def make_server(simulation: Simulation, port: int = 0) -> ThreadingHTTPServer:
 
         def do_GET(self) -> None:
             url = urlsplit(self.path)
-            if url.path in ("/", "/app.js", "/edit.js", "/download.js", "/inspector.js", "/style.css") and not url.query:
-                name = {"/": "index.html", "/app.js": "app.js", "/edit.js": "edit.js", "/download.js": "download.js", "/inspector.js": "inspector.js", "/style.css": "style.css"}[url.path]
+            if url.path in STATIC and not url.query:
+                name, kind = STATIC[url.path]
                 payload = resources.files("multi_agent_election").joinpath("web", name).read_bytes()
-                if name == "index.html":
+                if kind == "text/html":
                     payload = payload.replace(b"__SESSION_TOKEN__", session.token.encode())
-                kind = {"index.html": "text/html", "app.js": "text/javascript", "edit.js": "text/javascript", "download.js": "text/javascript", "inspector.js": "text/javascript", "style.css": "text/css"}[name]
                 self._send(200, payload, kind + "; charset=utf-8")
+            elif url.path == "/scenario" and not url.query:
+                if self.headers.get("X-Session-Token") != session.token:
+                    self._json(403, {"error": "invalid session token"}); return
+                try:
+                    with session.lock:
+                        self._json(200, session.scenario())
+                except (ValueError, ElectionError) as exc:
+                    self._json(400, {"error": str(exc)})
             elif url.path == "/state" and not url.query:
                 if self.headers.get("X-Session-Token") != session.token:
                     self._json(403, {"error": "invalid session token"}); return
@@ -196,7 +275,9 @@ def make_server(simulation: Simulation, port: int = 0) -> ThreadingHTTPServer:
                 self._json(404, {"error": "not found"})
 
         def do_POST(self) -> None:
-            if self.path != "/command":
+            limits = {"/command": 65536, "/scenario/convert": MAX_SCENARIO_TEXT + 1024,
+                      "/scenario/validate": MAX_SCENARIO_TEXT, "/scenario/launch": MAX_SCENARIO_TEXT}
+            if self.path not in limits:
                 self._json(404, {"error": "not found"}); return
             if self.headers.get("X-Session-Token") != session.token:
                 self._json(403, {"error": "invalid session token"}); return
@@ -204,13 +285,21 @@ def make_server(simulation: Simulation, port: int = 0) -> ThreadingHTTPServer:
                 self._json(415, {"error": "application/json required"}); return
             try:
                 size = int(self.headers.get("Content-Length", "0"))
-                if not 0 < size <= 65536:
+                if not 0 < size <= limits[self.path]:
                     raise ElectionError("invalid command size")
                 data = json.loads(self.rfile.read(size))
-                with session.lock:
-                    response = session.command(data)
+                if self.path == "/scenario/convert":
+                    response = session.convert(data)          # pure: touches no session state
+                elif self.path == "/scenario/validate":
+                    if not isinstance(data, dict) or set(data) != {"config"}:
+                        raise ElectionError("validate requires a config")
+                    with session.lock:
+                        response = session.validate(data["config"])[1]
+                else:
+                    with session.lock:
+                        response = session.command(data) if self.path == "/command" else session.launch(data)
                 self._json(200, response)
-            except (ValueError, TypeError, KeyError, json.JSONDecodeError) as exc:
+            except (ValueError, TypeError, KeyError, AttributeError, json.JSONDecodeError) as exc:
                 self._json(400, {"error": str(exc)})
 
         def log_message(self, format: str, *args: Any) -> None:

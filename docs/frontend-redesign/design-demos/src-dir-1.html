@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eclipse · Observatory (direction 1)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#121110;--panel:#1a1917;--line:#2d2b28;--ink:#ece7df;--mute:#a39c91;--faint:#6f6a62;--A:#5b9bf0;--B:#f08a4b;--C:#3dc28e;--follow:#e7b341;--camp:#ef6f8f;--sel:#f4f1ea}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--ink);font:14px/1.45 "Schibsted Grotesk",system-ui,sans-serif;height:100vh;display:grid;grid-template-rows:56px minmax(0,1fr) 292px;overflow:hidden}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+header{display:flex;align-items:center;gap:18px;padding:0 18px;border-bottom:1px solid var(--line)}
+header h1{font-size:17px;font-weight:700;letter-spacing:.2px}
+header .scn{color:var(--mute);font-size:13px}
+.transport{margin-left:auto;display:flex;align-items:center;gap:10px}
+button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;min-height:36px;padding:0 12px;cursor:pointer}
+button:hover{border-color:#4a4741}
+button.primary{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+.round{font-size:13px;color:var(--mute);min-width:96px;text-align:right}
+.round b{color:var(--ink);font-size:18px;font-weight:500}
+input[type=range]{accent-color:var(--ink);width:220px}
+main{display:grid;grid-template-columns:248px minmax(0,1fr) 316px;min-height:0}
+aside{padding:16px;overflow:auto;border-right:1px solid var(--line)}
+aside.right{border-right:0;border-left:1px solid var(--line)}
+h2{font-size:12.5px;font-weight:600;color:var(--mute);margin:4px 0 10px}
+.layer{display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:8px;cursor:pointer;user-select:none}
+.layer:hover{background:var(--panel)}
+.layer .sw{width:22px;height:0;border-top:2px solid}
+.layer .n{margin-left:auto;color:var(--mute);font-size:12px}
+.layer.off{opacity:.38}
+.legend{display:grid;grid-template-columns:22px 1fr auto;gap:7px 8px;align-items:center;margin-bottom:18px}
+.legend svg{width:18px;height:18px}
+.legend .n{color:var(--mute);font-size:12px}
+.sep{height:1px;background:var(--line);margin:16px 0}
+.selbox{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+.selbox .big{font-size:26px;font-weight:600}
+.selbox .acts{display:grid;gap:8px;margin-top:12px}
+.hint{color:var(--faint);font-size:12px;margin-top:10px}
+#net{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:crosshair}
+.agent-id{font-size:22px;font-weight:600}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:12px 0;font-size:13px}
+.kv dt{color:var(--mute)} .kv dd{text-align:right}
+.rank{display:flex;gap:6px;margin:6px 0 2px}
+.rank span{padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600;color:#111}
+.heard{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:8px 0 4px;background:var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;color:var(--ink)}
+.empty{color:var(--faint);margin-top:40px;text-align:center}
+.lanes{border-top:1px solid var(--line);display:grid;grid-template-rows:repeat(6,minmax(0,1fr));min-height:0;overflow:hidden}
+.lane{display:grid;grid-template-columns:248px minmax(0,1fr) 120px;border-bottom:1px solid #1f1e1c;min-height:0}
+.lane .lbl{padding:0 16px;display:flex;align-items:center;gap:8px;color:var(--mute);font-size:12.5px}
+.lane .val{display:flex;gap:8px;align-items:center;justify-content:flex-end;padding-right:16px;font-size:13px}
+.lane .cv{position:relative;min-height:0}.lane canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:pointer}
+</style></head>
+<body>
+<header>
+  <h1>Eclipse</h1><span class="scn">showcase100 · 100 agents · seed 7</span>
+  <div class="transport">
+    <button id="back" aria-label="Previous round">◀</button>
+    <button id="playbtn" class="primary">Play</button>
+    <button id="fwd" aria-label="Next round">▶</button>
+    <input type="range" id="slider" min="0" max="40" value="24" aria-label="Round">
+    <div class="round mono">round <b id="rnum">24</b> / 40</div>
+  </div>
+</header>
+<main>
+  <aside>
+    <h2>Layers</h2>
+    <div class="layer" data-k="prox"><span class="sw" style="border-color:#6f6a62"></span>Proximity · who hears whom<span class="n mono" id="n-prox"></span></div>
+    <div class="layer" data-k="follow"><span class="sw" style="border-color:var(--follow)"></span>Follow links<span class="n mono" id="n-follow"></span></div>
+    <div class="layer" data-k="campaign"><span class="sw" style="border-color:var(--camp)"></span>Paid campaign links<span class="n mono" id="n-campaign"></span></div>
+    <div class="sep"></div>
+    <h2>Agents</h2>
+    <div class="legend" id="legend"></div>
+    <h2>Selection</h2>
+    <div class="selbox"><div class="big mono" id="seln">0</div><div style="color:var(--mute)">agents selected</div>
+      <div class="acts"><button id="mkgroup" disabled>Make a group from selection</button><button id="bulk" disabled>Bulk edit rule, radius, beliefs</button></div>
+      <div class="hint">Click an agent · Shift-click to add · Shift-drag to box-select · Esc to clear</div></div>
+  </aside>
+  <section style="position:relative;min-height:0"><canvas id="net"></canvas></section>
+  <aside class="right" id="inspector"></aside>
+</main>
+<section class="lanes" id="lanes"></section>
+<script id="demo-data" type="application/json">/*DATA*/</script>
+<script>/*CORE*/</script>
+<script>
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const PC = { A: css("--A"), B: css("--B"), C: css("--C") };
+const theme = { pad: 26, size: 4.6, stroke: 1, dim: .18, party: PC, agentStroke: "#121110", campStroke: "#f4f1ea", select: "#f4f1ea", focusStroke: "#f4f1ea",
+  edge: { prox: "#6f6a62", follow: css("--follow"), campaign: css("--camp") }, ego: { inc: { prox: "#ece7df", follow: css("--follow"), campaign: css("--camp") }, out: "#8d877d" },
+  background(ctx, W, H, pad) { ctx.strokeStyle = "#1f1e1c"; ctx.lineWidth = 1; for (let k = 0; k <= 10; k++) { const x = pad + k / 10 * (W - 2 * pad), y = pad + k / 10 * (H - 2 * pad); ctx.beginPath(); ctx.moveTo(x, pad); ctx.lineTo(x, H - pad); ctx.moveTo(pad, y); ctx.lineTo(W - pad, y); ctx.stroke(); } },
+  halo(ctx, [x, y], r) { const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, "rgba(236,231,223,.10)"); g.addColorStop(1, "rgba(236,231,223,.03)"); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.strokeStyle = "rgba(236,231,223,.55)"; ctx.setLineDash([3, 5]); ctx.stroke(); ctx.setLineDash([]); } };
+makeNetwork(document.getElementById("net"), theme);
+
+const shapeSvg = (g, col) => { const k = SHAPE[g]; const s = k === "square" ? '<rect x="4" y="4" width="10" height="10"/>' : k === "diamond" ? '<path d="M9 2 16 9 9 16 2 9z"/>' : k === "tri" ? '<path d="M9 2 16 15H2z"/>' : '<circle cx="9" cy="9" r="6"/>'; return `<svg viewBox="0 0 18 18" fill="${col}" stroke="#f4f1ea" stroke-width="${g.startsWith("team") ? 1.4 : 0}">${s}</svg>`; };
+const counts = {}; D.people.forEach(p => counts[p.group] = (counts[p.group] || 0) + 1);
+document.getElementById("legend").innerHTML = D.groups.map(g => `${shapeSvg(g, "#a39c91")}<span>${GROUP_LABEL[g]}</span><span class="n mono">${counts[g]}</span>`).join("") +
+  PARTIES.map(p => `<svg viewBox="0 0 18 18"><circle cx="9" cy="9" r="6" fill="${PC[p]}"/></svg><span>Votes ${p}</span><span></span>`).join("");
+document.querySelectorAll(".layer").forEach(el => el.onclick = () => { state.layers[el.dataset.k] = !state.layers[el.dataset.k]; el.classList.toggle("off", !state.layers[el.dataset.k]); emit(); });
+
+const LANES = [
+  ["Vote share", () => PARTIES.map(p => ({ data: S.share[p], color: PC[p], width: 1.8 })), [0.15, .55], () => PARTIES.map(p => `<span style="color:${PC[p]}">${pct(S.share[p][state.t])}</span>`).join(" ")],
+  ["Voters switching", () => [{ data: S.switches, color: "#ece7df", fill: "rgba(236,231,223,.10)" }], [0, .3], () => pct(S.switches[state.t])],
+  ["Contact turnover", () => [{ data: S.turnover, color: "#8d877d", fill: "rgba(141,135,125,.12)" }], [0, .5], () => pct(S.turnover[state.t])],
+  ["Follow + paid links", () => [{ data: S.follow, color: css("--follow") }, { data: S.campaign, color: css("--camp") }], [0, 80], () => `${S.follow[state.t]} · ${S.campaign[state.t]}`],
+  ["Poll distortion for C", () => [{ data: S.pollGap, color: PC.C, fill: "rgba(61,194,142,.12)" }], [-0.05, .05], () => (S.pollGap[state.t] * 100).toFixed(0) + " pts"],
+  ["Hearing the other side", () => [{ data: S.exposure, color: "#ece7df" }], [0.4, 1], () => pct(S.exposure[state.t])],
+];
+const lanes = document.getElementById("lanes"), vals = [];
+for (const [name, mk, range, val] of LANES) {
+  const row = document.createElement("div"); row.className = "lane";
+  row.innerHTML = `<div class="lbl">${name}</div><div class="cv"><canvas></canvas></div><div class="val mono"></div>`; lanes.appendChild(row);
+  lineChart(row.querySelector("canvas"), mk(), { range, pad: 26, padY: 7, playhead: "#ece7df", grid: "#24221f", gridAt: [range[0], range[1]] });
+  vals.push(() => row.querySelector(".val").innerHTML = val());
+}
+function inspector() {
+  const el = document.getElementById("inspector"), i = state.hover >= 0 ? state.hover : (state.sel.size === 1 ? [...state.sel][0] : -1);
+  if (i < 0) { el.innerHTML = `<h2>Inspector</h2><div class="empty">Hover an agent to see its hearing circle,<br>who it hears and who hears it.</div>`; return; }
+  const p = D.people[i], f = D.frames[state.t], l = links(state.t, i), hv = heardVotes(state.t, i);
+  const bar = PARTIES.map(q => `<span style="width:${hv.n ? hv.tally[q] / hv.n * 100 : 0}%;background:${PC[q]}"></span>`).join("");
+  el.innerHTML = `<h2>Inspector</h2><div class="agent-id mono">${p.id}</div><div style="color:var(--mute)">${GROUP_LABEL[p.group]} · votes <b style="color:${PC[f.v[i]]}">${f.v[i]}</b></div>
+   <div class="rank">${p.pref.map(q => `<span style="background:${PC[q]}">${q}</span>`).join("")}</div><div style="color:var(--faint);font-size:12px">private ranking, best first</div>
+   <dl class="kv"><dt>Decision rule</dt><dd class="mono">${p.voting}</dd><dt>Movement</dt><dd class="mono">${p.movement}</dd><dt>Hearing radius</dt><dd class="mono">${p.radius.toFixed(2)}</dd>
+   <dt>Hears (in)</dt><dd class="mono">${l.inc.prox.length} near · ${l.inc.follow.length} followed · ${l.inc.campaign.length} paid</dd><dt>Heard by (out)</dt><dd class="mono">${l.out.prox.length} near · ${l.out.follow.length} followers</dd></dl>
+   <h2>What it heard last round</h2><div class="heard">${bar}</div><div class="mono" style="font-size:12px;color:var(--mute)">${PARTIES.map(q => q + " " + hv.tally[q]).join(" · ")} of ${hv.n}</div>
+   <h2 style="margin-top:14px">Powers</h2><div class="chips">${(p.powers.length ? p.powers : ["none"]).map(x => `<span class="chip">${x}</span>`).join("")}</div>`;
+}
+function chrome() {
+  document.getElementById("rnum").textContent = state.t; document.getElementById("slider").value = state.t;
+  const f = D.frames[state.t]; document.getElementById("n-prox").textContent = prox(state.t).length; document.getElementById("n-follow").textContent = f.follow.length; document.getElementById("n-campaign").textContent = f.campaign.length;
+  document.getElementById("seln").textContent = state.sel.size; document.getElementById("mkgroup").disabled = document.getElementById("bulk").disabled = state.sel.size < 2;
+  vals.forEach(v => v()); inspector();
+}
+state.listeners.push(chrome);
+document.getElementById("slider").oninput = e => setRound(+e.target.value);
+document.getElementById("back").onclick = () => setRound(state.t - 1); document.getElementById("fwd").onclick = () => setRound(state.t + 1);
+document.getElementById("playbtn").onclick = e => { play(); e.target.textContent = state.playing ? "Pause" : "Play"; };
+[3, 17, 42, 58, 77].forEach(i => state.sel.add(i)); state.hover = 12; emit();
+</script></body></html>
