@@ -4,6 +4,9 @@ Partly implemented; acceptance open; inherits 02. [Gates](README.md).
 Current9 November: Gaussian default, mean=cap/2/std=cap/8; grid runtime retired.
 Memory10/polls10/strict response unchanged; frequency diagnostics exploratory.
 Historical grid proof/checker retained; no Gaussian mixing certificate.
+Follow-up: [18 exploratory 1,000-round runs](../gaussian-long-horizon-study.md),
+three configurations/seeds, matched sincere controls, retained figures and
+200-round playback. Held-out multi-electorate evaluation remains open.
 References: survey S9-S12, S28-S29.
 
 ## Deliverables

@@ -41,6 +41,7 @@ Updated 9 November 2026. [Quickstart](../README.md#run).
 | [Architecture](code-audit-and-refinement-report.md) | Ownership, invariants, unresolved engineering risks |
 | [Estimator results](majority-estimation-report.md) | Dated exploratory200-person pilot; no superiority/convergence claim |
 | [Memory-pivotal exploration](memory-pivotal-exploration.md) | Exact response contract, five-seed pilot, tests and limitations |
+| [Gaussian long-horizon study](gaussian-long-horizon-study.md) | Three initializations, matched controls, figures and exploratory results |
 | [Historical evidence](history/README.md) | Prior heuristic checks and workload measurements; not current-source claims |
 
 ## Research and planning

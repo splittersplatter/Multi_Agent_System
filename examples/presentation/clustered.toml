@@ -1,0 +1,1221 @@
+# clustered: 200 voters; shared rankings; seed 8192 initialization.
+parties = ["A", "B", "C"]
+k = 1
+seed = 2000
+rounds = 1000
+
+[majority_estimation]
+poll_counts = [34, 33, 33]
+memory_rounds = 10
+poll_weight = 0.5
+poll_refresh_rounds = 10
+
+[network]
+radius = 0.12
+
+[groups.people]
+voting = "memory_pivotal"
+movement = "random_walk"
+max_step = 0.05
+communication = "none"
+parameters = { movement = { distribution = "normal", mean_step = 0.025, std_step = 0.00625 } }
+
+[[people]]
+id = "p000"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.177207356443, 0.854026710405]
+
+[[people]]
+id = "p001"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.469201473932, 0.377562127994]
+
+[[people]]
+id = "p002"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.937358497916, 0.252391988953]
+
+[[people]]
+id = "p003"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.054870377614, 0.860474302449]
+
+[[people]]
+id = "p004"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.665258558579, 0.273087040256]
+
+[[people]]
+id = "p005"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.724432645589, 0.117072675266]
+
+[[people]]
+id = "p006"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.067978148059, 0.386406491318]
+
+[[people]]
+id = "p007"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.415706810587, 0.550178135115]
+
+[[people]]
+id = "p008"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.791430441472, 0.636345117105]
+
+[[people]]
+id = "p009"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.199806591735, 0.237059307075]
+
+[[people]]
+id = "p010"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.342401583926, 0.487572098517]
+
+[[people]]
+id = "p011"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.949807779896, 0.194125857249]
+
+[[people]]
+id = "p012"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.258262415588, 0.989287526295]
+
+[[people]]
+id = "p013"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.455227891692, 0.085776441866]
+
+[[people]]
+id = "p014"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.694484271190, 0.070587751922]
+
+[[people]]
+id = "p015"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.254789182782, 0.900475993786]
+
+[[people]]
+id = "p016"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.398279643851, 0.149294524520]
+
+[[people]]
+id = "p017"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.796837968163, 0.138343820074]
+
+[[people]]
+id = "p018"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.183942694989, 0.162945380789]
+
+[[people]]
+id = "p019"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.638795282052, 0.252541632916]
+
+[[people]]
+id = "p020"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.788795377938, 0.122482136320]
+
+[[people]]
+id = "p021"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.094542357540, 0.347315587145]
+
+[[people]]
+id = "p022"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.402388844920, 0.404197182259]
+
+[[people]]
+id = "p023"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.924916096992, 0.638207579292]
+
+[[people]]
+id = "p024"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.244793058202, 0.215234049708]
+
+[[people]]
+id = "p025"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.340121128039, 0.682711688088]
+
+[[people]]
+id = "p026"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.727956245099, 0.499216934365]
+
+[[people]]
+id = "p027"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.319621010308, 0.733402769796]
+
+[[people]]
+id = "p028"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.570918407879, 0.739827411196]
+
+[[people]]
+id = "p029"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.729085647218, 0.588336447749]
+
+[[people]]
+id = "p030"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.063247390225, 0.840033407413]
+
+[[people]]
+id = "p031"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.471535400604, 0.799689110507]
+
+[[people]]
+id = "p032"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.712377877788, 0.727224811633]
+
+[[people]]
+id = "p033"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.192406728220, 0.651975160038]
+
+[[people]]
+id = "p034"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.348029407962, 0.261045873010]
+
+[[people]]
+id = "p035"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.772496625188, 0.001630058934]
+
+[[people]]
+id = "p036"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.101587676430, 0.309299304526]
+
+[[people]]
+id = "p037"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.593829271384, 0.083291257629]
+
+[[people]]
+id = "p038"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.841237330621, 0.916260798226]
+
+[[people]]
+id = "p039"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.192992442831, 0.540823409280]
+
+[[people]]
+id = "p040"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.384190628678, 0.147995785288]
+
+[[people]]
+id = "p041"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.675716810507, 0.422480088700]
+
+[[people]]
+id = "p042"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.268557091728, 0.589391511708]
+
+[[people]]
+id = "p043"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.624940944041, 0.547281524103]
+
+[[people]]
+id = "p044"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.978037915309, 0.828109084624]
+
+[[people]]
+id = "p045"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.284604778212, 0.877940078731]
+
+[[people]]
+id = "p046"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.396779429836, 0.744452257912]
+
+[[people]]
+id = "p047"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.992317777426, 0.372818451260]
+
+[[people]]
+id = "p048"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.148032624923, 0.739622513947]
+
+[[people]]
+id = "p049"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.610113369402, 0.119311090656]
+
+[[people]]
+id = "p050"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.973375633411, 0.707429177575]
+
+[[people]]
+id = "p051"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.023478886030, 0.698603807656]
+
+[[people]]
+id = "p052"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.643759104243, 0.968917484885]
+
+[[people]]
+id = "p053"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.869314709626, 0.842038006153]
+
+[[people]]
+id = "p054"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.261697159793, 0.121373067133]
+
+[[people]]
+id = "p055"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.451964973875, 0.758567850756]
+
+[[people]]
+id = "p056"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.906936427838, 0.371005478836]
+
+[[people]]
+id = "p057"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.117812935707, 0.589880966110]
+
+[[people]]
+id = "p058"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.402280892923, 0.992207414351]
+
+[[people]]
+id = "p059"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.985568721267, 0.187965483449]
+
+[[people]]
+id = "p060"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.069791886441, 0.351204679378]
+
+[[people]]
+id = "p061"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.493664453447, 0.480630149844]
+
+[[people]]
+id = "p062"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.854041550286, 0.042445665187]
+
+[[people]]
+id = "p063"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.147314005179, 0.790213777446]
+
+[[people]]
+id = "p064"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.568346023803, 0.099538019154]
+
+[[people]]
+id = "p065"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.873022257492, 0.125310663146]
+
+[[people]]
+id = "p066"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.119874932434, 0.451155716545]
+
+[[people]]
+id = "p067"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.418887637008, 0.747115249554]
+
+[[people]]
+id = "p068"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.667973173976, 0.863691511246]
+
+[[people]]
+id = "p069"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.084606537126, 0.039065505367]
+
+[[people]]
+id = "p070"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.390518113328, 0.112594693324]
+
+[[people]]
+id = "p071"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.939583543739, 0.747768860840]
+
+[[people]]
+id = "p072"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.283900462559, 0.013714476507]
+
+[[people]]
+id = "p073"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.420391380165, 0.837693533954]
+
+[[people]]
+id = "p074"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.976412455829, 0.803985736755]
+
+[[people]]
+id = "p075"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.073415983932, 0.547895211581]
+
+[[people]]
+id = "p076"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.496607352553, 0.602819607502]
+
+[[people]]
+id = "p077"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.998288768894, 0.670812812188]
+
+[[people]]
+id = "p078"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.303251878185, 0.486074490084]
+
+[[people]]
+id = "p079"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.495173501401, 0.278527670255]
+
+[[people]]
+id = "p080"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.787020380244, 0.037143131780]
+
+[[people]]
+id = "p081"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.239049010636, 0.749798403689]
+
+[[people]]
+id = "p082"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.506416666504, 0.844563418774]
+
+[[people]]
+id = "p083"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.898576225691, 0.798440997949]
+
+[[people]]
+id = "p084"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.072238069392, 0.859282334360]
+
+[[people]]
+id = "p085"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.358366108799, 0.941336970645]
+
+[[people]]
+id = "p086"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.959890455692, 0.383874776684]
+
+[[people]]
+id = "p087"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.238700870355, 0.541607451333]
+
+[[people]]
+id = "p088"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.390683531396, 0.902654158336]
+
+[[people]]
+id = "p089"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.793274316879, 0.446818880708]
+
+[[people]]
+id = "p090"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.304736403575, 0.449317898529]
+
+[[people]]
+id = "p091"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.644730923559, 0.069731455863]
+
+[[people]]
+id = "p092"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.705945756102, 0.642735682798]
+
+[[people]]
+id = "p093"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.082604449913, 0.023053975834]
+
+[[people]]
+id = "p094"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.665474382316, 0.391904142691]
+
+[[people]]
+id = "p095"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.889293227342, 0.794383248690]
+
+[[people]]
+id = "p096"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.105689999301, 0.148479661883]
+
+[[people]]
+id = "p097"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.341188223473, 0.083212639200]
+
+[[people]]
+id = "p098"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.933343786134, 0.821649483511]
+
+[[people]]
+id = "p099"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.152863662785, 0.267531510147]
+
+[[people]]
+id = "p100"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.472813273123, 0.379753498867]
+
+[[people]]
+id = "p101"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.869580609992, 0.606790344949]
+
+[[people]]
+id = "p102"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.151355929376, 0.284442350961]
+
+[[people]]
+id = "p103"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.545185437204, 0.721062254611]
+
+[[people]]
+id = "p104"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.986361379959, 0.989741515763]
+
+[[people]]
+id = "p105"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.194133432981, 0.255103643261]
+
+[[people]]
+id = "p106"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.373911356645, 0.241756185465]
+
+[[people]]
+id = "p107"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.940872241177, 0.037203176324]
+
+[[people]]
+id = "p108"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.276487559449, 0.114002570372]
+
+[[people]]
+id = "p109"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.561947072387, 0.265023830655]
+
+[[people]]
+id = "p110"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.824476154164, 0.381427159876]
+
+[[people]]
+id = "p111"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.269725512200, 0.590254029093]
+
+[[people]]
+id = "p112"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.485984261467, 0.227678932076]
+
+[[people]]
+id = "p113"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.729524971344, 0.155520733330]
+
+[[people]]
+id = "p114"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.200565809827, 0.076563242781]
+
+[[people]]
+id = "p115"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.372018651185, 0.208122111814]
+
+[[people]]
+id = "p116"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.870286967095, 0.935416191462]
+
+[[people]]
+id = "p117"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.148788477034, 0.154264090782]
+
+[[people]]
+id = "p118"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.606520859781, 0.841842441244]
+
+[[people]]
+id = "p119"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.883342392423, 0.871393906556]
+
+[[people]]
+id = "p120"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.056584440940, 0.266245839737]
+
+[[people]]
+id = "p121"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.415738778154, 0.475824566443]
+
+[[people]]
+id = "p122"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.815597852435, 0.949906881508]
+
+[[people]]
+id = "p123"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.109414119798, 0.197786462279]
+
+[[people]]
+id = "p124"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.386727377627, 0.542380790647]
+
+[[people]]
+id = "p125"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.779186873978, 0.775259311071]
+
+[[people]]
+id = "p126"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.209955935702, 0.798275827081]
+
+[[people]]
+id = "p127"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.374593928566, 0.633282512686]
+
+[[people]]
+id = "p128"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.693296840918, 0.614367059465]
+
+[[people]]
+id = "p129"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.065242436594, 0.521381614270]
+
+[[people]]
+id = "p130"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.344366537199, 0.415459201932]
+
+[[people]]
+id = "p131"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.801730832480, 0.110407396945]
+
+[[people]]
+id = "p132"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.221190751313, 0.919255353193]
+
+[[people]]
+id = "p133"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.638610812911, 0.366304388733]
+
+[[people]]
+id = "p134"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.917452043538, 0.320129824616]
+
+[[people]]
+id = "p135"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.161870640575, 0.464812420755]
+
+[[people]]
+id = "p136"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.521307471675, 0.464688792324]
+
+[[people]]
+id = "p137"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.883811506246, 0.259550132208]
+
+[[people]]
+id = "p138"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.248438156139, 0.463688505098]
+
+[[people]]
+id = "p139"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.472056103068, 0.048888376942]
+
+[[people]]
+id = "p140"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.855150562166, 0.930831690829]
+
+[[people]]
+id = "p141"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.041603480282, 0.897361905435]
+
+[[people]]
+id = "p142"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.388235223971, 0.972497541574]
+
+[[people]]
+id = "p143"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.821550650086, 0.465970815420]
+
+[[people]]
+id = "p144"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.297207691095, 0.794242214636]
+
+[[people]]
+id = "p145"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.419548125554, 0.588179953953]
+
+[[people]]
+id = "p146"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.991686484814, 0.558786795360]
+
+[[people]]
+id = "p147"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.037621857263, 0.637311422132]
+
+[[people]]
+id = "p148"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.409946495361, 0.534361292917]
+
+[[people]]
+id = "p149"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.893746826075, 0.308995047988]
+
+[[people]]
+id = "p150"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.097307327576, 0.733933780685]
+
+[[people]]
+id = "p151"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.569903330785, 0.929400049754]
+
+[[people]]
+id = "p152"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.878255842423, 0.118200866842]
+
+[[people]]
+id = "p153"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.127342899127, 0.118342185151]
+
+[[people]]
+id = "p154"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.405875729320, 0.785760720902]
+
+[[people]]
+id = "p155"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.671693139326, 0.986420211745]
+
+[[people]]
+id = "p156"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.332023806937, 0.422909774201]
+
+[[people]]
+id = "p157"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.509140222982, 0.700692993826]
+
+[[people]]
+id = "p158"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.756788299815, 0.751474965423]
+
+[[people]]
+id = "p159"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.180239033007, 0.332258524011]
+
+[[people]]
+id = "p160"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.439085754417, 0.138021674905]
+
+[[people]]
+id = "p161"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.787777301893, 0.993205443601]
+
+[[people]]
+id = "p162"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.027785353801, 0.938264884951]
+
+[[people]]
+id = "p163"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.356470264003, 0.172884023857]
+
+[[people]]
+id = "p164"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.815860388764, 0.488124958679]
+
+[[people]]
+id = "p165"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.024891394189, 0.425074210996]
+
+[[people]]
+id = "p166"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.558141222287, 0.992676438498]
+
+[[people]]
+id = "p167"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.743049349427, 0.843888517463]
+
+[[people]]
+id = "p168"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.027182287017, 0.012494719846]
+
+[[people]]
+id = "p169"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.483677618401, 0.665206488659]
+
+[[people]]
+id = "p170"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.721590738091, 0.331380838479]
+
+[[people]]
+id = "p171"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.239769289659, 0.159747281333]
+
+[[people]]
+id = "p172"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.666007496872, 0.405498852393]
+
+[[people]]
+id = "p173"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.868536933757, 0.518254394852]
+
+[[people]]
+id = "p174"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.097376416908, 0.577324362672]
+
+[[people]]
+id = "p175"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.474412487748, 0.417671790225]
+
+[[people]]
+id = "p176"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.815324949871, 0.052699776081]
+
+[[people]]
+id = "p177"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.320514320353, 0.912430749677]
+
+[[people]]
+id = "p178"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.407341012906, 0.058742716640]
+
+[[people]]
+id = "p179"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.857876639589, 0.158443836948]
+
+[[people]]
+id = "p180"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.233612448183, 0.799760992742]
+
+[[people]]
+id = "p181"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.648475605809, 0.965234762563]
+
+[[people]]
+id = "p182"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.943903752484, 0.528749490654]
+
+[[people]]
+id = "p183"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.012233464229, 0.452937254017]
+
+[[people]]
+id = "p184"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.500496829939, 0.261759097255]
+
+[[people]]
+id = "p185"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.677783136771, 0.733558119207]
+
+[[people]]
+id = "p186"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.019590213827, 0.106330350968]
+
+[[people]]
+id = "p187"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.367605641835, 0.230507680735]
+
+[[people]]
+id = "p188"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.776010862742, 0.111473477221]
+
+[[people]]
+id = "p189"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.033377262501, 0.937105832448]
+
+[[people]]
+id = "p190"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.364938488924, 0.397620526773]
+
+[[people]]
+id = "p191"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.900825781348, 0.449682458022]
+
+[[people]]
+id = "p192"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.078864682520, 0.168581954969]
+
+[[people]]
+id = "p193"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.547878147226, 0.289890744674]
+
+[[people]]
+id = "p194"
+group = "people"
+preference = ["C", "A", "B"]
+position = [0.687661205055, 0.391337130134]
+
+[[people]]
+id = "p195"
+group = "people"
+preference = ["A", "C", "B"]
+position = [0.262585492173, 0.726816693730]
+
+[[people]]
+id = "p196"
+group = "people"
+preference = ["B", "A", "C"]
+position = [0.519121396158, 0.940973962155]
+
+[[people]]
+id = "p197"
+group = "people"
+preference = ["C", "B", "A"]
+position = [0.757756269865, 0.669188179605]
+
+[[people]]
+id = "p198"
+group = "people"
+preference = ["A", "B", "C"]
+position = [0.017919169141, 0.309102536851]
+
+[[people]]
+id = "p199"
+group = "people"
+preference = ["B", "C", "A"]
+position = [0.373350078045, 0.430564999227]
