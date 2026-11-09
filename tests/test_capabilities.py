@@ -1,10 +1,11 @@
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from test_baseline import example
 
 
-class CapabilityTests(unittest.TestCase):
+class CapabilityTests(VerificationTestCase):
     def test_legacy_scenarios_and_checkpoints_keep_original_permissions(self):
         scenario = make_scenario(example())
         implicit = Simulation(scenario)

@@ -5,13 +5,13 @@ Proposed; inherits 10. [Gates](README.md).
 ## Deliverables
 
 - [ ] Refresh closest full texts; access limits; baseline/extension/claim evidence matrix.
-- [ ] Pilot defaults: 20 seeds/config; estimate variance/compute; separate final seeds.
+- [ ] Keep calibration1000–1029 separate from evaluation2000–2029; freeze before evaluation.
 - [ ] Freeze hypotheses, primary metrics, controls/grid, seeds, limits, failures/
-  censoring, analysis, versions. Proposed final 100 seeds/comparison; revise
-  from pilot precision/compute before freezing, with rationale.
+  censoring, analysis, versions. At least30 independent held-out seeds/cell;
+  extend only by predeclared precision/budget rules.
 - [ ] Isolated + integrated/leave-one-out runs; matched exogenous draws;
   complete seed rows, costs, failures; no outcome-based seed/target selection.
-- [ ] Proposed uncertainty: bootstrap paired seed-level deltas, 2,000 resamples,
+- [ ] Proposed uncertainty: bootstrap paired seed-level deltas, 10,000 resamples,
   95% intervals; state instability; secondary comparisons exploratory.
 - [ ] Sensitivity: size, graph/radius, policy, information, intervention strength;
   budgeted matrix. Initial/current ideals; detector drift/adaptation false alarms;
@@ -31,5 +31,7 @@ Null results valid; no unsupported novelty/real-election inference.
 
 ## Progress
 
-| Date | Work/status | Evidence | Prior integration | Remaining |
-| --- | --- | --- | --- | --- |
+Formal studies pending; estimator five-seed pilot is exploratory evidence only.
+All outcome cells N>=100. Certified claims require a composition proof;
+label exploratory finite-horizon runs uncertified and retain cycle/cutoff results.
+No forced top-five shortlist. [Evaluation contract](heuristic-evaluation.md).

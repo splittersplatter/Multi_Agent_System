@@ -1,12 +1,19 @@
 # Voting policies
 
-Implemented 6 November 2026. One engine: CLI/browser/replay/exports. Plurality;
+Updated 9 November 2026. One engine: CLI/browser/replay/exports. Plurality;
 ranked ballots retain global `k`; party order breaks election ties. These are
 explicit source-informed variants, not claims of exact paper reproduction.
 New permission-scoped epistemic policies and their distinct world-count limit:
 [epistemic guide](epistemic-voting.md), including bounded-signal variants.
 Certified sequential cases:
 [convergence foundation](convergence-foundations.md).
+Comparison `stability_assessment` explicitly remains uncertified; it records recent
+contact-arc changes and flips after quiet windows. No quiet-window auto-stop.
+[Future-contact proof routes](dynamic-network-stability.md).
+
+Population contract: normal runs N>=100. `population-scenario.toml` remains a
+large sensor-enabled workload; undersized legacy `heuristics.toml` is verification
+only. Startup policy selection does not grant sensing or prove convergence.
 
 ## Start
 
@@ -23,8 +30,8 @@ restart after source changes. Use submitted-vote colors to observe switching.
 CLI preselection:
 
 ```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/heuristics.toml --port 8008 --voting top_k --voting-parameters '{"top_k":2}'
-PYTHONPATH=src python3 -m multi_agent_election.cli run examples/heuristics.toml --voting local_dominance --voting-parameters '{"uncertainty_radius":2}' --checkpoint /tmp/eclipse-heuristic-checkpoint.json
+PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/population-scenario.toml --port 8008 --voting top_k --voting-parameters '{"top_k":2}'
+PYTHONPATH=src python3 -m multi_agent_election.cli run examples/population-scenario.toml --voting local_dominance --voting-parameters '{"uncertainty_radius":2}' --checkpoint outputs/eclipse-heuristic-checkpoint.json
 ```
 
 Checkpoint output must not already exist. Inspector **Agent reports and memory**
@@ -40,6 +47,7 @@ last observed choices. Traces are researcher-visible, not shared between voters.
 | `local_plurality` | Most frequent first choice in delivered reports; ranking breaks ties; no reports -> sincere | Existing report-based conformity control |
 | `sensed_plurality` | Same, using deduplicated trusted neighbor ballots | Existing sensor-based conformity control |
 | `pivotal` | Maintain poll belief; remove own vote; evaluate every replacement; switch only if best achievable winner is strictly preferable | [Baumeister et al. 2020, §2.2](https://ifaamas.org/Proceedings/aamas2020/pdfs/p132.pdf). Plurality best response; simultaneous, mobile-network extension here; veto not implemented |
+| `memory_pivotal` | Estimate support from explicit initial poll and recent unique incoming proximity contacts; switch only if it strictly improves the predicted winner | S9/S12/S13-inspired adaptation; simultaneous, moving, uncertified; requires `k=1` and enabled `majority_estimation` |
 | `expected_utility` | Enumerate multinomial scores of other voters; maximize expected winner utility | [Tsang & Larson 2016, §2.2](https://www.ifaamas.org/Proceedings/aamas2016/pdfs/p368.pdf). Here exact multiway ties included, deterministic tie order; not their pairwise-only approximation |
 | `top_k` | Retain locally most-supported K candidates; renormalize support; maximize summed pairwise pivotal utility gains | [Tsang et al. 2018, §2.3](https://www.ifaamas.org/Proceedings/aamas2018/pdfs/p301.pdf). K is consideration-set size, independent of ballot `k` |
 | `max_m` | Maximize largest pairwise pivotal utility gain, rather than sum | Same source, Max-M |
@@ -50,7 +58,7 @@ last observed choices. Traces are researcher-visible, not shared between voters.
 | `local_dominance` | Switch only to a ballot weakly improving every possible state's winner and strictly improving at least one; prefer undominated dominators in ranking order | [Meir et al. 2014, §4](https://arxiv.org/html/1404.4688v2). Fixed-population L1 set here; original allows other metrics/variable totals |
 | `maximin` | Maximize worst winner utility across possible score states | [Bakhtiari et al., §5.1](https://arxiv.org/abs/1809.10489). Exact score-world decision criterion; NOT full DEL, higher-order knowledge or conditional-equilibrium solver |
 
-All strategic modes use own ranking, previous ballot, authorized trusted ballot
+The original ten strategic modes use own ranking, previous ballot, authorized trusted ballot
 sensors, public population/candidate counts, parameters and actor-round RNG.
 Reports are not silently treated as trusted ballots. No sensor permission => empty
 local sample (uniform smoothed prior), not access to hidden votes. Choosing a policy
@@ -96,13 +104,13 @@ subtracts the action-independent abstention outcome; exhaustive small-state test
 verify identical utility differences. TieR uses exact conditional-binomial
 factorization of the multinomial distribution, with inverse-CDF sampling.
 500-agent browser responsiveness is NOT verified for these policies. Start with
-the nine-person `examples/heuristics.toml`. No resource-limit fallback to another rule.
+the nine-person `examples/population-scenario.toml`. No resource-limit fallback to another rule.
 Poisson truncation and Monte Carlo error are approximation limits, not exact guarantees.
 
 ## Matched experiments
 
 ```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli compare examples/heuristics.toml --seeds 11 22 33 --rounds 30 --window 10 --output /tmp/eclipse-heuristics.json
+PYTHONPATH=src python3 -m multi_agent_election.cli compare examples/population-scenario.toml --seeds 11 22 33 --rounds 30 --window 10 --output outputs/eclipse-heuristics.json
 ```
 
 Default: sincere + sensed-plurality + all ten strategic policies. Optional
@@ -127,27 +135,39 @@ do not establish human realism. No substantive experiments validated yet.
 
 ## Verification record
 
-Latest expanded audit: [verification report](heuristic-verification-report.md).
-Top-2 exact-tie parity at even electorate sizes limits comparisons; unchanged
-rules are not certified as exact reference-paper replications.
+Current suite/evidence: [status](implementation-status-report.md#verification).
+Independent `test_voting_verification.py` checks exact-EU, pivotal, dominance and
+maximin oracles; all13 baseline/strategic policies use actual verification HTTP
+startup, CLI-equivalent frames, CSV and checkpoint replay.
 
-- Full suite: 130 pass; `python3 -S`: 127 pass + 3 optional-image skips.
-- [Tests](../tests/test_voting.py): labelled-ballot EU oracle; exhaustive small-state
-  pivotal/multiway ties; Top-K vs Max-M; dominance vs maximin; Poisson sums;
-  sampler frequencies; limits/invalid parameters; hidden-state isolation; duplicate
-  sensors; unchanged movement streams; every policy replay/resume/rewind; HTTP
-  configuration atomicity/checkpoint; failed comparison runs retained.
-- Live browser: Top-K, TieR and fresh maximin session; invalid samples rejected at revision 0;
-  valid choice, submitted-vote colors, decision inspector, step/edit startup locks observed.
-- [Smoke artifact](../outputs/heuristics-smoke-20261106/comparison-final.json): nine people,
-  12 policies x seeds 11/22/33 x 30 rounds; 36 completed, zero failures; 34 observed
-  stable windows, two horizon cutoffs. Native information. Current manifest matches.
-  This is plumbing evidence, not a policy ranking.
-- [Matched-information smoke](../outputs/heuristics-smoke-20261106/common-information-final.json):
-  ten strategic policies, seed 7, five rounds, shared initial-poll information;
-  ten completed, zero failures. Earlier smoke files retained as pre-final history.
-- 500-person moving scenario, seed 2026, default parameters: one construction +
-  first engine round per policy, seconds: pivotal .046; exact EU 1.211; Top-K .051;
-  Max-M .254; TieU .243; TieH .561; TieR 3.252; Poisson .448; dominance .055;
-  maximin .056. Single shared-machine run; excludes HTTP/browser/rendering;
-  later rounds/cache state differ. No latency guarantee or full-horizon validation.
+Important retained limits: Top-2 exact-tie parity (test499/500/501), different
+native information across policies, inactive report-only controls without messages,
+finite-sample/truncation error, numerical objective ties. Match observations and
+utility before attributing outcome differences to a response rule.
+
+[Historical verification/results](history/heuristic-verification.md) retain the
+original source-stamped findings. No best heuristic or general convergence follows
+from those runs. `memory_pivotal` is exploratory and distinct from `pivotal`.
+
+## Memory-pivotal
+
+```bash
+PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/recent-majority.toml --port 8000 --voting memory_pivotal
+```
+
+Requires explicit `[majority_estimation]` and k=1. After movement, each person
+caches previous-round first choices from incoming proximity neighbors. It blends
+its unique recent contacts with the latest poll, interprets shares as expected
+other-voter support `(N-1)p`, and predicts winners after each possible vote.
+Election ties use party order. It switches to its favorite achievable winner
+only for a strict improvement over retaining its vote; all voters act simultaneously.
+Exact integer comparisons avoid rounding fabricated electorates. No hidden current
+counts/preferences, reports or persistent/campaign edges enter this decision.
+Inspector voting memory exposes predictions, chosen ballot, leader set, sample size
+and timestamps. Poll/count estimates are beliefs, not factual census values.
+
+For mixed-policy comparisons: `compare ... --policies sincere memory_pivotal`.
+The memory policy takes no voting-specific parameters: set memory length and poll
+weight in `[majority_estimation]`. In the example, `poll_refresh_rounds=10`
+publishes true completed tallies every ten rounds and linearly reduces poll
+weight from 1.0 to 0.1 between publications. It is uncertified; a quiet window is not proof.

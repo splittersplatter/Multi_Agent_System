@@ -5,6 +5,8 @@ References: survey S22, S30.
 
 ## Deliverables
 
+Checked = implemented; unchecked = full acceptance pending, including implemented subsets below.
+
 - [x] Separate true leader alignment, public behavior signal, perceived alignment,
   evaluator utility. Isolated: preselected leaders; combined: fixed nominees.
 - [x] Bounded vote-seeking heuristic from permitted public history; finite local
@@ -27,7 +29,9 @@ Cumulative run: all seven available; retain isolated controls/UI/plots/checkpoin
 
 ## Progress
 
-| Date | Work/status | Evidence | Prior integration | Remaining |
-| --- | --- | --- | --- | --- |
-| 8 Nov 2026 | Bounded leader feedback, signals, perceptions and controls | [Example](../../examples/leader-adaptation.toml), [contract](../simulator-guide.md#hidden-leader-adaptation), [tests](../../tests/test_leaders.py): public-score-only feedback, signal RNG, budgets, no-signal noninterference, checkpoint/CSV, fixed controls and honest-adaptation detector calibration | Prior nomination, own ideals, scoped attacks, detector and ordinal APIs retained; attack targets prior perception, not hidden truth | Formal evaluation, confidence intervals, stage/shared gates and live browser verification pending; uncertified dynamics |
-| 8 Nov 2026 | Leader integration regression | Full suite 304 pass; `python3 -S`: 300 pass + 4 optional-image skips; proof checker, playback harness and `git diff --check` pass; checkpoint v21 verifies leader history | All prior checkpoints/certified cases retained; all-enabled HTTP, replay/rewind and GIF tests pass | Formal studies, all shared gates and live browser interaction remain open |
+Consolidated9 November2026; [current verification](../implementation-status-report.md#verification).
+Hidden adaptation, noisy signals, separate perceptions/budgets and matched
+fixed/no-signal controls implemented (`test_leaders.py`). Remaining: broader
+strategies, manual acceptance and certified/statistically evaluated compositions.
+All outcome workloads N>=100; small linked examples are verification fixtures.
+Retain prior-stage APIs/evidence; no broader stage completion or convergence inferred.

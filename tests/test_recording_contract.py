@@ -8,6 +8,7 @@ import sys
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 from unittest.mock import patch
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
@@ -16,7 +17,7 @@ from multi_agent_election.provenance import manifest
 from test_baseline import example
 
 
-class RecordingContractTests(unittest.TestCase):
+class RecordingContractTests(VerificationTestCase):
     def test_run_preflights_aliased_outputs_before_constructing_simulation(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder); (root / "sub").mkdir()
@@ -82,7 +83,7 @@ class RecordingContractTests(unittest.TestCase):
     def test_record_modes_and_resume_preserve_integrated_history(self):
         env = {**os.environ, "PYTHONPATH": "src:examples", "PYTHONDONTWRITEBYTECODE": "1"}
         def cli(*args):
-            result = subprocess.run([sys.executable, "-m", "multi_agent_election.cli", *args],
+            result = subprocess.run([sys.executable, "scripts/verify_fixture.py", *args],
                                     env=env, check=True, capture_output=True, text=True)
             return json.loads(result.stdout)
         with tempfile.TemporaryDirectory() as folder:

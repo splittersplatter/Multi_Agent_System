@@ -1,11 +1,12 @@
 import copy
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from test_baseline import example
 
 
-class TrustedBallotSensorTests(unittest.TestCase):
+class TrustedBallotSensorTests(VerificationTestCase):
     def test_sensor_is_opt_in_and_never_falls_back_to_reports(self):
         data = example()
         data["network"] = {"persistent_edges": [["1", "4"]]}

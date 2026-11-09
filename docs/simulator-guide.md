@@ -1,30 +1,36 @@
-# Simulator guide: Stage 01
+# Simulator reference
 
 Status: implementation/verification in progress; see [checkpoint](plans/stage-01-political-simulator.md).
 Research simulation only; no claim of real election prediction.
 
 ## Setup and commands
 
-Architecture, verified scope and engineering limits:
-[code audit](code-audit-and-refinement-report.md). Existing experiment imports and
-commands remain stable after the module refinement.
+Architecture and limits: [ownership](code-audit-and-refinement-report.md).
+Current runnable quickstart: [root README](../README.md#run).
 
 Python >=3.11; core and browser use standard library. PNG/GIF exports require
 `python3 -m pip install -r requirements-visualization.txt` (Pillow 12.1.1).
 From project root:
 
 ```bash
+mkdir -p outputs
 PYTHONPATH=src python3 -m unittest discover -s tests -v
-PYTHONPATH=src python3 -m multi_agent_election.cli run examples/network.toml
-PYTHONPATH=src python3 -m multi_agent_election.cli run examples/network.toml --summary
-PYTHONPATH=src python3 -m multi_agent_election.cli run examples/network.toml --sample 2 --jsonl /tmp/eclipse-trace.jsonl
-PYTHONPATH=src python3 -m multi_agent_election.cli run examples/network.toml --checkpoint /tmp/eclipse-run.json
-PYTHONPATH=src python3 -m multi_agent_election.cli resume /tmp/eclipse-run.json --rounds 2
-PYTHONPATH=src python3 -m multi_agent_election.cli export /tmp/eclipse-run.json --csv /tmp/eclipse.csv --plot-svg /tmp/eclipse.svg --network-png /tmp/network.png --gif /tmp/eclipse.gif
-PYTHONPATH=src python3 -m multi_agent_election.cli batch examples/network.toml --seeds 1 2 3 --target A --csv /tmp/paired.csv --plot-svg /tmp/paired.svg
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/network.toml --port 8000
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli run examples/custom.toml
+PYTHONPATH=src python3 -m multi_agent_election.cli run examples/recent-majority.toml --summary
+PYTHONPATH=src python3 -m multi_agent_election.cli run examples/recent-majority.toml --sample 10 --jsonl outputs/eclipse-trace.jsonl
+PYTHONPATH=src python3 -m multi_agent_election.cli run examples/recent-majority.toml --checkpoint outputs/eclipse-run.json
+PYTHONPATH=src python3 -m multi_agent_election.cli resume outputs/eclipse-run.json --rounds 2
+PYTHONPATH=src python3 -m multi_agent_election.cli export outputs/eclipse-run.json --csv outputs/eclipse.csv --plot-svg outputs/eclipse.svg --network-png outputs/network.png --gif outputs/eclipse.gif
+PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/recent-majority.toml --port 8000
 ```
+
+Open `http://127.0.0.1:8000`. Demo: **200 distinct moving voters**, passive
+majority estimates, sincere ballots. Every normal simulation requires **N>=100**;
+API/CLI/browser/resume/experiment runs enforce it. No automatic electorate padding.
+Existing smaller examples below are structural/regression fixtures, not outcome
+workloads. Their old CLI commands require a deliberately constructed >=100-person
+scenario instead. Tiny unit/formal checks use explicit verification scope only;
+`scripts/verify_fixture.py` labels CLI regression output `verification_only` and
+does not serve a browser. See [population contract](plans/minimum-population.md).
 
 Output paths must not exist, including dangling symlinks; parents must exist and
 multiple outputs must resolve to distinct paths. Preflight catches common
@@ -59,12 +65,38 @@ header IDs are percent-encoded. Intervention traces identify `scheduled`,
 committed. Paired plots mark scheduled treatment events only. Markers show
 timing, not causal attribution.
 
+## Command prerequisites
+
+Use `PYTHONPATH=src python3 -m multi_agent_election.cli COMMAND --help` for exact flags.
+All normal outcome commands require N>=100; fixtures are not production presets.
+Only the quickstart demo is promised as a ready-to-run200-person estimator scenario.
+
+| Command | Required scenario / purpose |
+| --- | --- |
+| `run`, `visual`, `resume`, `export` | General shared engine; checkpoint/export needs full recorded state |
+| `batch` | Scheduled intervention/control; `--seeds`, `--target` |
+| `compare` | Compatible voter policies, observations and computation limits; seeds/window/horizon |
+| `compare-networks` | Built-in motion, no graph plugins; optional disjoint calibration seeds |
+| `coalition-ablations` | Configured coalition/capabilities; six arms |
+| `compare-campaign` | Budgeted campaign controller; none/random/target heuristic |
+| `compare-signals` | Signal controller, permitted groups and declared distortion bound; exact epistemic arm currently unscalable at N>=100/m>=2 |
+| `compare-nominations` | Spatial nomination; endogenous/same-fixed/random nominees |
+| `compare-alignment` | Spatial ideals, configured attack and natural drift |
+| `evaluate-detector` | Matching detector/attack targets, disjoint calibration/evaluation seeds |
+| `compare-leaders` | Spatial leaders; fixed/adaptive × signal/no-signal |
+| `combined-ablation` | All seven mechanisms, positive budgets, dynamic motion, endogenous nomination;17 arms |
+| `estimate-majority` | Explicit poll/estimator or built-in200-person pilot |
+| `knowledge` | Finite formal JSON analysis, not an outcome simulation |
+| `campaign-exhaustive` | <=8-voter exact oracle; explicit verification helper only |
+
+
 ## Scenario
 
-See [baseline](../examples/baseline.toml) and [network](../examples/network.toml).
+Run [200-person majority demo](../examples/recent-majority.toml); inspect
+[baseline](../examples/baseline.toml) and [network](../examples/network.toml) as tiny fixtures.
 The [integrated example](../examples/integrated.toml) combines all four policy
-phases, directed/proximity/campaign links, a private channel, sensors and a scheduled edit; run it
-with `PYTHONPATH=src:examples`.
+phases, directed/proximity/campaign links, a private channel, sensors and a scheduled edit.
+It is verification-only; its local plugins require `PYTHONPATH=src:examples`.
 `parties` defines tie order; `k` is one global ballot length. Each person has a
 unique ID, group, full strict private `preference` and optional `[x,y]` position
 and `overrides`. Bounds: positions in `[0,1]^2`; `1 <= k <= number of parties`.
@@ -74,6 +106,12 @@ Group fields: `voting` (baseline, [strategic heuristic](voting-heuristics.md), o
 (`stationary`, `random_walk`, or plugin), `max_step` (0..1), `communication`
 (`none`, `truthful`, `target_report`, or plugin), `graph` (`none` or plugin), `parameters` (table).
 Person overrides replace individual fields; `{}` restores group defaults.
+Normal-step example: `max_step=0.05` with
+`parameters={movement={distribution="normal",mean_step=0.025,std_step=0.00625}}`.
+Length is normal conditioned on `[0,max_step]`, direction uniform; reflective bounds.
+Mean is configured length, not previous displacement; spread defaults to mean/4.
+Missing movement parameters preserve legacy uniform lengths.
+[Motion and future-contact stability](dynamic-network-stability.md).
 `local_plurality` chooses the most-reported first choice, breaking ties by own
 preference; no reports means sincere voting.
 
@@ -108,7 +146,7 @@ in `report_provenance`; plugin observations expose the same metadata. In the cur
 protocol a report generated in round t refers to completed round t-1 and is
 delivered in t+1. Truthful reports copy the ballot; coalition reports can be false.
 The reference timestamp does not establish that the payload was a real ballot.
-Checkpoint version 21 replays prior compatible histories with explicit environment review
+Checkpoint21 (estimator disabled),22 (fixed poll) or23 (periodic poll) replays supported histories with environment review
 when runtime/source hashes changed; tampered histories are rejected.
 With `modify_private_channels = true`, a graph plugin may join any configured
 channel; disable it when membership must remain externally controlled.
@@ -125,9 +163,7 @@ at the next edited or scheduled round; persistent, campaign and private layers
 remain separate. The selected-agent browser overlay shows the receiver radius;
 it does not imply symmetric links. [Example](../examples/group-radius.toml):
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/group-radius.toml --port 8008
-```
+For a browser experiment, apply those radius settings to a scenario with >=100 people.
 
 Persistent and campaign edges remain until explicitly removed; proximity links
 are recomputed by default. Set `[network] proximity_mode = "frozen"` to retain
@@ -147,15 +183,12 @@ Edge lists contain outgoing recipient IDs; channel lists contain existing names.
 Ballot overrides last one round; other edits persist. Invalid changes fail.
 The [campaign-layer example](../examples/campaign-layer.toml) demonstrates
 proximity loss and scheduled removal. These are external researcher controls:
-campaign budgets, eligible-edge checks across layers and strategic controllers
-remain Stage 05; graph plugins cannot change the campaign layer.
+budgeted campaign controllers are separate below; graph plugins cannot change the campaign layer.
 
 Compare dynamic and frozen proximity using identical initial settings and keyed
 movement draws (the input mode is ignored in this comparison):
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli compare-networks examples/group-radius.toml --seeds 11 22 33 --output /tmp/network-comparison.json
-```
+Command reference: `compare-networks --help`. Use a deliberately configured >=100-person scenario.
 
 Requires built-in stationary/random-walk movement and no graph-policy plugins;
 checks equal per-round positions. Each pair records failures, full metric series,
@@ -168,9 +201,7 @@ cannot isolate a turnover effect; other graph layers or interventions can confou
 Add a one-to-one, unique and disjoint calibration seed for each evaluation seed
 to include an explicit static exposure control:
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli compare-networks examples/group-radius.toml --seeds 11 22 --calibration-seeds 101 102 --output /tmp/calibrated-networks.json
-```
+Command reference: `compare-networks --help`. Use a deliberately configured >=100-person scenario.
 
 For each receiver, count incoming calibration arcs over rounds 1..T. Choose a
 static in-degree nearest to count/T (half ties round down), then choose the most
@@ -200,7 +231,7 @@ policy receives an automatic sensor fallback. `sensed_plurality` counts each
 observed sender once across overlapping channels, chooses the most common first
 choice, and breaks ties by own preference; no sensor readings means sincere.
 The [sensor example](../examples/sensors.toml) contrasts this with report-only
-voting. Deceptive reports remain unimplemented, not trusted observations.
+voting. Coalition reports below can be deceptive; they are not trusted observations.
 
 ## Local strategies
 
@@ -228,9 +259,7 @@ Configure fixed `[[coalitions]]` entries with unique `id`, disjoint known
 `members`, a known `target`, `report_budget_per_round` and `report_budget_total`
 (nonnegative integers). See [coalition-report.toml](../examples/coalition-report.toml):
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/coalition-report.toml --port 8008
-```
+Schema fixture only; use a deliberate >=100-person scenario for browser/outcome runs.
 
 Each false report sent to an authorized `(recipient, channel)` costs one unit,
 including separate channels to the same recipient. Truthful reports cost zero.
@@ -248,7 +277,7 @@ reports the preceding ballot. It requires coalition membership.
 Recipients receive ordinary reports without truth labels; trusted sensors remain
 independent. Researcher frames/inspector show `deceptive_reports` and cumulative
 `coalition_report_spend`; CSV contains per-round false counts and cumulative spend.
-Spend and pending messages replay/rewind with checkpoint v14. Zero budget has the
+Spend and pending messages replay/rewind with checkpoints. Zero budget has the
 same ballot/report dynamics as truthful broadcasting. This does not implement
 strategic optimality or convergence. Certified
 convergence scenarios reject coalitions; these adaptive multi-agent cases remain
@@ -260,9 +289,7 @@ Add `sight_targets` (nonempty unique person IDs), `sight_budget_per_round`, and
 `sight_budget_total` to a coalition; grant `observe_target_preferences = true`
 only to its members. [Example](../examples/coalition-sight.toml):
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/coalition-sight.toml --port 8008
-```
+Schema fixture only; use a deliberate >=100-person scenario for browser/outcome runs.
 
 After boundary edits and graph actions, the engine automatically reads targets'
 current private rankings, one unit per `(observer,target)` reading. Coalition
@@ -286,7 +313,7 @@ mixed populations.
 Researcher frames/inspector and CSV record readings and cumulative sight spend;
 only the researcher view exposes all such events. Sight and report budgets are
 independent. Target selection is currently a fixed sorted schedule, not an adaptive
-selection policy; full coalition ablations remain unimplemented.
+selection policy; the six-arm ablation runner below is implemented.
 
 ### Budgeted private-report interception
 
@@ -294,9 +321,7 @@ Add `eavesdrop_channels` (nonempty configured private-channel names),
 `eavesdrop_budget_per_round`, and `eavesdrop_budget_total` to a coalition; grant
 `intercept_private_reports = true` only to its members. Example:
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/coalition-eavesdrop.toml --port 8008
-```
+Schema fixture only; use a deliberate >=100-person scenario for browser/outcome runs.
 
 At each delivery boundary, authorized observers intercept already-sent private
 reports on those channels, one budget unit per `(observer, packet)`. Observers
@@ -328,10 +353,7 @@ that a report is a truthful preference. Highest count wins, ties use own ranking
 and no evidence gives a sincere ballot. Both permissions and configured target
 lists are required. It is a bounded simulation heuristic, not an equilibrium rule.
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/coalition-combined.toml --port 8008
-PYTHONPATH=src python3 -m multi_agent_election.cli coalition-ablations examples/coalition-combined.toml --seeds 11 22 33 --output /tmp/coalition-ablations.json
-```
+Command reference: `coalition-ablations --help`. Use a deliberately configured >=100-person scenario.
 
 The six arms are `none`, `sight_only`, `deception_only`, `eavesdrop_only`,
 `coordination_only`, and `all`. Disabled sight/deception/interception use zero
@@ -357,9 +379,7 @@ Configure `[campaign_controller]` with `target`, `policy` (`none`, `random`, or
 `target_heuristic`), `lifetime_budget`, `per_round_budget`, and optional
 `max_candidates` (default 100,000; maximum 1,000,000). Example:
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/campaign-controller.toml --port 8008
-```
+Schema fixture only; use a deliberate >=100-person scenario for browser/outcome runs.
 
 The controller explicitly observes every previous committed first-choice ballot
 and the current public graph after movement and graph actions. It does not receive
@@ -377,7 +397,7 @@ If the exact eligible set exceeds `max_candidates`, the round fails atomically;
 when no selection is possible because of policy or budget, eligibility is `null`
 rather than measured. Frames, CSV and researcher inspector record eligibility,
 proposals, acceptances and cumulative spend; current generated proposals are
-always eligible, so there are no rejected proposals. Checkpoint v15 preserves
+always eligible, so there are no rejected proposals. Checkpoints preserve
 the purchase ledger. Voting agents do not automatically gain the controller's
 global view. Certified scenarios reject controllers; these dynamics are uncertified.
 The existing coalition-ablation and network-control commands reject controller
@@ -385,9 +405,7 @@ scenarios until their combined-control designs are specified.
 
 Compare policies with identical configured budgets and paired movement seeds:
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli compare-campaign examples/campaign-controller.toml --seeds 11 22 33 --output /tmp/campaign-comparison.json
-```
+Command reference: `compare-campaign --help`. Use a deliberately configured >=100-person scenario.
 
 The no-addition control, random and target heuristic retain complete researcher
 frames, metrics, source digests, failures and per-round target win/share/margin
@@ -400,12 +418,14 @@ spend and marks rounds with accepted additions.
 For an exact **evaluator-only** one-round bound:
 
 ```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli campaign-exhaustive examples/campaign-exhaustive.toml --max-combinations 10000 --output /tmp/campaign-upper-bound.json
+# Exact tiny verification oracle only; not a normal outcome simulation.
+PYTHONPATH=src python3 scripts/verify_fixture.py campaign-exhaustive examples/campaign-exhaustive.toml --max-combinations 10000
 ```
 
 This enumerates every subset of initially eligible edges up to both budgets and
 returns separate maximum target votes and target-win possibility with witnesses.
-It requires exactly one round, at most eight voters, stationary movement, no
+This is **verification-only**: its <=8-voter cap is incompatible with the normal
+N>=100 minimum. It requires exactly one round, at most eight voters, stationary movement, no
 interventions, graph actions or plugins. Before simulation it checks the exact
 combination count against `--max-combinations` (maximum 100,000); no partial
 optimum is returned on failure. The evaluator preinstalls each chosen edge set;
@@ -421,9 +441,7 @@ Configure `[signal_controller]` with `target`, `policy` (`truthful`,
 `per_broadcast_budget` and `lifetime_budget`. Grant `observe_public_signal = true`
 to recipients. [Example](../examples/public-signal.toml):
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/public-signal.toml --port 8008
-```
+Schema fixture only; use a deliberate >=100-person scenario for browser/outcome runs.
 
 After graph actions and before communication/voting, a broadcast uses the last
 completed true first-choice counts. The report is a nonnegative integer vector
@@ -446,14 +464,12 @@ epistemic policies ignore this signal; [bounded-signal variants](epistemic-votin
 use only compatible worlds. The researcher frame/CSV and browser show both
 the report and its corresponding source truth, timestamps and spending; these
 truth values are not agent observations. A missing broadcast cost is `null`, not
-zero. Checkpoint v17 preserves the signal, its source and budget. Certified
+zero. Checkpoints preserve the signal, its source and budget. Certified
 convergence scenarios reject signal controllers.
 
 For matched descriptive controls:
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli compare-signals examples/epistemic-public-signal.toml --seeds 11 22 33 --groups signal_voter --signal-distortion-bound 1 --output /tmp/eclipse-signals.json
-```
+Command reference: `compare-signals --help`. Use a deliberately configured >=100-person scenario.
 
 Nine arms: selected groups use sincere, trusting, or known-bound dominant voting;
 each receives truthful, bounded-random, or target-biased signals. Each response
@@ -471,10 +487,7 @@ comparison tool, not proof of causal identification, convergence or a research r
 
 ### Spatial nomination
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/nomination.toml --port 8008
-PYTHONPATH=src python3 -m multi_agent_election.cli compare-nominations examples/nomination.toml --seeds 11 22 33 --output /tmp/eclipse-nominations.json
-```
+Command reference: `compare-nominations --help`. Use a deliberately configured >=100-person scenario.
 
 Nomination scenarios omit `parties` and per-person `preference`; each person
 provides a nonempty `ideal` vector in `[0,1]^d` and an independent physical
@@ -502,8 +515,8 @@ agents receive no other voters' ideals. Without alignment dynamics, manual ordin
 preference edits remain possible and logged; they do not modify the initial ideal
 or leader position.
 CSV/metrics include mean winner-to-initial-ideal and nearest-nominee distances;
-these are synthetic geometric measures, not validated welfare. Checkpoint v18
-stores the nomination configuration and re-derives its results on replay.
+these are synthetic geometric measures, not validated welfare. Checkpoints
+store the nomination configuration and re-derives its results on replay.
 
 `compare-nominations` pairs endogenous with identical fixed nominees and an
 equal-size random set. It retains configurations, nomination records, frames,
@@ -517,10 +530,7 @@ stochastic or convergence claim follows from its output.
 
 ### Bounded ideal shifts
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/alignment-attack.toml --port 8008
-PYTHONPATH=src python3 -m multi_agent_election.cli compare-alignment examples/alignment-attack.toml --seeds 11 22 33 --output /tmp/eclipse-alignment.json
-```
+Command reference: `compare-alignment --help`. Use a deliberately configured >=100-person scenario.
 
 Add `[alignment]` only to a spatial nomination scenario. Set `drift_max_step`;
 `[alignment.attack]` requires a nominated `target`, explicit `targets` person
@@ -548,7 +558,7 @@ and physical-position edits remain governed by existing permissions. Agents get
 their own resulting ranking, not other people's ideal vectors; scoped coalition
 preference sight remains distinct from ideal sight. Researcher-only frames and
 issue view show ideal trajectories, before/after drift and attack, and spend;
-checkpoints v19 verify these records on replay. CSV includes attack spend/cost,
+checkpoints verify these records on replay. CSV includes attack spend/cost,
 drift distance, targeted count and distances to current as well as initial
 voter ideals. No current-drift case is convergence-certified.
 
@@ -562,10 +572,7 @@ results are descriptive, not a causal or convergence guarantee.
 
 ### Passive aggregate detector
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/detector.toml --port 8008
-PYTHONPATH=src python3 -m multi_agent_election.cli evaluate-detector examples/detector.toml --calibration-seeds 100 101 102 --evaluation-seeds 200 201 202 --false-alarm-rate 0.1 --output /tmp/eclipse-detector.json
-```
+Command reference: `evaluate-detector --help`. Use a deliberately configured >=100-person scenario.
 
 Optional `[detector]` specifies a known `target` party and `threshold` in `[0,1]`.
 At round `t>0`, statistic = `(target_votes_t - target_votes_(t-1))/N`; alert
@@ -575,7 +582,7 @@ endpoint `t3` is the earliest round completing three target wins. The detector
 reads only current/prior aggregate counts and its own memory; it cannot see
 attack labels, ideals, messages or budgets and cannot influence the simulation.
 Alerts are anomalies, not proof of attack. Red triangles mark alert rounds;
-CSV and checkpoint v20 include statistics, alert and streak state. Rewind/replay
+CSV and checkpoints include statistics, alert and streak state. Rewind/replay
 restores the exact state.
 
 The evaluation command requires matching detector/attack targets, at least one
@@ -602,11 +609,7 @@ adequate independent seeds and uncertainty estimates.
 
 ### Hidden leader adaptation
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/leader-adaptation.toml --port 8008
-PYTHONPATH=src python3 -m multi_agent_election.cli compare-leaders examples/leader-adaptation.toml --seeds 11 22 33 --output /tmp/eclipse-leaders.json
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/all-enabled.toml --port 8008
-```
+Command reference: `compare-leaders --help`. Use a deliberately configured >=100-person scenario.
 
 Spatial nomination scenarios may add `[leaders]`: `policy = "fixed" | "feedback"`,
 `adaptors` (nominated person IDs), `per_round_step`, per-adaptor `lifetime_budget`,
@@ -637,7 +640,7 @@ attacks are enabled, the directed controller aims at the **previous public
 perception** of its target, not the target's hidden new position. Ordinal
 preference edits are rejected in this derived-ranking mode; ballot edits remain.
 
-Frames/checkpoint v21 retain true positions, public signals, perceptions,
+Frames/checkpoints retain true positions, public signals, perceptions,
 feedback memory and budgets; CSV contains coordinates, perception errors and
 synthetic true/perceived winner distances. The researcher issue view draws
 diamonds for hidden true positions, squares for perceptions and their trajectories.
@@ -651,9 +654,7 @@ validated causal study; later full-system gates remain open.
 
 ### Combined mechanism matrix
 
-```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli combined-ablation examples/all-enabled.toml --seeds 11 22 33 --target alice --output /tmp/eclipse-combined.json
-```
+Command reference: `combined-ablation --help`. Use a deliberately configured >=100-person scenario.
 
 Versioned output contains 17 arms per seed: all enabled, all disabled, seven
 isolated mechanisms, seven leave-one-out arms, and a separate detector-off arm.
@@ -752,4 +753,4 @@ and downloads stay disabled until the committed round arrives. A disconnect
 stops playback; already committed server-side rounds are not rolled back.
 
 Progress and measured limitations: [Stage 01](plans/stage-01-political-simulator.md#progress).
-Reproducible scale workloads: [benchmark notes](stage-01-benchmarks.md).
+Historical scale workloads: [benchmark notes](history/benchmarks.md); remeasure current code.

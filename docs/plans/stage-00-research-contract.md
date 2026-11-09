@@ -2,21 +2,12 @@
 
 Status: baseline specification; no model results. Date: 2026-11-05.
 
-## Inventory and compatibility
+## Current scope
 
-- Initial Stage 00 snapshot: roadmap, 12 stage plans, 32-source survey, historical
-  API map, proposal/reference PDFs, metadata-only `pyproject.toml`, `agent.md`;
-  simulator source, tests, old checkpoints and CLI were absent at that time.
-- Current workspace: Stage 01 source, tests, CLI and examples exist; old
-  implementation and checkpoint samples remain absent. See [current state](../README.md#current-state).
-  Historical API names are design references; no legacy compatibility can be
-  validated without an actual old checkpoint or implementation. Do not fabricate one.
-- Stage 01 baseline exists and remains in verification; Stage 02 adds finite
-  epistemic semantics.
-- Confirmed requirements/defaults: [roadmap](../project-roadmap.md),
-  [Stage 01](stage-01-political-simulator.md). Proposed first-choice plurality,
-  TOML/Python plugins and optional browser/rendering dependencies are adopted
-  as implementation defaults, subject to explicit future user changes.
+- Engine, tests, CLI and examples exist; [status](../implementation-status-report.md).
+- Corpus31 reviewed works/36 PDFs. Only supported actual schemas/artifacts establish replay compatibility.
+- Adopted plurality, TOML/Python plugins, stdlib browser and optional Pillow.
+- Normal outcome runs N>=100; the baseline below is a tiny formal/unit oracle only.
 
 ## Hand-worked baseline
 

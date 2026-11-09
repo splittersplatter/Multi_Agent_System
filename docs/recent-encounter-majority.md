@@ -1,6 +1,7 @@
 # Recent-encounter majority estimator
 
-Passive, opt-in plurality belief; **does not change ballots**. No convergence,
+Opt-in plurality belief; the estimator alone does not change ballots. The
+`memory_pivotal` voter can use it to decide ballots. No convergence,
 population-representativeness or calibrated-confidence claim.
 [Maintained plan](plans/recent-encounter-majority.md).
 [Implementation/results report](majority-estimation-report.md).
@@ -13,13 +14,22 @@ Add to an ordinary scenario; counts follow its `parties` order:
 [majority_estimation]
 poll_counts = [40, 35, 25] # supplied initial poll; never silently derived census
 memory_rounds = 10
-poll_weight = 0.5
+poll_refresh_rounds = 10 # optional; periodic completed tallies + linear decay
 poll_round = 0
 ```
 
 Omit table or set `enabled=false` to disable. Window: positive integer; weight:
 finite `[0,1]`; poll: nonnegative integers, positive total, one count/party.
-The poll is immutable. Changing a later public signal does not replace it.
+Without `poll_refresh_rounds`, the poll stays fixed and `poll_weight` (default
+0.5) controls the blend. With `poll_refresh_rounds = 10`, the poll begins at the
+explicit supplied sample; the completed election tally is published after every
+10th round. For decisions in rounds 1–10 the poll weights are 1.0, 0.9, …, 0.1;
+the completed round-10 tally resets the weight to 1.0 for round 11. Subsequent
+cycles repeat. `poll_weight` is used only in fixed-poll mode. With no remembered
+contacts the latest poll is used alone. Public-signal controller reports remain
+separate and do not replace this scheduled truthful tally. Inspector fields
+`poll_weight` and `effective_poll_weight` distinguish scheduled weight from the
+100% poll fallback when no contacts are cached.
 
 From repository root:
 
@@ -27,6 +37,9 @@ From repository root:
 # Interactive network; select a node and inspect majority_estimation.
 PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/recent-majority.toml --port 8000
 # Browser: http://127.0.0.1:8000
+
+# Exploratory strategic voting based on this estimate.
+PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/recent-majority.toml --port 8000 --voting memory_pivotal
 
 # Efficient CLI; frames discarded, estimator state retained.
 PYTHONPATH=src python3 -m multi_agent_election.cli run examples/recent-majority.toml --summary
@@ -39,12 +52,14 @@ PYTHONPATH=src python3 -m multi_agent_election.cli export outputs/recent-majorit
 # Built-in matched pilot, five seeds × three cases × two movement conditions.
 PYTHONPATH=src python3 -m multi_agent_election.cli estimate-majority --pilot --sensitivity --output-dir outputs/majority-pilot-new
 
-# Evaluate an existing configured TOML scenario instead.
+# Evaluate the configured periodic scenario too.
 PYTHONPATH=src python3 -m multi_agent_election.cli estimate-majority examples/recent-majority.toml --seeds 101 102 --output-dir outputs/majority-custom-new
 ```
 
-`outputs` must exist; directories/files are exclusive, never overwritten.
-Initial example is four people; pilot generates 200-person scenarios automatically.
+`outputs` must exist (`mkdir -p outputs`); directories/files are exclusive, never overwritten.
+Browser example: **200 distinct voters**; built-in pilots also use 200.
+All normal simulations require **at least 100** people. Smaller legacy examples
+are verification fixtures, not runnable outcome scenarios; no automatic padding.
 
 ## Semantics/state
 
@@ -60,11 +75,12 @@ Initial example is four people; pilot generates 200-person scenarios automatical
 - Delayed/old records cannot refresh; equal-source conflicting first choices fail.
 - Cache reads do not refresh; committed records are immutable. Voting-policy edits
   preserve cache. Rewind restores state; edits replace the future.
-- Checkpoint22 carries enabled estimator state. Disabled histories retain version21;
+- Checkpoint23 carries periodic polls; checkpoint22 carries fixed-poll estimator
+  state. Disabled histories retain version21;
   older supported histories replay without inventing observations. Source changes
   still require explicit environment-migration approval after review.
 
-For n cached people, `recent_share(c)=count(c)/n`:
+For n cached people, `recent_share(c)=count(c)/n` and w is the current poll weight:
 
 `estimate(c)=w×poll_share(c)+(1−w)×recent_share(c)`.
 
@@ -82,7 +98,8 @@ ordering O(d log d) worst case for unordered d observations (engine contacts alr
 ordered). Full update is not constant time. Dense population memory can be O(N²).
 Full-history/checkpoints duplicate state; `--summary` discards frames, not current cache.
 
-Fixed poll weight can preserve stale bias. Clustering/repeated encounters are not
+The initial sample can be biased; between publications the tally can become stale.
+Clustering/repeated encounters are not
 independent random population samples. Finite memory and movement can oscillate;
 stable beliefs/strategic-voting convergence are not certified.
 
@@ -101,6 +118,10 @@ stable beliefs/strategic-voting convergence are not certified.
 - Poll: initial sample100 without replacement, independent keyed RNG; stationary
   and moving versions share layout, preferences and sampled IDs.
 - Four base arms; optional K5/20 and w.25/.75 extend K10/w.5 one factor at a time.
+  For periodic input, poll-only uses the most recently published tally;
+  current/window-only use contact weight 1, falling back to that poll if empty;
+  window sensitivity uses linear decay; fixed-weight sensitivity uses the latest
+  published tally with the specified fixed weight. Headers record these semantics.
 - Metrics: exact leader-set match, ambiguity, total-variation share error,
   coverage/ages, cache entries, median/p95 population update and engine-round times.
 - Recovery: first correct leader-set match after source round50, delay0 allowed;
@@ -122,4 +143,5 @@ node tests/playback_harness.js
 Tests challenge window boundaries, refresh/expiry, independent randomized oracle,
 ties, stale/conflicting data, hidden-information access, directed/coincident contacts,
 transaction failure, policy changes, replay/tampering, HTTP/CSV and inspector parity.
-Actual live browser rendering must be checked separately from HTTP/JS tests.
+Current suite/evidence: [status](implementation-status-report.md#verification).
+Actual200-node browser rendering must be checked separately from HTTP/JS tests.

@@ -1,9 +1,21 @@
 # Confirmed-convergence research foundation
 
+[Moving-network analysis](dynamic-network-stability.md): quiet ballots are not a
+certificate; existing guarded cases below remain unchanged.
+The [grid occupation-frequency contract](plans/stochastic-stability.md) is a
+separate, unimplemented mathematical model. Its time-average result does not
+establish ballot absorption, F1–F5 membership or convergence of the current normal walk.
+
 Adopted scope: **restricted, explicitly certified cases**, requested 7 November
 2026. The unrestricted simulator remains available and non-guaranteed. F1–F3
 and finite scheduled F1/F3 interventions now use the shared engine.
 [Dossier](heuristic-convergence.md) · [Evaluation plan](plans/heuristic-evaluation.md) · [Metrics](heuristic-evaluation-metrics.md).
+
+9 November: [memory-based voter analysis](memory-voting-convergence.md) refutes
+the original size-unrestricted `memory_pivotal` proposal under simultaneous updates, fresh complete
+proximity and an accurate poll. No contradiction with the different F1–F5 guarded
+policies below. N>=100-only memory-voter convergence remains uncertified; its
+implementation is available for exploratory runs. Foundation runs also require N>=100.
 
 ## 1. Foundation cases
 
@@ -98,7 +110,7 @@ certification. Stationary/unchanging-graph restrictions still apply.
 
 ### Scheduler, ballot and stopping contract
 
-- Planned reproducible scheduler: deterministic cyclic voter-ID order; one
+- Implemented reproducible scheduler: deterministic cyclic voter-ID order; one
   activation/commit per microstep. A sweep contains N activations. Alternative
   fair singleton schedules need separately logged order; outcome uniqueness not assumed.
 - Bounds above count **changes**, not idle activations, browser frames or sweeps.
@@ -167,14 +179,17 @@ may be studied later outside the certified track or after a separate theorem.
 
 ## 3. Run and inspect
 
+Small linked TOMLs are explicit regression fixtures, not production scenarios.
+Use the verification helper for exact checks; it cannot serve a browser:
+
 ```bash
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/certified-direct.toml --port 8008
-PYTHONPATH=src python3 -m multi_agent_election.cli run examples/certified-local-dominance.toml --summary
-PYTHONPATH=src python3 -m multi_agent_election.cli run examples/certified-conformity.toml --summary
-PYTHONPATH=src python3 -m multi_agent_election.cli run examples/certified-conformity-intervention.toml --until-equilibrium --summary
-PYTHONPATH=src python3 -m multi_agent_election.cli run examples/certified-intervention.toml --summary
-PYTHONPATH=src python3 -m multi_agent_election.cli run examples/certified-direct.toml --until-equilibrium
+PYTHONPATH=src python3 scripts/verify_fixture.py run examples/certified-direct.toml --until-equilibrium --summary
+PYTHONPATH=src python3 scripts/verify_fixture.py run examples/certified-local-dominance.toml --summary
+PYTHONPATH=src python3 scripts/verify_fixture.py run examples/certified-conformity-intervention.toml --until-equilibrium --summary
 ```
+
+A normal outcome/browser run needs a deliberately configured N>=100 scenario
+satisfying the same certificate guards. No large certified preset is asserted here.
 
 Each step activates one voter in sorted-ID cyclic order; `round` counts activations.
 Verification, 8 November 2026: `--summary --until-equilibrium` reached F1 Nash,
@@ -248,24 +263,17 @@ N=1/m=1 boundaries, malformed/unsupported contracts, queued messages, rewind edi
 pending future events, differing radii, asymmetric graphs and source-to-engine
 oracle disagreement. Guard checks must never silently certify unsupported modes.
 
-## Progress
+## Verification evidence
 
-| Date | Work/status | Evidence | Remaining |
-| --- | --- | --- | --- |
-| 2026-11-07 | User selected provable restricted cases; theorem statements/proofs read; F3 potential derived; verification helper added | S4 p.5 visually checked; S6 p.17 visually checked, pp.11-13 variable totals checked; proof/domain contracts above | Engine integration and certificate outputs pending; no existing mode newly certified |
-| 2026-11-07 | F1/F2/F3 and scheduled F4 in shared simulator | [Tests](../tests/test_certified_direct.py); examples above; real browser direct-response step; per-frame JSON/CSV status and checkpoint replay | Budgeted attackers, larger verified workloads, cumulative later stages and controlled evaluation pending |
-| 2026-11-07 | Terminal stop and certification hardening | `--until-equilibrium`; pending-event and sampled-final-frame tests; reject forged interactive checkpoint and unvalidated dataclass replacements | Certified mode stops only on full response audit; finite horizon remains cutoff; no budgeted attack controller |
-| 2026-11-07 | Browser playback verification | Certified intervention example: play passed a temporarily stable state while event pending, applied round-3 edit, paused at round-6 equilibrium | Broader visual and experimental acceptance remain pending |
-| 2026-11-08 | F5 finite ballot/preference events then network recovery | Independent oracle checks 512 post-event graph/ranking/ballot configurations; CLI, session, checkpoint and CSV; 243 tests pass (`-S`: 240 + 3 skips); proof checker and playback harness pass | Fixed undirected graph only; F2 interventions and active attackers remain uncertified; live browser not rechecked |
+[Independent checker](../scripts/verify_convergence_foundations.py):
+F1 1,584 preference profiles/111,490 states; F2 4,704 profile/radius cases;
+F3 2,904 graph/preference cases/127,758 changing transitions. F5 independent
+post-event oracle checks512 configurations (`test_certified_direct.py`).
+These are tiny mathematical checks, not outcome workloads or universal empirical bounds.
 
-Verified: F1 1,584 preference profiles / 111,490 ballot states (longest checked
-path 5); F2 4,704 profile/radius cases (longest checked path 1); F3 2,904
-graph/preference cases / 127,758 changing transitions. Small-domain maxima are
-not universal empirical bounds. Negative controls pass; no election outcome
-ranking or multi-seed simulator experiment performed.
-
-Validation: repeated normal, `PYTHONHASHSEED=1 python3 -S` and
-`PYTHONHASHSEED=777 python3 -O` runs produce identical summaries; cycle rejection
-remains active under optimization. Verifier AST, 73 local document links and
-`git diff --check` pass; all 36 reference hashes unchanged. No `src`/`tests`
-changes, dependency installation, engine-mode certification or simulator suite run.
+Engine tests cover scheduler/current observations, source-rule oracles, pending
+events/cutoffs, unsupported mixtures, forged checkpoints, replay and exports.
+[Current suite evidence](implementation-status-report.md#verification).
+Budgeted controllers, broader certified variants and comparative studies remain
+pending **inside these certified domains**; uncertified controller features elsewhere
+do not inherit the guarantees.

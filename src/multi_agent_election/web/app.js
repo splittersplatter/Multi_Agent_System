@@ -76,8 +76,10 @@ function render(focusPerson = null) {
   $("round-label").textContent = `Round ${frame.round}`;
   $("status").textContent = `Revision ${state.revision} · ${state.frames.length} frames`;
   $("active-voting").textContent = Object.entries(state.startup_voting || {}).map(([group, value]) => `${group}: ${value.policy}`).join(" · ");
-  $("convergence-status").textContent = row.convergence ? `Certified model · ${row.convergence.status.replaceAll("_", " ")} · ${row.convergence.improving_voters === null ? row.convergence.reason : `${row.convergence.improving_voters} voters can change`} · next: ${row.convergence.next_actor}` : "";
+  $("convergence-status").textContent = row.convergence ? `Certified model · ${row.convergence.status.replaceAll("_", " ")} · ${row.convergence.improving_voters === null ? row.convergence.reason : `${row.convergence.improving_voters} voters can change`} · next: ${row.convergence.next_actor}` : "Exploratory run · quiet ballots do not certify future stability; contacts and poll information can change.";
+  if (state.stochastic_stability) $("convergence-status").textContent = "Finite-grid occupation model · long-run frequency theorem assumes ideal IID motion; seeded replay is not that proof. No ballot-absorption or mixing-time guarantee.";
   if (state.convergence_case) $("voting-description").textContent = `Certified sequential voting: one voter updates per step using ${state.convergence_case === "certified_conformity" ? "current public neighbors" : "current public counts"}. Scheduled ballot or preference changes may apply in direct-response scenarios. Interactive edits and policy changes are unavailable during this episode.`;
+  if (state.stochastic_stability) $("voting-description").textContent = "Simultaneous memory-pivotal; strict predicted-winner improvement, rolling contacts and ten-round truthful polls. Fixed proof domain: edits/policy changes disabled; timeline playback remains available.";
   const selector = $("startup-policy");
   if (!selector.dataset.populated) {
     for (const policy of state.voting_policies || []) if (!policy.startsWith("python:")) option(selector, policy, policy);
@@ -276,13 +278,13 @@ function syncControls() {
   for (const id of ["previous", "next", "timeline", "download", "export"]) $(id).disabled=unavailable || busy;
   $("play").disabled=unavailable || (busy && !playing);
   $("play").textContent=playing ? "Pause" : busy ? "Pausing…" : "Play";
-  setEditingDisabled(unavailable || playing || busy || !!state?.convergence_case);
+  setEditingDisabled(unavailable || playing || busy || !!state?.convergence_case || !!state?.stochastic_stability);
   for (const id of ["startup-policy", "startup-parameters", "apply-voting"])
     $(id).disabled = unavailable || playing || busy || state.startup_voting_locked || state.frames.at(-1).round !== 0;
 }
 function pause() {playing=false;clearTimeout(timer);syncControls();}
 $("startup-policy").addEventListener("change", () => {
-  const baseline = ["", "sincere", "local_plurality", "sensed_plurality"].includes($("startup-policy").value);
+  const baseline = ["", "sincere", "local_plurality", "sensed_plurality", "memory_pivotal"].includes($("startup-policy").value);
   const epistemic = $("startup-policy").value.startsWith("epistemic_");
   $("startup-parameters").value = baseline ? "{}" : epistemic ? JSON.stringify({max_worlds:10000}) : JSON.stringify({utility_mode:"rank",top_k:2,samples:200,uncertainty_radius:2,max_states:200000,poll:"initial_truthful",information_source:"native"});
 });

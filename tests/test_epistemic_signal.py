@@ -8,6 +8,7 @@ from pathlib import Path
 import tomllib
 import tempfile
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.cli import main
@@ -53,7 +54,7 @@ def example():
     return data
 
 
-class SignalEpistemicTests(unittest.TestCase):
+class SignalEpistemicTests(VerificationTestCase):
     def test_all_small_reports_against_explicit_knowledge_worlds(self):
         for k in (1, 2):
             for ballot in itertools.permutations(("A", "B", "C"), k):

@@ -1,12 +1,13 @@
 import copy
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.metrics import series
 from test_baseline import example
 
 
-class CampaignLayerTests(unittest.TestCase):
+class CampaignLayerTests(VerificationTestCase):
     def test_layer_overlap_is_deduplicated_for_reports_and_sensors(self):
         data = example()
         for person, position in zip(data["people"], ([0.1, 0.1], [0.95, 0.9], [0.1, 0.9], [0.15, 0.1])):

@@ -13,6 +13,7 @@ import tempfile
 import threading
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 
@@ -21,7 +22,7 @@ from multi_agent_election.cli import main
 from multi_agent_election.visual import make_server
 
 
-class IntegratedScenarioTests(unittest.TestCase):
+class IntegratedScenarioTests(VerificationTestCase):
     def test_mixed_epistemic_scenario_http_replay_and_authorization(self):
         with Path("examples/epistemic-integrated.toml").open("rb") as handle:
             scenario = make_scenario(tomllib.load(handle))
@@ -65,7 +66,7 @@ class IntegratedScenarioTests(unittest.TestCase):
             checkpoint_file = root / "cli.json"
             env = {**os.environ, "PYTHONPATH": os.pathsep.join(("src", examples))}
             result = subprocess.run(
-                [sys.executable, "-m", "multi_agent_election.cli", "run", str(scenario_path),
+                [sys.executable, "scripts/verify_fixture.py", "run", str(scenario_path),
                  "--checkpoint", str(checkpoint_file)], env=env, text=True,
                 capture_output=True, check=True)
             cli = json.loads(result.stdout)

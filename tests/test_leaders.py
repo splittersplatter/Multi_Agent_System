@@ -8,6 +8,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.cli import main
@@ -24,7 +25,7 @@ def example():
         return tomllib.load(handle)
 
 
-class LeaderTests(unittest.TestCase):
+class LeaderTests(VerificationTestCase):
     def test_feedback_uses_only_public_support_and_own_action(self):
         config = LeaderConfig("feedback", ("A",), 0.1, 1.0, "none", 0.0, 1.0)
         parties = ("A", "B"); true = {"A": (0.2, 0.5), "B": (0.9, 0.5)}

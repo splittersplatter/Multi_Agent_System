@@ -1,10 +1,13 @@
-# Stage 01 scale measurements
+# Historical scale measurements
 
-Status: preliminary, individual runs; not performance guarantees. Historical
-and current-code measurements are identified below. Updated 2026-11-06.
+Status: preliminary, individual runs; not performance guarantees. All
+measurements below predate the current runtime. Last measurement update:2026-11-08.
 Machine: Intel i7-12700H, x86_64 Linux 7.0.0, CPython 3.14.4.
 Original measurement core SHA-256: `629c342418714bd502d75a7393c9f88856e7e1efbeadc80649aac8ca5251b259`.
 Shared, non-isolated machine; some other test activity overlapped the CLI run.
+
+[Current status](../implementation-status-report.md). Current runs require N>=100;
+all measured workload sizes below satisfy that floor. Use new output paths.
 
 ## Workload and reproduction
 
@@ -16,8 +19,8 @@ Each run validates its final round; generated data stay in temporary storage.
 ```bash
 python3 scripts/benchmark_simulator.py cli --agents 10000 --rounds 100 --seed 2026
 python3 scripts/benchmark_simulator.py http --agents 500 --rounds 100 --seed 2026
-python3 scripts/benchmark_simulator.py generate --agents 500 --rounds 100 --seed 2026 --output /tmp/eclipse-500.toml
-PYTHONPATH=src python3 -m multi_agent_election.cli visual /tmp/eclipse-500.toml --port 0
+python3 scripts/benchmark_simulator.py generate --agents 500 --rounds 100 --seed 2026 --output outputs/eclipse-500.toml
+PYTHONPATH=src python3 -m multi_agent_election.cli visual outputs/eclipse-500.toml --port 0
 ```
 
 Generate requires a new output path. Browser measurement: open printed URL,
@@ -51,7 +54,7 @@ Both HTTP figures include client/server/retained history, not browser. Earlier
 browser figures use the original core; browser RSS and sensor-enabled browser
 performance remain unmeasured.
 
-## Recheck: current browser and pipeline
+## Recheck: 6 November browser and pipeline
 
 2026-11-06; same machine, 500 agents, 100 HTTP rounds, seed 2026, one run each.
 Measured before the subsequent browser checkpoint revision guard; rebenchmark
@@ -78,3 +81,44 @@ HTTP p95 <= 50 ms and process peak <= 200 MiB; browser manual-step maximum
 service levels. Repeat independent runs under controlled load, measure browser
 memory and denser/expensive policies, then set defensible budgets before Stage 01
 completion. Do not extrapolate to other policies, machines, or populations.
+
+## Combined-mechanism measurements — 8 November 2026
+
+Linux x86-64, Python 3.14.4, Intel i7-12700H, 20 logical CPUs. Sequential isolated
+workers; one repetition each; seed 2026. Timing includes other uncontrolled
+machine activity; these are workload samples, not service guarantees.
+
+| Workload | Result | Time | Linux peak RSS |
+| --- | --- | --- | --- |
+| Combined CLI, 1,000 × 10 | Completed | 0.757 s total | 44,108 KiB child |
+| Combined CLI, 10,000 × 100, before numeric repair | Failed: movement rounding limit | 64.299 s worker lifetime | Unavailable on failure |
+| Same 10,000 × 100 after repair | Completed | 90.768 s CLI; ~11,017 agent-rounds/s | 217,372 KiB child |
+| Combined HTTP, 500 × 100 after repair | Completed | Mean 76.81 ms / p95 104.12 ms / max 115.93 ms per step | 263,932 KiB process |
+
+CLI uses summary recording; HTTP retains all frames and includes loopback,
+engine, metrics and JSON encoding/decoding. HTTP mean response size: 3,355,812
+bytes (~3.20 MiB). Browser rendering, browser memory and interactive usability
+are unmeasured; the large payload/history cost deserves optimization before
+claiming a responsive visual workload.
+
+Generator: two nominees, `k=2`, near-Alice added ideals, directed star links,
+moving sparse proximity, ~10% added voters sense public ballots. Initial mean
+public out-degree: 12.793 at 10k; 11.904 at 500. One fixed coalition, leader and
+alignment target; adversarial population does not scale with electorate size.
+This differs from Stage 01's proposed three-party/full-ballot workload.
+
+10k realized activity: 10,569,302 proximity arc additions/removals; 1,290,334
+trusted observations; 100 sight events; 99 interceptions; 100 false reports;
+100 campaign purchases; signal spend 100; ideal-shift spend ~0.5; leader spend
+~0.1. Zero ballot switches/alerts in this lopsided electorate: execution evidence,
+not evidence that interventions are effective or that convergence is guaranteed.
+
+Raw measurements retain generator/template/scenario hashes, manifests, per-round
+metrics and the original failure: `combined-*-fixed.json`,
+`combined-cli-10000x100.json` in the artifact directory.
+
+
+Combined records: `outputs/code-audit-2026-11-08/`. These source-stamped samples
+are not current-source benchmarks. Browser rendering and memory remain unmeasured
+for the combined workload. Current benchmark scripts: `scripts/benchmark_simulator.py`
+and `scripts/benchmark_combined.py`; inspect `--help`, use N>=100 and new output paths.

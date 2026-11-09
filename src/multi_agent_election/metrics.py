@@ -169,6 +169,9 @@ def frame_metrics(scenario: Scenario, frame: Frame, previous: Frame | None = Non
         if future:
             result["convergence"]["status"] = "pending_intervention"
             result["convergence"]["next_intervention_round"] = min(future)
+    if scenario.stochastic_case is not None:
+        from .grid import assessment
+        result["stochastic_stability"] = {**assessment(scenario), "poll_phase": frame.round % 10}
     return result
 
 

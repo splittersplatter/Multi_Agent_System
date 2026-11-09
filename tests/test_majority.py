@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 import threading
 import unittest
+from verification_support import VerificationTestCase
 from unittest.mock import patch
 from urllib.request import Request, urlopen
 
@@ -34,7 +35,7 @@ def configured(**options):
     return data
 
 
-class MajorityCacheTests(unittest.TestCase):
+class MajorityCacheTests(VerificationTestCase):
     def update(self, state, tick, records=(), window=3, weight=0.5):
         return advance(state, observer="self", parties=PARTIES,
                        config=MajorityConfig((4, 3, 3), window, weight), round_number=tick, encounters=records)
@@ -135,7 +136,7 @@ class MajorityCacheTests(unittest.TestCase):
                 state = first
 
 
-class MajorityIntegrationTests(unittest.TestCase):
+class MajorityIntegrationTests(VerificationTestCase):
     def test_mid_estimator_failure_is_atomic(self):
         simulation = Simulation(make_scenario(configured()))
         original = simulation.checkpoint()
@@ -287,7 +288,7 @@ class MajorityIntegrationTests(unittest.TestCase):
             self.assertEqual(json.loads(result.stdout), sim.current.as_dict()["majority_estimation"]["1"])
 
 
-class MajorityPilotTests(unittest.TestCase):
+class MajorityPilotTests(VerificationTestCase):
     def test_generator_counts_poll_pairing_and_shift(self):
         for case in ("well_mixed", "clustered", "support_shift"):
             first, audit = pilot_scenario(101, case, False)

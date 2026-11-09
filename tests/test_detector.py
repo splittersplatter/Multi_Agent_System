@@ -9,6 +9,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.cli import main
@@ -24,7 +25,7 @@ def example():
         return tomllib.load(handle)
 
 
-class DetectorTests(unittest.TestCase):
+class DetectorTests(VerificationTestCase):
     def test_hand_worked_change_strict_threshold_and_interrupted_streaks(self):
         config = DetectorConfig("B", 0.25); parties = ("A", "B")
         values = [{"A": 2, "B": 2}, {"A": 1, "B": 3}, {"A": 1, "B": 3},

@@ -17,8 +17,12 @@ import time
 import tomllib
 from urllib.request import Request, urlopen
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+from multi_agent_election.population import require_population
+
 
 def scenario_text(agents: int, rounds: int, seed: int, sensors: bool = False) -> str:
+    require_population(agents)
     if agents < 2 or rounds < 1 or seed < 0:
         raise ValueError("agents >= 2, rounds >= 1 and seed >= 0 required")
     # Expected mean degree is approximately 12 before boundary effects.

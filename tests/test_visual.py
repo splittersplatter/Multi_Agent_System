@@ -1,6 +1,7 @@
 import json
 import threading
 import unittest
+from verification_support import VerificationTestCase
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 import contextlib
@@ -17,7 +18,7 @@ from multi_agent_election.cli import main
 from test_baseline import example
 
 
-class VisualTests(unittest.TestCase):
+class VisualTests(VerificationTestCase):
     def test_checkpoint_revision_guard_rejects_stale_and_malformed_requests(self):
         simulation = Simulation(make_scenario(example()))
         server = make_server(simulation)

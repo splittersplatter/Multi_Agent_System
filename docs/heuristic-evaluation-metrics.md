@@ -1,6 +1,11 @@
 # Heuristic metric contract
 
-Proposed specification, 7 November 2026; **not implemented or experimentally validated**.
+Maintained metric specification; existing runtime metrics implement only a subset.
+This dictionary is not a coverage claim or experimentally validated ranking.
+Selected statistical follow-up: [occupation-frequency specification](plans/stochastic-stability.md#5-evaluation-specification-execution-deferred).
+It permits continuing flips and class-dependent limits; it is not an absorption
+metric, a per-round-law certificate or implemented stationarity detection.
+Outcome simulations N>=100; tiny oracle cases are verification-only.
 [Plan](plans/heuristic-evaluation.md) · [Convergence gate](heuristic-convergence.md) · [Published methods](literature-heuristics-and-metrics.md).
 
 ## Notation and measurement boundary
@@ -92,6 +97,6 @@ oracles; report sampling uncertainty rather than calling every disagreement a bu
   oracle, budget zero, unresolved pairs and truncated history; nulls explicit.
 - Challenge repeated ballot windows with later flips, constant-winner cycles,
   hidden-state changes, mixed policies and RNG replay. Never certify by timeout.
-- Scope now follows [confirmed foundation cases](convergence-foundations.md).
-  New metric implementation/tests and experiment runs require source-to-engine
-  certification and separate implementation approval. Existing output names/defaults unchanged.
+- Certified claims follow [confirmed foundation cases](convergence-foundations.md).
+  Exploratory finite-horizon experiments can use uncertified policies when labelled;
+  report run horizon, failures, observed switches and possible cycles.

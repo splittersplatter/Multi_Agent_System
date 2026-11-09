@@ -5,6 +5,7 @@ import itertools
 import json
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 from pathlib import Path
 from dataclasses import replace
 
@@ -19,7 +20,7 @@ def example():
     return json.loads(Path("examples/knowledge-profile.json").read_text())
 
 
-class KnowledgeModelTests(unittest.TestCase):
+class KnowledgeModelTests(VerificationTestCase):
     def test_de_dicto_de_re_dominance_and_pessimism(self):
         model = KnowledgeModel.from_dict(example())
         result = model.analyze("1")

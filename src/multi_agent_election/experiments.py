@@ -91,12 +91,27 @@ def compare_heuristics(scenario, seeds, policies, parameters=None, rounds=None, 
             prefs=dict(final.preferences); m=len(selected.parties)
             welfare=sum((m-1-prefs[person.id].index(final.winner))/max(1,m-1) for person in selected.people)/len(selected.people)
             stable=len(switches)>=window and all(s==0 for s in switches[-window:])
+            quiet = 0
+            reactivations = 0
+            for changed in switches:
+                if changed:
+                    reactivations += quiet >= window
+                    quiet = 0
+                else:
+                    quiet += 1
+            recent = sim.frames[-window-1:]
+            edge_changes = sum(len(set(a.proximity_edges) ^ set(b.proximity_edges))
+                               for a, b in zip(recent, recent[1:]))
             winners=[f.winner for f in sim.frames[-window-1:]]
             trace={p:json.loads(mem) for p,mem in final.policy_memory}
             rows.append({"seed":seed,"policy":policy,"status":"observed_ballot_stability" if stable else "horizon_reached",
                          "completed_round":final.round,"winner":final.winner,
                          "winner_stable_window":len(winners)==window+1 and len(set(winners))==1,
                          "ballot_stable_window":stable,"total_ballot_switches":sum(switches),
+                         "stability_assessment": {"certified": False, "basis": "finite observations only",
+                             "proximity_arc_changes_in_window": edge_changes,
+                             "flip_reactivations_after_quiet_window": reactivations,
+                             "future_contact_changes_checked": False},
                          "final_switch_fraction":switches[-1]/len(selected.people),
                          "winner_mean_rank_utility":welfare,"runtime_seconds":elapsed,
                          "metrics":metrics,"final_decisions":trace,
@@ -107,6 +122,6 @@ def compare_heuristics(scenario, seeds, policies, parameters=None, rounds=None, 
             "parameters":parameters or {},"rounds":horizon,"stability_window":window,
             "notes":["Same electorate and actor-round movement streams across policies.",
                      "Simultaneous updates; stability window is not proof of convergence.",
-                     "Native information: pivotal receives initial global poll, other new policies use local sensors. Set information_source=poll for matched strategic information.",
+                     "Native information: pivotal uses a public poll; memory_pivotal uses its explicit poll and recent proximity cache; other strategic policies use local sensors. These observations are not inherently matched.",
                      "Epistemic policies require electorate access and trusted sensors; they do not accept the poll-information parameter and are not information-matched with poll-based policies.",
                      "Winner rank utility is a researcher ordinal proxy, not validated welfare."],"rows":rows}

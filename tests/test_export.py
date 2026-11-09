@@ -4,6 +4,7 @@ import contextlib
 import json
 import tempfile
 import unittest
+from verification_support import VerificationTestCase
 from pathlib import Path
 import importlib.util
 import subprocess
@@ -16,7 +17,7 @@ from multi_agent_election.metrics import series
 from test_baseline import example
 
 
-class ExportTests(unittest.TestCase):
+class ExportTests(VerificationTestCase):
     @unittest.skipUnless(importlib.util.find_spec("PIL"), "install requirements-visualization.txt for PNG/GIF checks")
     def test_network_and_gif_keep_overlapping_layers_and_reciprocal_edges(self):
         from PIL import Image
@@ -142,7 +143,7 @@ class ExportTests(unittest.TestCase):
             root = Path(folder); env = {**os.environ, "PYTHONPATH": "src:examples"}
             for scenario, expected in (("examples/custom.toml", False), ("examples/integrated.toml", True)):
                 target = root / (Path(scenario).stem + ".svg")
-                subprocess.run([sys.executable, "-m", "multi_agent_election.cli", "batch", scenario,
+                subprocess.run([sys.executable, "scripts/verify_fixture.py", "batch", scenario,
                                 "--seeds", "1", "--target", "A", "--plot-svg", str(target)],
                                env=env, capture_output=True, text=True, check=True)
                 svg = target.read_text()

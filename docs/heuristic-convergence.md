@@ -1,13 +1,13 @@
 # Convergence dossier
 
-7 November 2026. **Universal full-model guarantee: refuted.**
+7 November 2026. **Original size-unrestricted full-model guarantee: refuted.**
 Analytical audit only; no new simulator experiments.
 [Candidate plan](plans/heuristic-evaluation.md) · [Source audit](literature-heuristics-and-metrics.md).
 
 **Subsequent decision, 7 November:** user requested confirmed-convergence cases
 as the foundation. [Restricted cases and proof checks](convergence-foundations.md)
-now define that scope. Universal counterexample below remains valid; old stop
-decision is resolved for restricted research. F1–F3 and scheduled F4/F5 are now
+now define that scope. The tiny counterexample below remains a formal statement about that original
+domain, not an admissible normal run after the N>=100 requirement. F1–F3 and scheduled F4/F5 are now
 implemented under those guards; unrestricted simultaneous modes remain uncertified.
 
 ## Required property and observability
@@ -28,7 +28,7 @@ there exists finite T such that B(X_t)=B(X_T) for every t>=T.
 - Horizon, timestamp and RNG-dependent policies prevent assuming a finite
   time-homogeneous state graph. Any abstraction must preserve possible flips.
 
-## Counterexample in existing semantics
+## Counterexample in original small-domain semantics
 
 Permitted composition: two people, two parties, ballot length 1; private rankings
 u: A>B and v: B>A; both use `sensed_plurality`; public-ballot sensing enabled;
@@ -54,7 +54,7 @@ This is a hand-derived transition proof, not a newly executed regression test.
 Finite configured rounds merely truncate the cycle; extending the same rules
 does not produce convergence. Fair simultaneous activation already holds.
 
-This refutes a guarantee over all currently permitted mixtures. It does **not**
+This refutes a guarantee over the original size-unrestricted mixtures. It does **not**
 prove each strategic candidate independently divergent, or exclude the possibility
 of a different certified composition. Open-ended permitted ballot interventions
 can additionally prevent absorption; finite budgets alone do not eliminate
@@ -73,11 +73,12 @@ endogenous cycles after those budgets are spent.
 | S30 | Party-adaptation experiments/burn-in | No full mixed-agent absorption theorem |
 
 Source evidence is indexed in the linked audit; PDFs are locally available.
-No existing implemented strategic policy has a verified full-model theorem mapping.
+No unrestricted mobile/mixed strategic composition has a full-model theorem;
+F1–F5 have separate guarded mappings.
 Unimplemented poll/network/campaign/defense methods lack a composed transition
 system; certification remains unsupported, not assumed false from absence alone.
 
-## Certification gate and next decision
+## Certification gate
 
 For each proposed composition require: domain + initial-state assumptions;
 policy/action/observation contracts; scheduler/fairness; future interventions;
@@ -86,15 +87,8 @@ region proof covering every legal successor. For finite abstractions, absence of
 reachable nonabsorbing recurrent behaviour needs rigorous abstraction justification;
 enumerating a few traces is insufficient. Bound on T only if separately established.
 
-**Historical stop:** before the subsequent user decision, no experiments,
-shortlist or heuristic implementation. Available scope choices were:
-
-1. Keep every current capability/composition: accept that the requested universal
-   guarantee is impossible; study cycles and conditional certificates instead.
-2. Authorize a restricted certified composition: declare admissible policies,
-   scheduler and future external changes explicitly; retain the broader simulator
-   as a separate non-guaranteed mode. Selection still follows proof, not quiet runs.
-
-The user subsequently selected confirmed cases: restricted research contracts are
-now adopted in the linked foundation. No runtime restrictions, freezing or vote
-locks added; current simulator modes remain uncertified.
+Restricted confirmed cases have been adopted and implemented. Keep their proofs
+separate from unrestricted modes. The memory-voter is available for exploratory
+studies: its original four-voter witness does not decide the N>=100 domain, and no
+positive theorem for that domain has been established. Do not infer convergence
+from a population floor, quiet window or finite run.

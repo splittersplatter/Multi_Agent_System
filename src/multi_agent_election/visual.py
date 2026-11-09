@@ -4,6 +4,7 @@ import json
 import secrets
 import tempfile
 import threading
+from contextlib import nullcontext
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib import resources
@@ -15,6 +16,8 @@ from .engine import Simulation
 from .exports import write_metrics_csv
 from .metrics import frame_metrics, series
 from .model import ElectionError
+from .population import verification_scope
+from .grid import assessment as stochastic_assessment
 from .voting import VOTING_POLICIES, COALITION_POLICIES, SIGNAL_POLICIES, configure_voting
 from .epistemic import EPISTEMIC_POLICIES
 
@@ -28,6 +31,8 @@ class Session:
 
     def snapshot(self) -> dict[str, Any]:
         return {"revision": self.revision, "parties": self.simulation.scenario.parties,
+                **({"verification_only": True, "verification_reason": self.simulation.verification_reason}
+                   if self.simulation.verification_reason is not None else {}),
                 "k": self.simulation.scenario.k,
                 "group_names": [g.id for g in self.simulation.scenario.groups],
                 "group_capabilities": {g.id: asdict(g.capabilities) for g in self.simulation.scenario.groups},
@@ -50,11 +55,13 @@ class Session:
                                  **({"eavesdrop_channels":list(c.eavesdrop_channels),"eavesdrop_budget_per_round":c.eavesdrop_budget_per_round,
                                      "eavesdrop_budget_total":c.eavesdrop_budget_total} if c.eavesdrop_channels else {})} for c in self.simulation.scenario.coalitions],
                 "convergence_case": self.simulation.scenario.convergence_case,
+                **({"stochastic_stability": stochastic_assessment(self.simulation.scenario)}
+                   if self.simulation.scenario.stochastic_case else {}),
                 "voting_policies": ([self.simulation.scenario.convergence_case] if self.simulation.scenario.convergence_case else
                                     sorted(({g.voting for g in self.simulation.scenario.groups} | set(VOTING_POLICIES) | set(COALITION_POLICIES) | set(SIGNAL_POLICIES) | set(EPISTEMIC_POLICIES)) - {"direct_best_response"})),
                 "startup_voting": {g.id: {"policy": g.voting, "parameters": json.loads(g.parameters).get("voting", {})}
                                    for g in self.simulation.scenario.groups},
-                "startup_voting_locked": bool(self.simulation.scenario.convergence_case) or self.simulation.current.round != 0 or bool(self.simulation.manual_interventions),
+                "startup_voting_locked": bool(self.simulation.scenario.convergence_case or self.simulation.scenario.stochastic_case) or self.simulation.current.round != 0 or bool(self.simulation.manual_interventions),
                 "frames": [frame.as_dict() for frame in self.simulation.frames],
                 **({"majority_estimation": self.simulation.scenario.majority_estimation.as_dict()}
                    if self.simulation.scenario.majority_estimation is not None else {}),
@@ -69,7 +76,11 @@ class Session:
             if self.simulation.current.round != 0 or self.simulation.manual_interventions:
                 raise ElectionError("voting choice is only available before the first step/edit; restart for another episode")
             configured = configure_voting(self.simulation.scenario, value["policy"], value["parameters"])
-            self.simulation = Simulation(configured)
+            # Preserve explicit verification purpose across HTTP worker threads;
+            # clients cannot enable it through a command or scenario field.
+            reason = self.simulation.verification_reason
+            with verification_scope(reason) if reason is not None else nullcontext():
+                self.simulation = Simulation(configured)
         elif value.get("action") == "step" and set(value) == {"revision", "action"}:
             previous = self.simulation.current
             self.simulation.step()

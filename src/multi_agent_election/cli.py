@@ -10,6 +10,7 @@ from .engine import Simulation
 from .experiments import batch, compare_heuristics, compare_proximity, coalition_ablations, compare_campaign_policies, exhaustive_one_round_campaign, compare_signal_responses, compare_nominations, compare_alignment, calibrate_and_evaluate_detector, compare_leaders
 from .metrics import frame_metrics, series
 from .model import ElectionError, make_scenario
+from .population import require_simulation_population
 from .voting import VOTING_POLICIES, COALITION_POLICIES, SIGNAL_POLICIES, STRATEGIC, configure_voting
 from .epistemic import EPISTEMIC_POLICIES
 from .combined import combined_ablation
@@ -36,6 +37,15 @@ def main(argv: list[str] | None = None) -> int:
     recording.add_argument("--sample", type=int, metavar="STRIDE", help="output every STRIDE frames plus the final frame")
     run.add_argument("--jsonl", type=Path, help="write manifest, metrics and recorded frames as JSONL")
     run.add_argument("--until-equilibrium", action="store_true", help="stop a certified case at its proven equilibrium, up to the scenario round limit")
+    frequencies = commands.add_parser("frequencies", help="stream fixed-horizon occupation/phase diagnostics; no stationarity claim")
+    frequencies.add_argument("scenario", type=Path)
+    frequencies.add_argument("--rounds", type=int, default=10000)
+    frequencies.add_argument("--burn-in", type=int, default=1000, help="fixed excluded prefix; not validated mixing time")
+    frequencies.add_argument("--batch-size", type=int, default=100)
+    frequencies.add_argument("--rows", type=Path, help="exclusive raw per-round CSV; existing parent required")
+    frequencies.add_argument("--output", type=Path, help="exclusive summary JSON; stdout if omitted")
+    frequencies.add_argument("--control", choices=("baseline", "sincere-grid", "continuous-normal"), default="baseline")
+    frequencies.add_argument("--seed", type=int, help="explicit episode seed; default scenario seed")
     resume = commands.add_parser("resume", help="verify and resume a JSON checkpoint")
     resume.add_argument("checkpoint", type=Path)
     resume.add_argument("--rounds", type=int, required=True, help="additional rounds")
@@ -133,6 +143,26 @@ def main(argv: list[str] | None = None) -> int:
         command.add_argument("--voting-parameters", default="{}", help="JSON parameters for selected voting policy")
     args = parser.parse_args(argv)
     try:
+        if args.command == "frequencies":
+            from .occupation import run_frequencies, configure_control
+            _preflight_outputs([args.rows, args.output])
+            with args.scenario.open("rb") as handle:
+                frequency_raw = tomllib.load(handle)
+            if args.seed is not None:
+                frequency_raw["seed"] = args.seed
+            frequency_scenario = configure_control(make_scenario(frequency_raw), args.control)
+            result = run_frequencies(frequency_scenario, rounds=args.rounds, burn_in=args.burn_in,
+                                     batch_size=args.batch_size, rows_path=args.rows)
+            result["control"] = args.control
+            if args.output:
+                with args.output.open("x", encoding="utf-8") as handle:
+                    json.dump(result, handle, indent=2, allow_nan=False)
+                    handle.write("\n")
+                print(json.dumps({"output": str(args.output), "status": result["status"],
+                                  "completed_rounds": result["completed_rounds"]}))
+            else:
+                print(json.dumps(result, indent=2, allow_nan=False))
+            return 0 if result["status"] == "complete" else 1
         if args.command == "estimate-majority":
             from .majority_experiments import run_pilot
             if args.pilot == (args.scenario is not None):
@@ -169,6 +199,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.command in ("run", "batch", "visual", "compare", "compare-networks", "coalition-ablations", "compare-campaign", "campaign-exhaustive", "compare-signals", "compare-nominations", "compare-alignment", "evaluate-detector", "compare-leaders", "combined-ablation"):
             with args.scenario.open("rb") as handle:
                 scenario = make_scenario(tomllib.load(handle))
+            require_simulation_population(scenario)
             if args.command == "combined-ablation":
                 _preflight_outputs([args.output])
                 result = combined_ablation(scenario, args.seeds, args.target)

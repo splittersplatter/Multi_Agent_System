@@ -1,10 +1,11 @@
 import copy
 import unittest
+from verification_support import VerificationTestCase
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from test_baseline import example
 
 
-class InterventionTests(unittest.TestCase):
+class InterventionTests(VerificationTestCase):
     def test_scheduled_edit_changes_only_target_round_and_replays(self):
         data = example()
         data["interventions"] = [{"round": 2, "person": "2", "preference": ["C", "A", "B"], "position": [0.1, 0.2]}]

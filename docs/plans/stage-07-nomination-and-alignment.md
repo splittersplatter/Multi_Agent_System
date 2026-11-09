@@ -5,9 +5,11 @@ References: survey S22-S23, S29-S30.
 
 ## Deliverables
 
+Checked = implemented; unchecked = full acceptance pending, including implemented subsets below.
+
 - [x] Issue vectors in [0,1]^d; physical positions separate.
   Euclidean distance -> full ranking; party-order ties; ordinal-input adapter.
-- [x] Proposed nomination: each person chooses closest eligible public neighbor/self;
+- [x] Implemented nomination: each person chooses closest eligible public neighbor/self;
   top m nomination counts win; stable ID ties including zero-count fill.
   Validate k <= m <= eligible population.
 - [x] Nominate before round 0; stable leader/party mapping; fixed membership.
@@ -27,7 +29,9 @@ CLI/browser/plots/checkpoints.
 
 ## Progress
 
-| Date | Work/status | Evidence | Prior integration | Remaining |
-| --- | --- | --- | --- | --- |
-| 8 Nov 2026 | Spatial nomination, controls and representation metrics | [Example](../../examples/nomination.toml), [contract](../simulator-guide.md#spatial-nomination), [tests](../../tests/test_nomination.py), JS harness: initial public-neighbor/ID ties, abstention, zero fill, fixed/random controls, ideal distances, CLI/HTTP/CSV/replay | Shared engine; prior ordinal scenarios, coalition sight, campaign edges, signals and restricted F1 retained | Full stage/shared gates and live browser verification pending; no validated research effect, preference-drift or leader-adaptation implementation |
-| 8 Nov 2026 | Nomination integration regression | Full suite 268 pass; `python3 -S`: 265 pass + 3 optional-image skips; proof checker, playback harness and `git diff --check` pass; checkpoint v18 validates nomination record | Preserves historical cases, bound-signal responses, earlier checkpoint migration and seeded control replay | Stage 01/shared acceptance, live browser check, spatial attacks, adaptation and formal evaluation remain open |
+Consolidated9 November2026; [current verification](../implementation-status-report.md#verification).
+Nomination, spatial rankings, controls and representation metrics implemented
+(`test_nomination.py`). Later stages separately implement voter shifts/leader
+adaptation. Remaining: broader composition studies, manual acceptance and scientific gates.
+All outcome workloads N>=100; small linked examples are verification fixtures.
+Retain prior-stage APIs/evidence; no broader stage completion or convergence inferred.

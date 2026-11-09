@@ -7,6 +7,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 from unittest.mock import patch
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
@@ -20,7 +21,7 @@ def example():
         return tomllib.load(handle)
 
 
-class CombinedAblationTests(unittest.TestCase):
+class CombinedAblationTests(VerificationTestCase):
     def test_full_matrix_configuration_replay_and_pairing(self):
         scenario = make_scenario(example()); original = scenario.as_dict()
         result = combined_ablation(scenario, [11, 22], "alice")
