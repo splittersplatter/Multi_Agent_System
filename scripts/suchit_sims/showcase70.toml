@@ -1,0 +1,524 @@
+parties = ["A", "B", "C"]
+k = 2
+seed = 7
+rounds = 60
+
+[groups.copycats]
+voting = "sensed_plurality"
+movement = "random_walk"
+max_step = 0.012
+proximity_radius = 0.1
+communication = "truthful"
+capabilities = { sense_public_ballots = true }
+
+[groups.committed]
+voting = "sincere"
+movement = "random_walk"
+max_step = 0.012
+proximity_radius = 0.1
+communication = "truthful"
+
+[groups.poll_watchers]
+voting = "signal_confident"
+movement = "random_walk"
+max_step = 0.012
+proximity_radius = 0.1
+communication = "truthful"
+capabilities = { observe_public_signal = true }
+
+[groups.team_A]
+voting = "sincere"
+movement = "python:echo_campaign:move"
+max_step = 0.06
+graph = "python:echo_campaign:link"
+proximity_radius = 0.3
+communication = "truthful"
+capabilities = { sense_public_ballots = true, observe_electorate = true, modify_persistent_edges = true }
+
+[groups.team_A.parameters]
+strategy = "infiltrate"
+party = "A"
+home = [0.22, 0.28]
+rival = [0.78, 0.28]
+max_step = 0.06
+max_active = 6
+new_per_round = 2
+campaigners = ["campA0", "campA1", "campA2", "campA3", "campB0", "campB1", "campB2", "campB3", "campC0", "campC1", "campC2", "campC3"]
+
+[groups.team_B]
+voting = "sincere"
+movement = "python:echo_campaign:move"
+max_step = 0.06
+graph = "python:echo_campaign:link"
+proximity_radius = 0.3
+communication = "truthful"
+capabilities = { sense_public_ballots = true, observe_electorate = true, modify_persistent_edges = true }
+
+[groups.team_B.parameters]
+strategy = "bridge"
+party = "B"
+home = [0.78, 0.28]
+rival = [0.22, 0.28]
+max_step = 0.06
+max_active = 6
+new_per_round = 2
+campaigners = ["campA0", "campA1", "campA2", "campA3", "campB0", "campB1", "campB2", "campB3", "campC0", "campC1", "campC2", "campC3"]
+
+[groups.team_C]
+voting = "sincere"
+movement = "python:echo_campaign:move"
+max_step = 0.06
+graph = "python:echo_campaign:link"
+proximity_radius = 0.3
+communication = "truthful"
+capabilities = { sense_public_ballots = true, observe_electorate = true, modify_persistent_edges = true }
+
+[groups.team_C.parameters]
+strategy = "fortify"
+party = "C"
+home = [0.5, 0.78]
+rival = [0.22, 0.28]
+max_step = 0.06
+max_active = 6
+new_per_round = 2
+campaigners = ["campA0", "campA1", "campA2", "campA3", "campB0", "campB1", "campB2", "campB3", "campC0", "campC1", "campC2", "campC3"]
+
+[network]
+radius = 0.1
+
+[campaign_controller]
+target = "B"
+policy = "target_heuristic"
+per_round_budget = 1
+lifetime_budget = 15
+
+[signal_controller]
+target = "C"
+policy = "target_biased"
+schedule = "repeated"
+per_broadcast_budget = 3
+lifetime_budget = 60
+
+[detector]
+target = "C"
+threshold = 0.05
+
+[[people]]
+id = "r00"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.1921, 0.264]
+
+[[people]]
+id = "r01"
+group = "copycats"
+preference = ["C", "A", "B"]
+position = [0.2407, 0.3929]
+
+[[people]]
+id = "r02"
+group = "copycats"
+preference = ["B", "C", "A"]
+position = [0.2478, 0.3155]
+
+[[people]]
+id = "r03"
+group = "committed"
+preference = ["C", "A", "B"]
+position = [0.2026, 0.2418]
+
+[[people]]
+id = "r04"
+group = "copycats"
+preference = ["A", "C", "B"]
+position = [0.189, 0.2704]
+
+[[people]]
+id = "r05"
+group = "committed"
+preference = ["B", "C", "A"]
+position = [0.1092, 0.2825]
+
+[[people]]
+id = "r06"
+group = "copycats"
+preference = ["C", "A", "B"]
+position = [0.2956, 0.2405]
+
+[[people]]
+id = "r07"
+group = "committed"
+preference = ["C", "B", "A"]
+position = [0.1988, 0.2161]
+
+[[people]]
+id = "r08"
+group = "committed"
+preference = ["A", "B", "C"]
+position = [0.323, 0.1772]
+
+[[people]]
+id = "r09"
+group = "committed"
+preference = ["B", "A", "C"]
+position = [0.3166, 0.3279]
+
+[[people]]
+id = "r10"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.2802, 0.3651]
+
+[[people]]
+id = "r11"
+group = "poll_watchers"
+preference = ["B", "C", "A"]
+position = [0.3216, 0.3339]
+
+[[people]]
+id = "r12"
+group = "copycats"
+preference = ["A", "B", "C"]
+position = [0.1579, 0.3652]
+
+[[people]]
+id = "r13"
+group = "copycats"
+preference = ["A", "B", "C"]
+position = [0.2794, 0.3196]
+
+[[people]]
+id = "r14"
+group = "copycats"
+preference = ["A", "C", "B"]
+position = [0.181, 0.1561]
+
+[[people]]
+id = "r15"
+group = "copycats"
+preference = ["A", "B", "C"]
+position = [0.1192, 0.368]
+
+[[people]]
+id = "r16"
+group = "poll_watchers"
+preference = ["A", "C", "B"]
+position = [0.1439, 0.3775]
+
+[[people]]
+id = "r17"
+group = "copycats"
+preference = ["A", "B", "C"]
+position = [0.2254, 0.2329]
+
+[[people]]
+id = "r18"
+group = "copycats"
+preference = ["A", "C", "B"]
+position = [0.3114, 0.2274]
+
+[[people]]
+id = "r19"
+group = "copycats"
+preference = ["A", "C", "B"]
+position = [0.0424, 0.223]
+
+[[people]]
+id = "r20"
+group = "poll_watchers"
+preference = ["A", "B", "C"]
+position = [0.2034, 0.3718]
+
+[[people]]
+id = "r21"
+group = "committed"
+preference = ["A", "B", "C"]
+position = [0.1724, 0.3245]
+
+[[people]]
+id = "r22"
+group = "poll_watchers"
+preference = ["B", "A", "C"]
+position = [0.8143, 0.0999]
+
+[[people]]
+id = "r23"
+group = "copycats"
+preference = ["B", "A", "C"]
+position = [0.6988, 0.3437]
+
+[[people]]
+id = "r24"
+group = "copycats"
+preference = ["B", "A", "C"]
+position = [0.8362, 0.3053]
+
+[[people]]
+id = "r25"
+group = "copycats"
+preference = ["C", "B", "A"]
+position = [0.7463, 0.2553]
+
+[[people]]
+id = "r26"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.8978, 0.2409]
+
+[[people]]
+id = "r27"
+group = "poll_watchers"
+preference = ["B", "C", "A"]
+position = [0.7415, 0.2465]
+
+[[people]]
+id = "r28"
+group = "poll_watchers"
+preference = ["B", "A", "C"]
+position = [0.6983, 0.2188]
+
+[[people]]
+id = "r29"
+group = "committed"
+preference = ["B", "C", "A"]
+position = [0.8807, 0.2756]
+
+[[people]]
+id = "r30"
+group = "copycats"
+preference = ["C", "A", "B"]
+position = [0.8725, 0.3978]
+
+[[people]]
+id = "r31"
+group = "copycats"
+preference = ["B", "A", "C"]
+position = [0.7414, 0.1786]
+
+[[people]]
+id = "r32"
+group = "poll_watchers"
+preference = ["A", "C", "B"]
+position = [0.7301, 0.271]
+
+[[people]]
+id = "r33"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.7416, 0.4033]
+
+[[people]]
+id = "r34"
+group = "committed"
+preference = ["B", "C", "A"]
+position = [0.774, 0.3658]
+
+[[people]]
+id = "r35"
+group = "copycats"
+preference = ["A", "C", "B"]
+position = [0.7991, 0.3908]
+
+[[people]]
+id = "r36"
+group = "committed"
+preference = ["B", "A", "C"]
+position = [0.6599, 0.1764]
+
+[[people]]
+id = "r37"
+group = "committed"
+preference = ["C", "B", "A"]
+position = [0.8415, 0.1457]
+
+[[people]]
+id = "r38"
+group = "copycats"
+preference = ["B", "C", "A"]
+position = [0.6343, 0.2866]
+
+[[people]]
+id = "r39"
+group = "committed"
+preference = ["B", "C", "A"]
+position = [0.7218, 0.2902]
+
+[[people]]
+id = "r40"
+group = "copycats"
+preference = ["B", "A", "C"]
+position = [0.98, 0.1768]
+
+[[people]]
+id = "r41"
+group = "copycats"
+preference = ["B", "A", "C"]
+position = [0.8612, 0.3407]
+
+[[people]]
+id = "r42"
+group = "poll_watchers"
+preference = ["B", "A", "C"]
+position = [0.3829, 0.8316]
+
+[[people]]
+id = "r43"
+group = "committed"
+preference = ["C", "B", "A"]
+position = [0.5889, 0.764]
+
+[[people]]
+id = "r44"
+group = "committed"
+preference = ["C", "A", "B"]
+position = [0.5456, 0.8069]
+
+[[people]]
+id = "r45"
+group = "copycats"
+preference = ["A", "C", "B"]
+position = [0.4152, 0.7256]
+
+[[people]]
+id = "r46"
+group = "committed"
+preference = ["B", "C", "A"]
+position = [0.4159, 0.7222]
+
+[[people]]
+id = "r47"
+group = "copycats"
+preference = ["C", "A", "B"]
+position = [0.4821, 0.7744]
+
+[[people]]
+id = "r48"
+group = "committed"
+preference = ["C", "B", "A"]
+position = [0.5878, 0.7411]
+
+[[people]]
+id = "r49"
+group = "committed"
+preference = ["C", "B", "A"]
+position = [0.5166, 0.8465]
+
+[[people]]
+id = "r50"
+group = "committed"
+preference = ["C", "A", "B"]
+position = [0.5069, 0.7004]
+
+[[people]]
+id = "r51"
+group = "committed"
+preference = ["B", "A", "C"]
+position = [0.637, 0.8352]
+
+[[people]]
+id = "r52"
+group = "committed"
+preference = ["C", "A", "B"]
+position = [0.5431, 0.6804]
+
+[[people]]
+id = "r53"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.4827, 0.7774]
+
+[[people]]
+id = "r54"
+group = "committed"
+preference = ["C", "A", "B"]
+position = [0.3791, 0.6819]
+
+[[people]]
+id = "r55"
+group = "copycats"
+preference = ["C", "B", "A"]
+position = [0.3573, 0.804]
+
+[[people]]
+id = "r56"
+group = "copycats"
+preference = ["C", "B", "A"]
+position = [0.3862, 0.7668]
+
+[[people]]
+id = "r57"
+group = "poll_watchers"
+preference = ["A", "C", "B"]
+position = [0.555, 0.8005]
+
+[[people]]
+id = "campA0"
+group = "team_A"
+preference = ["A", "B", "C"]
+position = [0.1834, 0.2478]
+
+[[people]]
+id = "campA1"
+group = "team_A"
+preference = ["A", "B", "C"]
+position = [0.2162, 0.2422]
+
+[[people]]
+id = "campA2"
+group = "team_A"
+preference = ["A", "B", "C"]
+position = [0.2515, 0.2451]
+
+[[people]]
+id = "campA3"
+group = "team_A"
+preference = ["A", "B", "C"]
+position = [0.206, 0.3179]
+
+[[people]]
+id = "campB0"
+group = "team_B"
+preference = ["B", "A", "C"]
+position = [0.7885, 0.256]
+
+[[people]]
+id = "campB1"
+group = "team_B"
+preference = ["B", "A", "C"]
+position = [0.7622, 0.2807]
+
+[[people]]
+id = "campB2"
+group = "team_B"
+preference = ["B", "A", "C"]
+position = [0.8046, 0.2806]
+
+[[people]]
+id = "campB3"
+group = "team_B"
+preference = ["B", "A", "C"]
+position = [0.7598, 0.2819]
+
+[[people]]
+id = "campC0"
+group = "team_C"
+preference = ["C", "A", "B"]
+position = [0.5301, 0.8142]
+
+[[people]]
+id = "campC1"
+group = "team_C"
+preference = ["C", "A", "B"]
+position = [0.5338, 0.8114]
+
+[[people]]
+id = "campC2"
+group = "team_C"
+preference = ["C", "A", "B"]
+position = [0.4762, 0.7758]
+
+[[people]]
+id = "campC3"
+group = "team_C"
+preference = ["C", "A", "B"]
+position = [0.4933, 0.7714]
