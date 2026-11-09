@@ -7,6 +7,7 @@ import math
 import random
 import threading
 import unittest
+from verification_support import VerificationTestCase
 from dataclasses import replace
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
@@ -33,7 +34,7 @@ def response(policy, obs=None, params=None, total=5, memory=None, seed=12):
     return decide(policy, obs or observation(), params or {}, memory, random.Random(seed), total, (1, 2, total-3))
 
 
-class VotingTests(unittest.TestCase):
+class VotingTests(VerificationTestCase):
     def test_pivotal_requires_improved_winner_not_popularity(self):
         params = {"poll": "explicit", "initial_poll": [1, 2, 3]}
         ballot, trace = response("pivotal", params=params, total=6)

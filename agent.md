@@ -10,7 +10,7 @@ mechanism studies, combined experiments and reproducible report.
 - Sequence: 00 baseline; 01 simulator; 02 epistemics; 03 proximity;
   04 coalition; 05 campaign edges; 06 public signals; 07 nomination/alignment;
   08 alignment attacks/detective; 09 adapting leaders; 10 integration; 11 report.
-- Stage 01 baseline source/tests exist; older deleted baseline results remain historical.
+- Current implementation/status: `docs/implementation-status-report.md`; root README owns runnable quickstart.
 - Implement only requested work. Proposed defaults remain proposed until adopted;
   plans and baseline tests do not establish implemented extensions or research results.
 
@@ -75,6 +75,12 @@ mechanism studies, combined experiments and reproducible report.
 
 ## Model and reproducibility
 
+- STRICT: every outcome simulation, browser demo, pilot and benchmark uses at
+  least 100 people/nodes. Default demos: 200. Enforce in the shared engine; never
+  silently duplicate/pad voters or weaken this minimum for speed.
+- Tiny unit/formal counterexample/regression fixtures are verification only,
+  explicitly scoped with `verification_scope(reason)`; never label their outputs
+  simulation evidence. No implicit environment/test detection or normal CLI bypass.
 - Global ballot length: exactly `k` distinct ranked parties, `1 <= k <= |C|`.
   Private preferences, cast ballots, reports and perceptions remain separate.
 - Explicit actor observations/actions; no implicit hidden preferences or future events.
@@ -90,12 +96,18 @@ mechanism studies, combined experiments and reproducible report.
   random state and edits. Replays/resumes must match recorded versions.
 - UI rewind/edit replaces future; retain valid prefix state; reject stale revisions.
   Playback/rendering must not change model dynamics.
+- Physical random-walk default: truncated Gaussian; demo mean.025/std.00625/cap.05.
+  Grid runtime retired; preserve historical proof/checker, never transfer its
+  occupation theorem to Gaussian motion. Stationary certified cases stay explicit.
 - Record environment/commands in the active stage; lock dependencies when introduced.
   Generated data/checkpoints/logs stay outside source folders and ignored.
 - Multi-seed comparisons, uncertainty, controls and sensitivity precede broad claims.
   Null results valid; no unsupported novelty, optimality or real-election inference.
 - Freeze calibration/evaluation splits and primary metrics; retain failed/censored runs.
   Distinguish stable winner, stable ballots, cycles and horizon cutoff.
+- Convergence is mandatory for certified-convergence claims, optional for explicitly
+  exploratory finite-horizon studies; label uncertified policies and report cycles,
+  cutoffs and failures. Never claim proof from an observed quiet period.
 
 ## Progress and writing
 
@@ -103,7 +115,10 @@ mechanism studies, combined experiments and reproducible report.
   command/artifact, observed result, prior-stage integration and remaining limits.
 - Keep progress, validation evidence, decisions and setup notes in active-stage files;
   update [current state](docs/README.md#current-state) and relevant roadmap checkpoints.
-  Preserve history; distinguish implemented from verified.
+  Documentation source of truth: root README=quickstart; status=verification;
+  simulator guide=contracts; stage plans=remaining deliverables. Avoid duplicated snapshots.
+  Preserve unique evidence/decisions; consolidate obsolete status in `docs/history/`.
+  Remove stale commands/test-count dumps; distinguish implemented from verified.
   Correctness failures block dependent stages.
 - Minimum words; precise keywords, compact checklists/tables, actionable constraints.
   Remove repetition/background; preserve scope, interfaces, deliverables, acceptance and evidence.

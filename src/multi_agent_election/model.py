@@ -208,7 +208,8 @@ class Scenario:
                                "parameters": json.loads(g.parameters),
                                "capabilities": asdict(g.capabilities),
                                **({"proximity_radius": g.proximity_radius} if g.proximity_radius is not None else {})} for g in self.groups},
-            "people": [{"id": p.id, "group": p.group, "preference": list(p.preference), "position": list(p.position),
+            "people": [{"id": p.id, "group": p.group, "preference": list(p.preference),
+                        "position": list(p.position),
                         "overrides": json.loads(p.overrides)} for p in self.people],
             "network": {"persistent_edges": [list(e) for e in self.persistent_edges],
                         "campaign_edges": [list(e) for e in self.campaign_edges],
@@ -415,6 +416,8 @@ def _make_group(group: str, policy: Mapping[str, Any]) -> Group:
     if not isinstance(policy, dict) or set(policy) - {"voting", "movement", "max_step", "proximity_radius", "communication", "graph", "parameters", "capabilities"} or not isinstance(policy.get("voting"), str) or not (policy["voting"] in VOTING_POLICIES + COALITION_POLICIES + SIGNAL_POLICIES + CERTIFIED_POLICIES + EPISTEMIC_POLICIES or policy["voting"].startswith("python:")):
         raise ElectionError(f"group {group!r}: expected supported voting and movement")
     movement = policy.get("movement", "stationary")
+    if movement == "grid_walk":
+        raise ElectionError("grid_walk retired; use random_walk with normal movement parameters")
     # "external": positions come from Simulation.step(external_moves=...), e.g. a MARL learner.
     if not isinstance(movement, str) or not (movement in ("stationary", "random_walk", "external") or movement.startswith("python:")):
         raise ElectionError(f"group {group!r}: unsupported movement {movement!r}")
@@ -429,6 +432,12 @@ def _make_group(group: str, policy: Mapping[str, Any]) -> Group:
     params = policy.get("parameters", {})
     if not isinstance(params, dict):
         raise ElectionError(f"group {group!r}: parameters must be a table")
+    if movement == "random_walk":
+        from .network import validate_walk_parameters
+        distribution, mean, spread = validate_walk_parameters(params.get("movement", {}), max_step)
+        # Serialize defaults explicitly: checkpoints never depend on parser defaults.
+        params = {**params, "movement": ({"distribution": "normal", "mean_step": mean, "std_step": spread}
+                                        if distribution == "normal" else {"distribution": "uniform"})}
     if policy["voting"] in STRATEGIC:
         validate_parameters(params.get("voting", {}))
     if policy["voting"] in EPISTEMIC_POLICIES:
@@ -476,10 +485,13 @@ def make_scenario(raw: Mapping[str, Any]) -> Scenario:
     if "nomination" in raw:
         from .nomination import make_nominated_scenario
         return make_nominated_scenario(raw)
-    allowed = {"parties", "k", "seed", "rounds", "groups", "people", "network", "interventions", "convergence", "coalitions", "campaign_controller", "signal_controller", "detector", "majority_estimation"}
+    allowed = {"parties", "k", "seed", "rounds", "groups", "people", "network", "interventions", "convergence", "coalitions", "campaign_controller", "signal_controller", "detector", "majority_estimation", "stochastic_stability"}
     unknown = set(raw) - allowed
     if unknown:
         raise ElectionError(f"unknown scenario keys: {sorted(unknown)}")
+    if "stochastic_stability" in raw:
+        raise ElectionError("finite-grid stochastic_stability retired; use examples/gaussian-memory.toml; "
+                            "Gaussian frequency summaries are exploratory, not certified")
     party_data = raw.get("parties")
     if not isinstance(party_data, list) or not party_data:
         raise ElectionError("parties must be a non-empty list")
@@ -542,7 +554,7 @@ def make_scenario(raw: Mapping[str, Any]) -> Scenario:
         raise ElectionError("people must be a non-empty list")
     people = []
     for item in raw_people:
-        if not isinstance(item, dict) or not {"id", "group", "preference"} <= set(item) or set(item) - {"id", "group", "preference", "position", "overrides"}:
+        if not isinstance(item, dict) or not {"id", "group", "preference"} <= set(item) or set(item) - {"id", "group", "preference", "position", "grid_position", "overrides"}:
             raise ElectionError("each person requires id, group and preference; position and overrides are optional")
         person_id = _id(item["id"], "person id")
         group = _id(item["group"], "person group")
@@ -553,6 +565,8 @@ def make_scenario(raw: Mapping[str, Any]) -> Scenario:
             raise ElectionError(f"person {person_id!r}: preference must rank every party once")
         if set(pref) != set(parties):
             raise ElectionError(f"person {person_id!r}: preference must rank every party once")
+        if "grid_position" in item:
+            raise ElectionError("grid_position retired; provide explicit position=[x,y] in [0,1]")
         position = item.get("position", [0.5, 0.5])
         if not isinstance(position, list) or len(position) != 2:
             raise ElectionError(f"person {person_id!r}: position must have two coordinates")
@@ -692,6 +706,11 @@ def make_scenario(raw: Mapping[str, Any]) -> Scenario:
                                     or convergence["case"] not in ("direct_best_response", "source_local_dominance", "certified_conformity")):
         raise ElectionError("convergence requires a supported case")
     effective_groups = [apply_overrides(groups_by_id[p.group], p.overrides) for p in people]
+    if any(group.voting == "memory_pivotal" for group in effective_groups):
+        if majority is None or k != 1:
+            raise ElectionError("memory_pivotal requires enabled majority_estimation and k=1")
+        if any(json.loads(group.parameters).get("voting", {}) != {} for group in effective_groups if group.voting == "memory_pivotal"):
+            raise ElectionError("memory_pivotal takes no voting parameters; configure majority_estimation instead")
     from .epistemic import validate_signal_epistemic_group
     for group in effective_groups:
         validate_signal_epistemic_group(group, signal_controller, len(people), len(parties))
@@ -757,9 +776,10 @@ def make_scenario(raw: Mapping[str, Any]) -> Scenario:
                 raise ElectionError("source_local_dominance requires integer radius 0..20 and max_states 1..1000000")
             if len({p.get("radius", 0) for p in parameters}) != 1:
                 raise ElectionError("source_local_dominance requires a common radius")
-    return Scenario(parties, k, tuple(people), seed, rounds, tuple(normalized_groups), radius,
+    result = Scenario(parties, k, tuple(people), seed, rounds, tuple(normalized_groups), radius,
                     normalized_edges, tuple(sorted(normalized_channels)),
                     tuple(sorted(normalized_interventions, key=lambda action: (action.round, action.person))), normalized_campaign,
                     convergence["case"] if convergence else None, proximity_mode, normalized_static,
                     tuple(sorted(coalitions, key=lambda coalition: coalition.id)), controller, signal_controller,
                     detector=detector, majority_estimation=majority)
+    return result

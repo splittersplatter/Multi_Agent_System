@@ -6,6 +6,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.cli import main
@@ -19,7 +20,7 @@ def example():
     return data
 
 
-class ExhaustiveCampaignTests(unittest.TestCase):
+class ExhaustiveCampaignTests(VerificationTestCase):
     def test_every_subset_matches_independently_scheduled_round_one_actions(self):
         data=example(); scenario=make_scenario(data); result=exhaustive_one_round_campaign(scenario)
         self.assertEqual(result["combinations_checked"],11)

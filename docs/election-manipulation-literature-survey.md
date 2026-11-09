@@ -1,6 +1,6 @@
 # Election manipulation: literature survey and gap analysis
 
-**Working research record — 2 November 2026.** Scope: the seven mechanisms in
+**Survey:2 November; full-text audit:7 November; simulator mapping refreshed:9 November2026.** Scope: the seven mechanisms in
 the final [Eclipse-MAS proposal](</home/dhruv/Downloads/Eclipse-MAS-Proposal.pdf>).
 Project scope/order is now fixed in the [roadmap](project-roadmap.md) and
 [stage plans](plans/README.md); this survey supplies research evidence, not a
@@ -8,10 +8,16 @@ competing roadmap. It maps published models, not verified open-source implementa
 “Implemented” below means the paper specifies or simulates a mechanism; public
 code availability is not assumed.
 
+9 November focused supplement: [24-work stability audit](dynamic-network-stability.md#24-work-evidence-matrix)
+and [historical finite-grid contract](plans/stochastic-stability.md), whose runtime
+is now retired in favour of Gaussian movement. This adds
+conditional mathematical scope, not simulator implementation, absorption proof
+for the continuous model or a new main-corpus collection count.
+
 **Full-text collection/method audit — 7 November 2026:**
 [paper-by-paper heuristics and metrics](literature-heuristics-and-metrics.md),
 [local PDFs and access status](../References/README.md). 31 works reviewed from full text. The 36 PDFs include five retained versions/prints, not 36
-independent papers. Original files and historical survey scope retained. This
+independent papers. Source corpus/version evidence retained; no fresh search performed in this docs cleanup. This
 audit adds method/metric evidence and bibliographic corrections; it is not a
 fresh systematic search or a simulator replication. In particular, k-pragmatist
 and Top-K EU differ; S14 evaluates analytical success probabilities; final

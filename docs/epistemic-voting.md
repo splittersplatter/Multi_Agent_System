@@ -9,13 +9,18 @@ and simulation policies using an actor's permitted observation. [Stage plan](pla
 PYTHONPATH=src python3 -m multi_agent_election.cli knowledge examples/knowledge-profile.json --agent 1
 PYTHONPATH=src python3 -m multi_agent_election.cli knowledge examples/knowledge-profile.json --conditional examples/conditional-profile.json
 PYTHONPATH=src python3 -m multi_agent_election.cli knowledge examples/knowledge-two-voters.json --solve-conditional
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/epistemic.toml --port 8008
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/epistemic-integrated.toml --port 8008
-PYTHONPATH=src python3 -m multi_agent_election.cli visual examples/epistemic-public-signal.toml --port 8008
-PYTHONPATH=src python3 -m multi_agent_election.cli compare examples/epistemic.toml --policies epistemic_dere epistemic_dominant epistemic_pessimistic --seeds 11 22 --rounds 3
+# Tiny regression only; not an outcome simulation.
+PYTHONPATH=src python3 scripts/verify_fixture.py run examples/epistemic.toml --summary
 ```
 
-Example: agent 1 temporarily casts C, sees completed A/B/B ballots and then votes A;
+Normal simulations require N>=100. These finite-world policies retain a
+1,000,000-world ceiling and enumerate other voters' strict preferences: with
+N>=100 and m>=2 they exceed that ceiling even with complete ballot sensing.
+They currently serve tiny exact verification, not production-scale epistemic
+voting. The standalone JSON knowledge analysis is a formal tool, not a population
+simulation. Do not silently raise caps, sample worlds or claim a large run succeeded.
+
+Fixture example: agent 1 temporarily casts C, sees completed A/B/B ballots and then votes A;
 inspector **Agent reports and memory** records 216 logical worlds, one projected
 ballot profile, de re A, an opt-in observation history and no other voters'
 private preferences. The override is a researcher-scheduled edit, not an attacker implementation.
@@ -121,7 +126,7 @@ calculations group worlds with the same other first-choice profile; this preserv
 all four reported decision properties. The cap applies to the full logical count,
 before grouping. `max_worlds` defaults to 10,000 and is limited to 1,000,000;
 exceeding it fails the round without commit. This exponential model is intended
-for small electorates, not a 500-person default.
+for explicit tiny verification, not normal N>=100/m>=2 outcome simulations.
 
 Configure one of `epistemic_dere`, `epistemic_dominant`, or
 `epistemic_pessimistic`, explicitly grant roster observation, and optionally
@@ -163,8 +168,8 @@ decision. Neither limits nor the compatible-world model establish convergence.
 [Tests](../tests/test_epistemic.py) compare factored decisions with explicit
 preference-and-ballot world enumeration, exercise de dicto without de re, false
 announcements, nested knowledge, hidden-preference invariance, caps, permission
-denials, CLI, browser session, edits and replay. A live browser showed the example
-decision. Conditional checking/solving is exact only for its stated finite,
+denials, verification CLI/HTTP sessions, edits and replay. Historical tiny-browser
+checks predate the minimum population requirement. Conditional checking/solving is exact only for its stated finite,
 ordinal plurality domain. Richer temporal knowledge, source-specific truthful
 priors, other voting rules and richer adversarial temporal signal semantics remain future work;
 no human-behaviour or election prediction claim.

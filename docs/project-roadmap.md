@@ -5,16 +5,33 @@ Stage 11 pending. [Stage plans](plans/README.md) · [Code audit](code-audit-and-
 
 [Heuristic evaluation](plans/heuristic-evaluation.md): audit/metrics specified;
 restricted [convergent foundation](convergence-foundations.md) adopted for future
-studies; full-model guarantee remains refuted. F1–F3 and scheduled F4/F5 implemented;
-research experiments and remaining stage gates pending.
+studies; original size-unrestricted guarantee is refuted. F1–F3 and scheduled F4/F5 implemented;
+research experiments and remaining stage gates pending. Current evidence is
+centralized in [status](implementation-status-report.md); old measurements live in [history](history/README.md).
 
 ## Scope
 
-Current extension: [recent-encounter majority estimates](plans/recent-encounter-majority.md),
-passive only; no strategic-voting or convergence replacement.
+Research tracks: [exploratory and certified](plans/research-improvement.md).
+Moving/windowed/simultaneous `memory_pivotal` is implemented for exploratory
+simulation. Its original size-unrestricted model has a verified
+[two-state ballot cycle](memory-voting-convergence.md); N>=100 remains uncertified.
+Convergence certification is required for certified claims, optional for clearly
+labelled finite-horizon studies reporting cutoffs and possible cycles.
+
+Current extension: [recent-encounter majority estimates](plans/recent-encounter-majority.md)
+also provide the information used by `memory_pivotal`.
+
+Selected follow-up: [stochastic-stability contract](plans/stochastic-stability.md).
+Current baseline = Gaussian motion with exploratory long-run frequency diagnostics,
+not ballot absorption or a convergence certificate. Grid runtime retired by user
+decision; retain its [historical proof/checker](stochastic-stability-verification.md).
+Gaussian mixing/occupation guarantees and full outcome studies remain open;
+no noisy worse ballots or voter inertia introduced.
 
 - One cumulative simulator; seven controlled mechanism studies; integrated ablations; reproducible report.
 - People: group policies, capability permissions, movement, messaging, ranked voting.
+- Strict population: all outcome runs/demos/pilots/benchmarks N>=100; demo default200.
+  Tiny formal/unit/regression fixtures are explicitly verification-only; no silent padding.
 - Ballots: exactly `k` distinct ranked parties per voter; global `1 <= k <= |C|`.
 - CLI + local browser; editable timeline; network/per-agent views; stats; plots/GIFs.
 - Rewind + edit replaces future; no automatic branching.
@@ -46,8 +63,8 @@ Sources: [final proposal](</home/dhruv/Downloads/Eclipse-MAS-Proposal.pdf>),
 | 10 | All-enabled model; isolated controls; leave-one-out ablations |
 | 11 | Frozen experiments; uncertainty; report; reproducible package |
 
-Stage 00 contract verified; Stage 01 baseline and initial engine implemented;
-integrate epistemics in Stage 02; later stages validate mechanisms.
+Stage00 contract complete; engine and partial Stages01–10 implemented. Each
+stage below closes acceptance/evaluation gaps; do not rebuild existing features.
 
 ## Invariants
 
@@ -56,7 +73,8 @@ integrate epistemics in Stage 02; later stages validate mechanisms.
 - Separate sight/message/edge/signal/alignment budgets; log proposed, accepted and rejected actions.
 - Nominate before round zero; stable candidate IDs thereafter; candidate count >= k.
 - Isolated mechanism 7: preselected leaders; combined model: nominated leaders.
-- One winner per round; passive detective alerts before third consecutive target win.
+- One winner per round; detector early-alert-before-third-win is an evaluation
+  objective, not a guarantee. Alerts may be missed or false.
 - Knowledge factive; false reports not truthful announcements; approximate beliefs labelled.
 
 ## Completion
@@ -66,3 +84,13 @@ Metrics: target-win frequency, paired share/margin changes, winner rank, switchi
 contact exposure, realized costs, cycles/cutoffs, runtime; detector false alarms/recall/delay.
 Changing preferences: evaluate initial and current ideals.
 Null results valid; claims require evidence.
+
+9 November documentation progress: [24-work applicability audit](dynamic-network-stability.md#24-work-evidence-matrix),
+finite-state/clock-quotient proof draft and phase-conditioned evaluation contract.
+Observed quietness != occupation-frequency guarantee != distributional convergence
+!= ballot absorption. No simulator changes or new outcome experiments in this update.
+
+Historical follow-up:8 exact formal kernels/classes/stationary solves complete; opt-in grid
+integration, strict guards and streaming frequency diagnostics verified. Independent
+review found two guard gaps, fixed/re-reviewed. No stage acceptance or seeded-path
+stationarity certification inferred from finite checks.

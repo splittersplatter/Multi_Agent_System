@@ -1,14 +1,15 @@
-# Heuristic verification — 6 November 2026
+# Historical heuristic verification — 6 November 2026
 
 Scope: all ten strategic plurality variants + three existing controls. Verify
 implemented contracts, not exact paper reproduction or real-election validity.
 Model source/defaults unchanged; added independent verification tests only.
 
+Historical source/electorates only; small runs predate N>=100. No claim that
+old manifests match current source. [Current status](../implementation-status-report.md).
+
 ## Correctness
 
-- Full suite: **134 pass**. Standard-library-only (`python3 -S`): **131 pass,
-  three optional-image skips**; all voting/HTTP tests execute.
-- [New verification tests](../tests/test_voting_verification.py):
+- [New verification tests](../../tests/test_voting_verification.py):
   80 randomized exact-EU oracles, 2–5 parties, 0–10 other voters; independent
   stars-and-bars enumeration and factorial probabilities. Compare all ballot
   utility differences, including multiway/near ties.
@@ -22,7 +23,7 @@ Model source/defaults unchanged; added independent verification tests only.
   isolation, variable ballot lengths, singleton electorate, rewind/replay,
   sampling frequencies and independent Poisson probability sums.
 - No observed arithmetic/integration failure under the tested contracts. Source
-  departures remain explicit in [voting reference](voting-heuristics.md).
+  departures remain explicit in [voting reference](../voting-heuristics.md).
 
 ## Test-run protocol
 
@@ -39,17 +40,17 @@ Top-2, L1 radius 2; simultaneous updates; retain failed runs.
 | User population / native | 500 | All 13 | 20 | 10 | 39 / 0 | 9 / 30 |
 
 Total: **147 completed runs, zero failures, 11,580 committed simulation rounds**.
-All JSON manifests match the current model source. Test files/documentation do not
-change that model hash. Earlier smoke artifacts remain separate historical evidence.
+Manifests identify the source at collection time; they do not match later runtime
+changes. These are historical exploratory/verification runs, not qualifying studies.
 
 Artifacts, including full parameters/scenarios, manifests, metrics, final
 decisions and per-run runtime:
 
-- [Small native](../outputs/heuristic-verification-20261106/small-native.json)
-- [Common poll](../outputs/heuristic-verification-20261106/small-common-poll.json)
-- [Reports enabled](../outputs/heuristic-verification-20261106/small-reports-enabled.json)
-- [Reports-enabled input](../outputs/heuristic-verification-20261106/small-reports-enabled.toml)
-- [500-person runs](../outputs/heuristic-verification-20261106/population-500-native.json)
+- [Small native](../../outputs/heuristic-verification-20261106/small-native.json)
+- [Common poll](../../outputs/heuristic-verification-20261106/small-common-poll.json)
+- [Reports enabled](../../outputs/heuristic-verification-20261106/small-reports-enabled.json)
+- [Reports-enabled input](../../outputs/heuristic-verification-20261106/small-reports-enabled.toml)
+- [500-person runs](../../outputs/heuristic-verification-20261106/population-500-native.json)
 
 ### 500-person results
 
@@ -113,20 +114,8 @@ Shared machine/process caches; descriptive timings, not latency guarantees.
    rank-utility is .500 for A, .501 for B, .499 for C. This proxy barely separates
    winners here. Zero switching in pivotal does not establish that it is best.
 
-## Reproduce
+## Current rechecks
 
-Run from the repository root. Outputs must be new paths. Replace output names
-when rerunning; keep previous evidence.
-
-```bash
-PYTHONPATH=src python3 -m unittest discover -s tests -v
-PYTHONPATH=src python3 -S -m unittest discover -s tests
-PYTHONPATH=src python3 -m multi_agent_election.cli compare examples/heuristics.toml --seeds 101 202 303 --rounds 100 --window 20 --policies sincere local_plurality sensed_plurality pivotal expected_utility top_k max_m tie_u tie_h tie_r poisson local_dominance maximin --output outputs/verification-small-new.json
-PYTHONPATH=src python3 -m multi_agent_election.cli compare examples/heuristics.toml --seeds 101 202 303 --rounds 100 --window 20 --parameters '{"information_source":"poll"}' --policies pivotal expected_utility top_k max_m tie_u tie_h tie_r poisson local_dominance maximin --output outputs/verification-poll-new.json
-PYTHONPATH=src python3 -m multi_agent_election.cli compare outputs/heuristic-verification-20261106/small-reports-enabled.toml --seeds 101 202 303 --rounds 100 --window 20 --policies sincere local_plurality sensed_plurality pivotal expected_utility top_k max_m tie_u tie_h tie_r poisson local_dominance maximin --output outputs/verification-reports-new.json
-PYTHONPATH=src python3 -m multi_agent_election.cli compare examples/population-scenario.toml --seeds 101 202 303 --rounds 20 --window 10 --policies sincere local_plurality sensed_plurality pivotal expected_utility top_k max_m tie_u tie_h tie_r poisson local_dominance maximin --output outputs/verification-500-new.json
-```
-
-Remaining: review near-tie/parity modelling before research rankings; expand
-electorates/horizons/seeds; benchmark browser rendering/large-history export latency.
-No voting rule changed during verification. Veto/full DEL remain outside scope.
+Use the [active voting guide](../voting-heuristics.md) and [verification commands](../../README.md#verify).
+Old nine-person outcome commands are intentionally retired; do not rerun them as
+production simulations. Published-method assumptions/parity limits still apply.

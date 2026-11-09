@@ -6,6 +6,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 from unittest.mock import patch
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
@@ -19,7 +20,7 @@ def example():
         return tomllib.load(handle)
 
 
-class SignalComparisonTests(unittest.TestCase):
+class SignalComparisonTests(VerificationTestCase):
     def test_factorial_runs_replay_pairing_and_hand_worked_first_round(self):
         data = example()
         data["groups"]["residents"].update(movement="random_walk", max_step=0.02)

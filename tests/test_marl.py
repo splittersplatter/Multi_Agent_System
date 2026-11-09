@@ -2,6 +2,8 @@ import json
 import math
 import unittest
 
+from verification_support import VerificationTestCase
+
 from multi_agent_election.engine import Simulation
 from multi_agent_election.marl import MovementEnv
 from multi_agent_election.model import ElectionError, make_scenario
@@ -31,7 +33,7 @@ def scenario(**changes):
     return make_scenario(raw)
 
 
-class ExternalMovementTests(unittest.TestCase):
+class ExternalMovementTests(VerificationTestCase):
     def test_valid_move_commits_and_others_stay(self):
         sim = Simulation(scenario())
         frame = sim.step(external_moves={"a1": (0.58, 0.56)})
@@ -88,7 +90,7 @@ class ExternalMovementTests(unittest.TestCase):
             Simulation.from_checkpoint(tampered)
 
 
-class MovementEnvTests(unittest.TestCase):
+class MovementEnvTests(VerificationTestCase):
     def test_api_shapes_and_truncation(self):
         env = MovementEnv(scenario(), reward_party="B", max_rounds=3)
         self.assertEqual(env.possible_agents, ["a1", "a2", "f1"])

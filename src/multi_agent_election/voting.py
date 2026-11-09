@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 STRATEGIC = ("pivotal", "expected_utility", "top_k", "max_m", "tie_u", "tie_h",
              "tie_r", "poisson", "local_dominance", "maximin")
-VOTING_POLICIES = ("sincere", "local_plurality", "sensed_plurality") + STRATEGIC
+VOTING_POLICIES = ("sincere", "local_plurality", "sensed_plurality", "memory_pivotal") + STRATEGIC
 COALITION_POLICIES = ("sight_plurality", "overheard_plurality", "coalition_fusion")
 SIGNAL_POLICIES = ("signal_confident",)
 CERTIFIED_POLICIES = ("direct_best_response", "source_local_dominance", "certified_conformity")
@@ -108,6 +108,36 @@ def configure_voting(scenario, policy, parameters=None):
 
 def winner(scores, ballot):
     return max(range(len(scores)), key=lambda c: (scores[c] + (c == ballot), -c))
+
+
+def memory_pivotal(parties, preference, current, population, state, config):
+    """Strict predicted-winner improvement using exact estimated other-voter scores."""
+    from .majority import _scores, estimate, leader_indices, poll_weight_ratio
+
+    scores, denominator = _scores(state, config)
+    other = tuple((population - 1) * value for value in scores)
+    predicted = tuple(parties[max(range(len(parties)), key=lambda c:
+                      (other[c] + denominator * (c == action), -c))]
+                      for action in range(len(parties)))
+    baseline = predicted[parties.index(current)]
+    best = next(party for party in preference if party in predicted)
+    choice = best if preference.index(best) < preference.index(baseline) else current
+    return choice, {"policy": "memory_pivotal", "previous": current, "choice": choice,
+                    "switched": choice != current, "baseline_winner": baseline,
+                    "predicted_winners": dict(zip(parties, predicted)),
+                    "estimated_shares": dict(zip(parties, estimate(state, config))),
+                    "estimated_leaders": [parties[i] for i in leader_indices(state, config)],
+                    "sample_size": len(state.entries), "observation_round": state.round,
+                    "ballot_source_round": max(0, state.round - 1),
+                    **({"poll_counts": list(state.published_poll if state.published_poll is not None else config.poll_counts),
+                        "poll_source_round": state.published_round,
+                        "poll_weight": poll_weight_ratio(state, config)[0] / poll_weight_ratio(state, config)[1],
+                        "effective_poll_weight": (poll_weight_ratio(state, config)[0] / poll_weight_ratio(state, config)[1]
+                                                  if state.entries else 1.0)}
+                       if config.poll_refresh_rounds is not None else {}),
+                    "information": "initial poll and recent incoming proximity ballots",
+                    "strict_improvement": choice != current,
+                    "convergence": "uncertified"}
 
 
 def direct_best_response(parties, counts, current, preference):

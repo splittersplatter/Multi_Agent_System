@@ -7,6 +7,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.campaign import select_campaign_edges
@@ -21,7 +22,7 @@ def example():
         return tomllib.load(handle)
 
 
-class CampaignControllerTests(unittest.TestCase):
+class CampaignControllerTests(VerificationTestCase):
     def test_hand_worked_controller_and_sensor_effect(self):
         sim=Simulation(make_scenario(example())); sim.run()
         frames=[f.as_dict() for f in sim.frames]

@@ -111,6 +111,18 @@ def _is_nested_table(value: Mapping[str, Any]) -> bool:
     return any(isinstance(v, (list, Mapping)) for v in value.values()) or len(value) > 3
 
 
+def pin_uniform_walk(config: dict) -> dict:
+    """Keep the original uniform random-walk step lengths.
+
+    main switched the random_walk default to truncated-normal lengths. The uniform option
+    is the same code path as before, so pinning it keeps every published suchit-sims
+    result reproducible on the merged engine."""
+    for group in config.get("groups", {}).values():
+        if group.get("movement") == "random_walk":
+            group.setdefault("parameters", {}).setdefault("movement", {"distribution": "uniform"})
+    return config
+
+
 # --------------------------------------------------------------------------- running
 @dataclass
 class Run:

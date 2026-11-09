@@ -1,10 +1,15 @@
 # Literature: heuristics and evaluation metrics
 
 Audit: **7 November 2026**. Corpus: **31 retained works; stable source IDs**, not a new
-systematic search. **31 reviewed works; 36 PDFs = 31 selected
+systematic search. Simulator mappings refreshed9 November; original PDF evidence unchanged.
+**31 reviewed works; 36 PDFs = 31 selected
 copies + five retained versions/prints.** Three original PDFs preserved.
 [Collection/versions](../References/README.md) · [Manifest](../References/manifest.json)
 · [Earlier survey](election-manipulation-literature-survey.md).
+
+9 November supplement: [24-work moving-network stability audit](dynamic-network-stability.md#24-work-evidence-matrix).
+Overlapping works retain the source IDs below; supplementary row IDs/blocked
+sources do not change this corpus's31-work/36-PDF counts or collection manifest.
 
 Evidence: PDF-page numbers below are **1-based file pages**, including covers;
 printed pages/sections are supplied where useful. Records audit model/algorithm,
@@ -94,7 +99,7 @@ Meir, Polukarov, Rosenschein, Jennings; AAAI 2010;
   included as counterexamples, not the default convergent process.
 - **Evaluation:** existence/nonexistence, finite improvement, counterexamples,
   move bounds under specified assumptions; no empirical metric suite/trials.
-- **Evidence:** PDF pp.3-5, §2/Proposition 2; pp.6-9, §3/Theorems 3/8;
+- **Evidence:** PDF pp.3-5, §2/Proposition 2; pp.5-9, §3/Theorems 3/8;
   pp.10-11, discussion. Do not transfer proofs to our moving simultaneous engine.
 
 ### S5 — Voter Response to Iterated Poll Information
@@ -583,20 +588,20 @@ Names denote **paper methods**, not implemented simulator features.
 | --- | --- | --- | --- |
 | Truthful, k-pragmatist — S5/S7 | Voter; ranking + poll leaders | Favourite overall / favourite among k leaders | Sincere implemented; pragmatist **absent**; not `top_k` |
 | AU, CV_eta, LD+LB, TRT/CMP/LB — S7 | Voter; utilities/poll, fitted parameters | Attainability-utility / subjective pivotality / leader bias / type rules | **Absent** as named paper variants; fitting requires human data |
-| Pivotal/direct response — S4/S11-S14 | Voter; current or believed score, tie rule | Preferred attainable winning outcome | `pivotal` variant; fixed threshold 1; simultaneous/moving departures |
+| Pivotal/direct response — S4/S11-S14 | Voter; current or believed score, tie rule | Preferred attainable winning outcome | `pivotal` belief variant; separate exact sequential F1; no shared proof for mobile mixtures |
 | Full/pivotal EU — S9/S10 | Voter; local ballots, cardinal utilities | Expected winner utility | Exact `expected_utility` includes multiway/near outcomes; not paper Full oracle |
 | Top-K/Max-M/TieU/H/R/Poisson — S10 | Voter; local support, utility, population/sample size | Simplified pivotal gains | Names implemented; inertia/ties/scheduling/utilities/Poisson differ |
-| Local dominance, truth/lazy bias — S6 | Voter; plausible scores, current action | Robust improvement; bias variants | Fixed-total L1 dominance only; truth/lazy variants absent |
-| Maximin conditional choice — S1/S2 | Voter; epistemic profile information classes | Best worst outcome; conditional equilibrium | Score-world `maximin` only; no higher-order/conditional-equilibrium solver |
+| Local dominance, truth/lazy bias — S6 | Voter; plausible scores, current action | Robust improvement; bias variants | Fixed-total `local_dominance` and separate source variable-total F2; truth/lazy variants absent |
+| Maximin conditional choice — S1/S2 | Voter; epistemic profile information classes | Best worst outcome; conditional equilibrium | Score-world maximin plus finite knowledge/conditional-equilibrium tools; exact world caps prevent normal N>=100/m>=2 use |
 | Considerate improving moves — S8 | Coalition; graph cliques, member/neighbor welfare | Joint gain without harming relatives | Absent; not an attacker coalition by default |
-| Greedy supporter-edge construction — S11 | Organizer; network/preferences/poll | Force and stabilize target victory with fewer edges | Strategic edge policy absent; campaign layer alone insufficient |
-| Specter/pair/2PW-H reports — S12-S14 | Pollster; electorate, feasible reports, target | Constructive/destructive victory | Attack optimizers absent; initial poll input is not optimizer |
+| Greedy supporter-edge construction — S11 | Organizer; network/preferences/poll | Force and stabilize target victory with fewer edges | None/random/outdegree controller exists; source supporter-edge construction absent |
+| Specter/pair/2PW-H reports — S12-S14 | Pollster; electorate, feasible reports, target | Constructive/destructive victory | Bounded truthful/random/target-biased controller exists; source pair/2PW-H optimizers absent |
 | MOV/POV influence surrogates — S17/S19 | Controller; diffusion/utility/ranking model | Margin or win-probability effect under seed budget | Absent; requires explicit diffusion and evaluation oracle |
 | Political-distance/PageRank — S23 | Controller; topology, ideology, probabilities | Rank seed usefulness over campaigns | Absent; centrality guarantees do not transfer (S16) |
 | FTPL/online gradient + greedy defense — S18 | Attacker/defender; channel/payoff beliefs | Approximate minimax expected switched voters | Absent; distinct from detection |
 | ILP/PA/DP control — S20-S22/S25-S26 | Campaigner; types, costs, graph/issue space | Exact feasible winning strategy in bounded cases | Absent; **algorithms**, not generic voter heuristics |
 | SIRM / anchored opinion dynamics — S28/S29 | Voter; contact/commuting or opinion graph | Copying/noisy influence / anchored consensus | Absent; `random_walk` and conformity are not these models |
-| Party adaptation — S30 | Party; support/history/government | Platform/office-oriented rules | Absent; nearest-party voter not strategic EU voter |
+| Party adaptation — S30 | Party; support/history/government | Platform/office-oriented rules | Bounded public-feedback adaptation exists, not S30 office/coalition algorithms |
 | Credibility targeting — S31 | Campaigner/voter; source beliefs, turnout | Bayesian persuasion and filtered contact | Absent; requires distinct belief/turnout state |
 | Six-probability voting game / zealots — S27 | Voter; local poll, time/payoff regime | Conditional stochastic support, avoid deadlock | Absent; different election/payoff semantics |
 | Profile-conditioned LLM — S32 | Generative agent; demographic/context prompt | Output support probabilities | Absent; not required for Eclipse |
@@ -638,29 +643,28 @@ score; `SW` = source-specific social welfare. Undefined ratios stay undefined.
 
 ## Current simulator mapping
 
-Read-only source check: `voting.py`, `metrics.py`, `experiments.py`;
-[implemented-policy reference](voting-heuristics.md) and
-[verification caveats](heuristic-verification-report.md). No code or experiments changed.
+Mapping refreshed9 November against current modules; paper records above remain
+the7 November full-text audit. [Policies](voting-heuristics.md),
+[epistemics](epistemic-voting.md), [current status](implementation-status-report.md).
 
 | Capability | Present | Missing / comparison requirement |
 | --- | --- | --- |
-| Decision tracing | Scoped observations, score/world traces, deterministic replay | Held-out identical-observation decision benchmark; paper Full reference distinct from exact EU |
-| Voting rules | Plurality winner over global ranked ballot length | Other counting rules, paper random election ties, sequential scheduling |
-| Policy assumptions | Rank-derived utility default; optional explicit utility; startup selector | Spatial quadratic utility/preference generation matching S9/S10; calibrated human parameters |
-| Empty observations | Smoothed uniform prior when strategic local sensors see nobody | S9 freezes isolated voters; uniform-prior decisions are a different assumption |
-| EU approximations | Named S10-inspired policies | Poisson numerical sums != paper asymptotic Skellam; TieU correction differs; inertia differs; document Top-2 parity before rankings |
-| Uncertainty | Fixed-total L1 worlds, dominance/maximin | Full epistemic profile worlds, higher-order knowledge, conditional equilibrium; source-matched radii/biases |
-| Existing output | Counts/shares/groups, winner margin, winner rank, switching; comparison rank-utility/runtime/stable-window flags | Nontruthful fraction, CW eligibility/efficiency, SF ratio, decision regret, latency distributions/peak memory |
-| Paired interventions | Researcher-scheduled edits and paired target-share/margin summaries | Actual poll/edge/campaign adversaries, budgets and equal-budget attack controls; no robustness claim yet |
-| Dynamics | Full-horizon runs; winner/ballot stable windows; failures retained | Reactivation/censor-aware timing; full-state cycles only under appropriate state assumptions |
-| External validity | Synthetic simulations | Human-choice data for S7-style prediction; election/commuting data for S28; do not infer realism from synthetic agreement |
+| Decision tracing | Scoped observations, scores/world traces, replay; passive encounter estimates | Held-out same-observation decision benchmark; paper Full distinct from exact EU |
+| Rules/scheduling | Plurality over length-k ballots; simultaneous default; separate guarded sequential F1–F5 | Other counting rules and certified moving/mixed response |
+| Utility/prior | Rank-derived or explicit utility; smoothed empty-sample prior | Source quadratic utilities/calibration; S9 isolated-voter freeze is different |
+| EU approximations | S10-inspired policies | Poisson/TieU/tie/inertia deviations; Top-2 parity |
+| Epistemics | Fixed-total worlds; source F2; finite knowledge and conditional-equilibrium analysis | General temporal models; full-world policies unscalable at normal N>=100/m>=2 |
+| Runtime output | Vote/group/network/switching, signed target comparisons, spatial/cost/detector and estimator metrics | CW/SF/nontruthful/decision-regret metrics; full metric dictionary not implemented |
+| Interventions | Scoped coalition, bounded campaign/poll/ideal/leader controllers; matched controls | Named source optimizers/defense game; proof for compositions |
+| Dynamics | Guarded certificates; unrestricted horizon/stability labels; failures retained | Full-model convergence and censor-aware certified outcome evaluation |
+| Scale/validity | Normal N>=100, explicit tiny verification, source-stamped synthetic runs | Current browser/resource curves, human/election datasets and external validity |
 
 ## Recommended evaluation contract — proposed, not published results
 
 Operational follow-up: [candidate plan](plans/heuristic-evaluation.md) and
 [metric dictionary](heuristic-evaluation-metrics.md). The stricter requested
-full-model convergence gate currently fails; recommendations below are research
-context, not authorization to run experiments or certify convergence.
+intended full-model voter convergence remains unresolved after the N>=100
+restriction. Label exploratory runs uncertified; certification requires proof.
 
 1. **Correctness gates:** independent tiny-state oracle; permitted-information
    invariance; valid ballots; tie/scheduler semantics; replay; explicit workload
@@ -672,7 +676,7 @@ context, not authorization to run experiments or certify convergence.
 3. **Clean outcomes:** rank-utility welfare gap vs best available winner and
    matched sincere control; conditional CW efficiency; group utility; nontruthful
    fraction/SF ratio as diagnostics. No single weighted “best heuristic” score.
-4. **Attacks, once implemented:** paired added target-win probability;
+4. **Attack evaluation, once composition-approved:** paired added target-win probability;
    conditional success among baseline losses; final target margin **and** margin
    change; welfare loss; realized budget-effect curves; equal-budget random/
    published attackers. Never call smallest found cost an optimum without proof.

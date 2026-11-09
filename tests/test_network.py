@@ -2,13 +2,14 @@ import copy
 import math
 import random
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.network import proximity_edges
 from test_baseline import example
 
 
-class NetworkTests(unittest.TestCase):
+class NetworkTests(VerificationTestCase):
     def test_edges_against_independent_brute_force(self):
         positions = {"a": (0.0, 0.0), "b": (0.3, 0.4), "c": (0.3, 0.4), "d": (1.0, 1.0)}
         for radius in (0, 0.5, 1.0, math.sqrt(2)):

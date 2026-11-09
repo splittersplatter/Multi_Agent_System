@@ -1,11 +1,66 @@
 """Checkpoint field serialization and explicit legacy frame projections."""
 
+import copy
 import json
 from typing import Any
 
 from .model import ElectionError, Intervention, apply_overrides
 from .policies import canonical_json
 from .epistemic import EPISTEMIC_POLICIES
+
+
+def checkpoint_scenario(raw, manual_actions=()):
+    """Pin historical group motion defaults; never replay implicit overrides differently."""
+    if not isinstance(raw, dict) or not isinstance(raw.get("groups"), dict):
+        return raw
+    raw = copy.deepcopy(raw)
+    groups = raw["groups"]
+    for group in groups.values():
+        if not isinstance(group, dict) or group.get("movement") != "random_walk":
+            continue
+        params = group.get("parameters", {})
+        motion = params.get("movement", {}) if isinstance(params, dict) else None
+        if not isinstance(motion, dict):
+            continue  # Normal scenario validation reports malformed data.
+        distribution = motion.get("distribution", "uniform")
+        if distribution == "normal":
+            mean = motion.get("mean_step", group.get("max_step", 0))
+            motion = {**motion, "distribution": distribution, "mean_step": mean,
+                      "std_step": motion.get("std_step", mean / 4 if type(mean) in (int, float) else mean)}
+        else:
+            motion = {**motion, "distribution": distribution}
+        group["parameters"] = {**params, "movement": motion}
+    # Override dictionaries are serialized in each frame. Rewriting them would
+    # falsify recorded history; require the archived runtime for ambiguous cases.
+    people = raw.get("people", [])
+    if not isinstance(people, list):
+        return raw
+    overrides = [p.get("overrides", {}) for p in people if isinstance(p, dict)]
+    actions = raw.get("interventions", [])
+    if isinstance(actions, list) and isinstance(manual_actions, (list, tuple)):
+        overrides += [a.get("overrides", {}) for a in (*actions, *manual_actions) if isinstance(a, dict)]
+    for override in overrides:
+        if not isinstance(override, dict):
+            continue
+        if override.get("movement") == "random_walk" and "parameters" not in override:
+            if any(isinstance(g, dict) and g.get("movement", "stationary") != "random_walk"
+                   for g in groups.values()):
+                raise ElectionError("legacy checkpoint has implicit movement parameters in an override; "
+                                    "resume with the archived runtime, not changed Gaussian defaults")
+        if not isinstance(override.get("parameters"), dict) or override.get("movement") == "stationary":
+            continue
+        motion = override["parameters"].get("movement", {})
+        if not isinstance(motion, dict):
+            continue
+        # Conservative for mixed groups: absent override motion could have been
+        # used after a scheduled group switch. Never guess its historical kernel.
+        if (any(isinstance(g, dict) and g.get("movement") == "random_walk" for g in groups.values())
+                or override.get("movement") == "random_walk"):
+            if "distribution" not in motion or (motion["distribution"] == "normal"
+                    and not {"mean_step", "std_step"} <= set(motion)):
+                raise ElectionError("legacy checkpoint has implicit movement parameters in an override; "
+                                    "resume with the archived runtime, not changed Gaussian defaults")
+    return raw
 
 
 def action_dict(action: Intervention) -> dict[str, Any]:

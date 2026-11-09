@@ -55,3 +55,46 @@ Checkpoints saved with the old code need the usual
 ## 4. Local environment
 
 - `.venv/` (already git-ignored) holds matplotlib, Pillow and numpy for the figures. The simulator core still needs only the standard library.
+
+## 5. Merge of `main` into `suchit-sims` (9 November 2026)
+
+Merged `main` at `fba9b08` (commits `f6638a5`, `c207e9c`, `fba9b08`): Gaussian
+random-walk movement, `memory_pivotal` voting with periodic polls, state recording
+and `view` playback, the 100-person minimum, checkpoint version 25 and many test updates.
+
+Conflicts resolved:
+
+| File | Resolution |
+| --- | --- |
+| `src/multi_agent_election/model.py` | Kept `main`'s retired-`grid_walk` guard and added `"external"` to the allowed movement modes |
+| `src/multi_agent_election/provenance.py` | Pipeline fingerprint lists both `main`'s new modules (`playback.py`, `occupation.py`) and `marl.py` |
+| `docs/README.md` | Took `main`'s rewritten index and added rows for the scenario studies, MARL interface and this change log |
+
+`engine.py` merged automatically: `main`'s state recorder runs inside `_step()`, and
+`step(external_moves=...)` wraps it, so recorded runs include external moves.
+
+Changes made to stay compatible with `main`:
+
+- **Uniform walk pinned.** `main` made truncated-normal step lengths the `random_walk`
+  default. Every suchit-sims scenario that walks now sets
+  `parameters.movement = {distribution = "uniform"}` (`common.pin_uniform_walk`), the same code
+  path as before, so published results reproduce exactly. Verified on the merged engine:
+  foreign-intelligence F2 win rates (62.5% vs 25%) and seed-1 counts (A 38, B 41, C 21),
+  echo-chamber all-passive and all-infiltrate payoffs (identical to 4 decimals), watchdog
+  W1/W4 and propaganda P2. The 8 saved foreign-intelligence configs were patched the same way.
+  The watchdog and propaganda studies use stationary voters and are unaffected.
+- **100-person minimum.** `main` rejects simulations with fewer than 100 people outside
+  unit-test verification scope. Changes:
+  - `showcase70` became `showcase100` (88 residents + 12 campaigners);
+  - the Experiment 4 demo became 100 voters with 10 loyal fans and 0/5/20 followers
+    (Centre wins 16/22/29 of 30 seeds; demo seed 20);
+  - `marl_demo.py` became 100 agents (85 residents + 15 spies);
+  - the 30-person foreign-intelligence demo (`foreign30*`) was removed; use the 100-person
+    configs in `docs/suchit_sims/foreign_intelligence/configs/` instead.
+- **Tests.** `tests/test_marl.py` uses `VerificationTestCase`, since its fixtures have 5 people.
+
+Verification on Windows (Python 3.13): the merged branch runs 402 tests (`main`'s 391 plus
+the 11 MARL tests). The same 12 tests error on an untouched `main` checkout on this machine, so
+the merge adds no regressions. All 12 are Windows-only issues: the Unix-only `resource` module
+(5) and subprocess tests that set `PYTHONPATH` with `:` (7). The merged browser server starts and
+records states for `showcase100.toml`.

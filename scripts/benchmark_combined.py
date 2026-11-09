@@ -21,6 +21,8 @@ from urllib.request import Request, urlopen
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from multi_agent_election.population import require_population
 TEMPLATE = ROOT / "examples" / "all-enabled.toml"
 
 
@@ -31,6 +33,7 @@ def _line_replace(lines, old, new):
 
 
 def scenario_text(agents, rounds, seed):
+    require_population(agents)
     if type(agents) is not int or agents < 4 or type(rounds) is not int or rounds < 1 or type(seed) is not int or seed < 0:
         raise ValueError("agents >= 4, rounds >= 1 and seed >= 0 required")
     lines = TEMPLATE.read_text(encoding="utf-8").splitlines()

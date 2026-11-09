@@ -9,6 +9,7 @@ import random
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.cli import main
@@ -23,7 +24,7 @@ def example():
         return tomllib.load(handle)
 
 
-class PublicSignalTests(unittest.TestCase):
+class PublicSignalTests(VerificationTestCase):
     def test_report_cost_integrality_and_budget_invariants(self):
         parties=("A","B","C")
         for policy in ("truthful","target_biased","bounded_random"):

@@ -20,6 +20,7 @@ from .engine import Simulation
 from .majority import MajorityConfig, MajorityState, advance_population, estimate, leader_indices
 from .model import ElectionError, make_scenario
 from .provenance import manifest
+from .population import require_simulation_population
 
 
 def _rng(seed, name):
@@ -98,6 +99,8 @@ def _evaluate(scenario, directory, sensitivity, shift_round):
     with _compressed(directory / "predictions.jsonl.gz") as predictions, _compressed(directory / "trace.jsonl.gz") as trace:
         _write_line(predictions, {"type": "header", "parties": scenario.parties, "people": people,
                                 "arms": {name: c.as_dict() for name, c in arms.items()},
+                                **({"weight_semantics": "poll_only uses latest poll; current_contacts/window_only use zero poll weight; blended/window sensitivity use linear decay; weight sensitivity uses fixed weight with refreshed poll"}
+                                   if config.poll_refresh_rounds is not None else {}),
                                 "empty_memory": "initial_poll", "time": "encounter r observes completed ballot r-1"})
         _write_line(trace, simulation.current.as_dict())
         for _ in range(scenario.rounds):
@@ -118,16 +121,25 @@ def _evaluate(scenario, directory, sensitivity, shift_round):
             history_bytes += len(json.dumps(current.as_dict(), separators=(",", ":")).encode())
             for name, arm in arms.items():
                 started = time.perf_counter()
-                states[name] = (tuple((p, replace(state, round=current.round)) for p, state in states[name])
-                                if name == "poll_only" else advance_population(states[name], scenario.parties, arm, current.round,
-                                                 current.proximity_edges, dict(previous.ballots)))
+                if arm.poll_refresh_rounds is None and name == "poll_only":
+                    states[name] = tuple((p, replace(state, round=current.round)) for p, state in states[name])
+                else:
+                    published = (tuple(truth_counts[c] for c in scenario.parties)
+                                 if arm.poll_refresh_rounds is not None and previous.round > 0
+                                 and previous.round % arm.poll_refresh_rounds == 0 else None)
+                    states[name] = advance_population(states[name], scenario.parties, arm, current.round,
+                        () if name == "poll_only" else current.proximity_edges, dict(previous.ballots),
+                        published_counts=published)
                 timings[name].append(time.perf_counter() - started)
                 if name == "blended" and states[name] != current.majority_states:
                     raise ElectionError("engine/evaluation cache disagreement")
                 predictions_round, leaders_round, sizes, ages_round = [], [], [], []
+                evaluation_arm = (replace(arm, poll_refresh_rounds=None)
+                                  if arm.poll_refresh_rounds is not None and name in
+                                  ("current_contacts", "window_only", "weight_0.25", "weight_0.75") else arm)
                 for person, state in states[name]:
-                    shares = estimate(state, arm)
-                    leaders = leader_indices(state, arm)
+                    shares = estimate(state, evaluation_arm)
+                    leaders = leader_indices(state, evaluation_arm)
                     correct = leaders == truth_leaders
                     totals[name]["observations"] += 1
                     totals[name]["leader_matches"] += correct
@@ -185,6 +197,8 @@ def run_pilot(output_dir, *, seeds=(101, 102, 103, 104, 105), sensitivity=False,
         raise ElectionError("seeds must be unique nonnegative integers")
     if scenario is not None and scenario.majority_estimation is None:
         raise ElectionError("scenario requires majority_estimation with explicit poll_counts")
+    if scenario is not None:
+        require_simulation_population(scenario)
     output_dir.mkdir()
     context = {"record_type": "eclipse.majority-estimation-pilot", "record_version": 1,
                "created_utc": datetime.now(timezone.utc).isoformat(), "manifest": manifest(),

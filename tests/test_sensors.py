@@ -1,11 +1,12 @@
 import copy
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from test_baseline import example
 
 
-class TrustedBallotSensorTests(unittest.TestCase):
+class TrustedBallotSensorTests(VerificationTestCase):
     def test_sensor_is_opt_in_and_never_falls_back_to_reports(self):
         data = example()
         data["network"] = {"persistent_edges": [["1", "4"]]}
@@ -95,7 +96,7 @@ class TrustedBallotSensorTests(unittest.TestCase):
         data["people"][3]["overrides"] = {"voting": "sensed_plurality", "capabilities": {"sense_public_ballots": True}}
         sim = Simulation(make_scenario(data))
         sim.run(3)
-        self.assertEqual(sim.checkpoint()["version"], 21)
+        self.assertEqual(sim.checkpoint()["version"], 25)
         sim.edit_after(1, "4", overrides={"voting": "sensed_plurality", "capabilities": {"sense_public_ballots": False}})
         frame = sim.step()
         self.assertEqual(frame.ballot_sensors, ())
@@ -121,7 +122,7 @@ class TrustedBallotSensorTests(unittest.TestCase):
             frame.pop("report_provenance")
         restored = Simulation.from_checkpoint(old)
         self.assertEqual(restored.current, sim.current)
-        self.assertEqual(restored.checkpoint()["version"], 21)
+        self.assertEqual(restored.checkpoint()["version"], 25)
 
 
 if __name__ == "__main__":

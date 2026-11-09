@@ -15,10 +15,10 @@ def _digest(base: Path, names: tuple[str, ...]) -> str:
 
 def manifest() -> dict[str, str | int]:
     base = Path(__file__).resolve().parent
-    core = _digest(base, ("model.py", "engine.py", "network.py", "policies.py", "voting.py", "metrics.py", "epistemic.py", "campaign.py", "signals.py", "nomination.py", "alignment.py", "detector.py", "leaders.py", "records.py", "observations.py", "coalitions.py", "majority.py", "provenance.py"))
+    core = _digest(base, ("model.py", "engine.py", "network.py", "policies.py", "voting.py", "metrics.py", "epistemic.py", "campaign.py", "signals.py", "nomination.py", "alignment.py", "detector.py", "leaders.py", "records.py", "state_recording.py", "observations.py", "coalitions.py", "majority.py", "population.py", "provenance.py"))
     pipeline = _digest(base, ("cli.py", "experiments.py", "combined.py", "experiment_support.py",
                               "spatial_experiments.py", "signal_experiments.py", "network_experiments.py", "majority_experiments.py",
-                              "render.py", "visual.py", "exports.py", "marl.py",
+                              "render.py", "visual.py", "playback.py", "exports.py", "occupation.py", "marl.py",
                               "__init__.py", "web/index.html", "web/app.js", "web/edit.js", "web/download.js",
                               "web/inspector.js", "web/style.css"))
     return {"manifest_version": 1, "package": "multi-agent-election", "package_version": "0.1.0",

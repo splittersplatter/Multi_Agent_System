@@ -19,7 +19,7 @@ import statistics as stats
 
 import numpy as np
 
-from common import (DOCS, INK, INK2, MUTED, PALETTE, Style, plt, run_config, save_fig, save_gif, save_snapshots,
+from common import (DOCS, pin_uniform_walk, INK, INK2, MUTED, PALETTE, Style, plt, run_config, save_fig, save_gif, save_snapshots,
                     share_plot, write_json)
 
 OUT = DOCS / "foreign_intelligence"
@@ -95,7 +95,7 @@ def build(variant: str, n_spies: int, seed: int, rate: int | None = None, total:
                  "parameters": {"target": TARGET, "mode": variant if attack else "blind"},
                  "capabilities": {"observe_target_preferences": sight, "intercept_private_reports": eaves,
                                   "receive_private_reports": True, "send_private_reports": True}}
-    return {
+    return pin_uniform_walk({
         "parties": PARTIES, "k": 1, "seed": seed, "rounds": ROUNDS,
         "groups": {
             "committed": {"voting": "sincere", "movement": "random_walk", "max_step": 0.015, "communication": "truthful"},
@@ -107,7 +107,7 @@ def build(variant: str, n_spies: int, seed: int, rate: int | None = None, total:
         "network": {"radius": 0.12, "persistent_edges": persistent, "private_channels": chats},
         "coalitions": coalitions,
         "people": people,
-    }
+    })
 
 
 VARIANTS = [

@@ -7,6 +7,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import Simulation, make_scenario
 from multi_agent_election.cli import main
@@ -21,7 +22,7 @@ def example():
         return tomllib.load(handle)
 
 
-class AllEnabledTests(unittest.TestCase):
+class AllEnabledTests(VerificationTestCase):
     def test_joint_budget_information_phase_and_replay_invariants(self):
         sim = Simulation(make_scenario(example())); sim.run()
         self.assertEqual(sim.scenario.parties, ("alice", "cara"))

@@ -75,6 +75,13 @@ checkpoint = env.checkpoint()   # replayable like any other run
 - Checkpoint replay matches exactly; a tampered position fails replay.
 - Environment: API shapes and truncation, scaling and clipping, determinism under a fixed seed, the sensing-permission observation boundary (checked against a hand-computed nearest-neighbour list), the reward formula, and errors when no agent is external or the reward party is invalid.
 
+## Population rule (after merging `main`)
+
+`main` requires at least 100 people per simulation. `MovementEnv` creates a normal `Simulation`,
+so training scenarios need 100 or more people (`marl_demo.py` uses 85 residents + 15 spies).
+Small fixtures are allowed only inside the unit-test verification scope (`VerificationTestCase`),
+which `tests/test_marl.py` uses.
+
 ## Limits
 
 - Only **movement** is externally controlled. Voting, communication and graph actions still come from the scenario's own policies or plugins. They could be added the same way: validate, then record as an intervention.

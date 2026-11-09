@@ -1,16 +1,27 @@
 # Heuristic audit and evaluation
 
-Status: **restricted certified foundation adopted; F1–F3 and scheduled F4
-integrated; F5 finite-intervention network recovery implemented; budgeted attackers and comparative experiments pending**.
-Date: 7 November 2026. Extends Stage 01/early Stage 02; no stage completion.
+Status: F1–F5 restricted cases implemented; formal selection/evaluation pending.
+Updated9 November2026. No broad stage completion.
 [Evidence](../literature-heuristics-and-metrics.md) · [Convergence dossier](../heuristic-convergence.md) · [Metric dictionary](../heuristic-evaluation-metrics.md).
 [Adopted foundation cases](../convergence-foundations.md): F1 direct response,
 F2 source local dominance, F3 sequential undirected conformity, F4/F5 finite intervention/relaxation.
 
+9 November scope priority: [proof-first improvements](research-improvement.md).
+`memory_pivotal` is an implemented exploratory policy distinct from `pivotal`.
+Its original unrestricted-size composition has an inductive
+[counterexample](../memory-voting-convergence.md). Proof remains required for
+certified-convergence claims; exploratory finite-horizon comparisons are allowed.
+
+Current statistical baseline: Gaussian movement and exploratory frequency/phase
+diagnostics. [Grid proof](stochastic-stability.md) retained as historical evidence;
+grid runtime retired. Immediate strict response retained; no Gaussian occupation,
+mixing or ballot-absorption certificate. Held-out evaluation remains required.
+
 ## 1. Scope and gates
 
 - Separate voter, pollster, network controller, campaigner and defender tracks.
-- Reproducibility and guaranteed eventual ballot absorption mandatory for selection.
+- Reproducibility mandatory; guaranteed ballot absorption mandatory only for a
+  certified-convergence selection. Exploratory selection records missing guarantees.
 - Original full-model guarantee is refuted. User subsequently authorized cases
   with confirmed convergence as the basis for future work: certify explicit
   restricted compositions, not arbitrary heterogeneous/mobile/attacked mixtures.
@@ -25,8 +36,9 @@ F2 source local dominance, F3 sequential undirected conformity, F4/F5 finite int
 Page references below are PDF pages in the [full-text audit](../literature-heuristics-and-metrics.md).
 Each row inherits its track contract below; listed departures override it.
 I = implemented source-informed variant; N = not implemented; C = control.
-**All existing engine candidates lack a full-model convergence certificate.** Theory for a restricted
-source model is not evidence for the current composition. Complexity refers to the
+**Unrestricted strategic candidates lack a full-model convergence certificate.**
+Separate F1–F5 modes retain their stated guarded domains, not arbitrary compositions.
+Theory for a restricted source model is not evidence for the current composition. Complexity refers to the
 method, not measured runtime; explicit enumeration budgets must fail visibly.
 
 ### Track contracts
@@ -34,7 +46,7 @@ method, not measured runtime; explicit enumeration budgets must fail visibly.
 | Track | Objective / permitted inputs | Actions, memory and budget | Execution / termination |
 | --- | --- | --- | --- |
 | V: voter | Own outcome utility; private ranking/current ballot, authorized observations, own memory; no evaluator truth | Ranked ballot; policy-specific belief/sample state; compute cap | Current engine: simultaneous after movement/graph/messages; fixed party-order election ties, retain current objective ties then ranking except Top-K exclusions; actor-round RNG; horizon is not convergence |
-| P: pollster | Constructive target win or destructive loss, separately; source-specified scores/preferences/network | Announced count vector; history for repeated polls; report distance `0.5 L1`, nonnegative counts summing to N | S13 unilateral voter response versus S14 one-shot response; not interchangeable; deterministic search ordering must be declared; no implemented attacker runtime |
+| P: pollster | Constructive target win or destructive loss, separately; source-specified scores/preferences/network | Announced count vector; history for repeated polls; report distance `0.5 L1`, nonnegative counts summing to N | S13 unilateral voter response versus S14 one-shot response; not interchangeable; deterministic search ordering must be declared; source algorithms not integrated; separate bounded controller heuristics exist |
 | E: network controller | Target victory/margin; explicitly declared controller knowledge | Legal supporter/seed/edge changes; cumulative intervention/cost log and residual budget | Voter/diffusion dynamics inherited from source; finite controller budget does not prove downstream voter convergence |
 | C: campaigner | Target margin/win or party vote/office objective; source-specific rankings/positions/history | Seed/rank/perception/platform changes; beliefs and contact state only where specified | Diffusion, spatial response and party adaptation are separate models; no assumption they inherit V scheduling or termination |
 | D: defender | Reduce expected switched voters under attack; declared channel exposure/preferences | Budgeted channel allocation; optimization iterates/mixed strategy | S18 finite optimization iterations; sampled play not ballot absorption; tie/solver settings require explicit configuration |
@@ -44,6 +56,7 @@ method, not measured runtime; explicit enumeration budgets must fail visibly.
 | Method | Source/page | Objective / distinguishing inputs | State, parameters / complexity | Status and convergence limitation |
 | --- | --- | --- | --- | --- |
 | `pivotal` | S13 pp.2-3 | Preferred achievable plurality winner from maintained public poll | Poll plus observed-sender history; candidate-response scan | I; simultaneous/local-belief departure from unilateral source dynamics |
+| `memory_pivotal` | S9/S12/S13 adaptation | Preferred achievable predicted winner from blended recent-contact estimate | Explicit initial poll, rolling unique-neighbor cache, public N; exact score comparisons | I; simultaneous; uncertified, known small-domain cycle |
 | `expected_utility` | S9 pp.2-3 | Exact expected winner utility under inferred multinomial scores | Local sample or poll; utility vector; score space `choose(N+m-2,m-1)` | I; includes multiway/near ties, deterministic election ties; not paper Full |
 | `top_k` | S10 pp.2-4 | Sum pairwise pivotal utility gains over K leaders | K; restricted score enumeration; no cross-round memory except optional poll | I; K=2 exact ties can vanish for odd other-voter total |
 | `max_m` | S10 pp.2-4 | Largest pairwise pivotal utility gain | Same support model; enumerated pair states | I; distinct objective, not exact-EU optimization |
@@ -68,7 +81,8 @@ not an alias for implemented exact EU.
 
 ### Poll, network, campaign and defense candidates
 
-All N; no source attacker/defender algorithm currently integrated. Controller
+Listed source algorithms are N (not integrated). Separate campaign/poll/ideal/leader
+controller heuristics exist; they are adaptations, not these paper algorithms. Controller
 knowledge is an explicit access contract, never permission for voters to read truth.
 Tie-breaking/scheduling not reported in a source stays unresolved until specified
 in a separately approved implementation plan; such candidates remain ineligible.
@@ -97,22 +111,23 @@ algorithms (S26) and MILP best responses are scoped comparators/prerequisites,
 not heuristics to fill shortlist slots. S31 credibility targeting needs new
 belief/turnout state; S27/S28/S29/S32 remain adjacent model inspiration.
 
-## 3. Experiment specification — gated, not executed
+## 3. Experiment specification — formal evaluation pending
 
 1. **Correctness:** hand-computed/or exhaustive tiny-state oracles, permissions,
    legal ballots/budgets, source-method deviations, deterministic ordering,
    resume/rewind/RNG and CLI/browser equivalence. No weakening failed assertions.
-2. **Feasibility:** use [confirmed foundation domains](../convergence-foundations.md).
-   Each admitted engine composition needs a verified proof-domain mapping, not just
-   policy names. Unrestricted model remains outside the certified track.
+2. **Feasibility:** use [confirmed foundation domains](../convergence-foundations.md)
+   for certified claims. Other compositions may run as labelled exploratory studies,
+   retaining cutoffs and possible cycles; no proof inferred from finite observations.
 3. **Calibration:** seeds 1000-1029; freeze versioned parameters/objectives and
    scenario matrix before held-out evaluation. Existing defaults unchanged.
 4. **Evaluation:** seeds 2000-2029 minimum per cell; independent additional blocks
    of 30 only under predeclared precision/budget extension, never selective reruns.
    Pair initial electorate/exogenous streams; isolate stochastic policy streams.
 5. **Scenario cells:** certified v1 uses k=1 and eligible case settings only.
-   Proposed later stress matrix: tiny enumerated cases; N=25,100,499,500,501; m=3,5;
-   k=1,m; sincere starts; IC and single-peaked preferences; static disconnected,
+   Proposed later stress matrix: N=100,200,499,500,501; m=3,5;
+   tiny enumerated cases are verification only, never outcome simulations.
+   k=1 or m in separately admitted domains; sincere starts; IC and single-peaked preferences; static disconnected,
    ER, homophilous and proximity graphs; movement off/on; homogeneous and 50/50
    mixed policies. Out-of-domain cells are exploratory, not certified results.
    Record exact generators/degree/exposure settings in approved
@@ -145,21 +160,17 @@ without changing defaults; no new CLI/API implemented by this document.
 | Audit | Role-specific register, implementation departures/prerequisites | Complete; no new heuristic validated |
 | Convergence | Source theorems, F3 potential proof, exhaustive tiny-model checks | F1–F3 implemented with guards/certificates; F4/F5 scheduled edits supported |
 | Metrics | Formula/eligibility/aggregation dictionary | Specified; not runtime implementation |
-| Experiments | Frozen manifests, acceptance tests, reproducible raw/aggregate outputs | Pending source-to-engine verification + separate implementation approval |
+| Experiments | Frozen manifests, acceptance tests, reproducible raw/aggregate outputs | Small exploratory pilot complete; formal held-out evaluation pending |
 | Shortlist | Discuss qualifying methods by behaviour; choose number afterward | Pending; no forced top five |
-| Implementation | Separate plan per selected method; cumulative stage gates | Pending selection |
+| Implementation | Separate plan per selected method; cumulative stage gates | `memory_pivotal` implemented for exploration; other selections pending |
 
 ## Progress
 
-| Date | Work/status | Evidence | Prior integration | Remaining |
-| --- | --- | --- | --- | --- |
-| 2026-11-07 | Reference cleanup; candidate/metric contract and symbolic convergence audit | This register, linked dictionary/dossier, reference manifest | Existing ten strategic policies/controls and historical verification retained; no simulator edits or runs | Full-model guarantee fails; scope decision needed; experiments/shortlist blocked |
-| 2026-11-07 | User adopted confirmed restricted cases as research basis | [Foundation](../convergence-foundations.md), exhaustive verification helper; F1/F2 source results, F3 potential proof, F4 finite-intervention composition | Existing simulator/defaults unchanged; earlier universal counterexample retained | Source-level guarantees are not current engine certificates; implementation, multi-seed studies and shortlist pending |
-| 2026-11-07 | F1/F2/F3 certified engine modes, scheduled F4 response | [Foundation](../convergence-foundations.md), [engine tests](../../tests/test_certified_direct.py), CLI/browser/replay/CSV | Shared engine, historical simultaneous defaults retained | Budgeted attackers, broader stage work, evaluation and selection pending |
-| 2026-11-08 | F5: finite scheduled ballot/preference events followed by F3 network recovery | [Proof and 512-case oracle](../convergence-foundations.md#f5-finite-interventions-then-network-recovery) | Reuses F3 scheduler, pending-event guard, session, export and replay | Fixed undirected graph; no budgeted controller, shortlist or comparative study |
+Corpus/method audit complete:31 works/36 PDFs, stable IDs. Restricted F1–F5
+integrated; memory-voter implemented for exploration. Current N>=100 floor
+does not certify it. Existing bounded controllers, detector and
+mechanism comparison tools are not source-algorithm replications or certified
+attacker/defender compositions. [Current evidence](../implementation-status-report.md).
 
-Validation: `python3 scripts/collect_references.py` -> 31 available, zero blocked;
-all 36 SHA-256 hashes and three original hashes matched. Source-ID/cardinality,
-136 local links, removed-source residue, helper AST syntax and `git diff --check`
-passed. Existing PDF font/xref recovery warnings remain documented; files unchanged.
-No simulator suite or simulations run for these documentation/reference changes.
+Next deliverables: frozen experiment manifests, metric implementation gap list,
+role-specific results and shortlist discussion. No forced five or cross-role score.

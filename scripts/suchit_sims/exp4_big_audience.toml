@@ -1,6 +1,6 @@
 parties = ["Left", "Right", "Centre"]
 k = 1
-seed = 19
+seed = 20
 rounds = 40
 
 [groups.loyal_centre]
@@ -9,11 +9,17 @@ movement = "random_walk"
 max_step = 0.03
 proximity_radius = 0.2
 
+[groups.loyal_centre.parameters]
+movement = { distribution = "uniform" }
+
 [groups.sincere]
 voting = "sincere"
 movement = "random_walk"
 max_step = 0.03
 proximity_radius = 0.2
+
+[groups.sincere.parameters]
+movement = { distribution = "uniform" }
 
 [groups.front_runner]
 voting = "top_k"
@@ -24,6 +30,7 @@ capabilities = { sense_public_ballots = true }
 
 [groups.front_runner.parameters]
 voting = { top_k = 2 }
+movement = { distribution = "uniform" }
 
 [groups.copycat]
 voting = "sensed_plurality"
@@ -32,6 +39,9 @@ max_step = 0.03
 proximity_radius = 0.2
 capabilities = { sense_public_ballots = true }
 
+[groups.copycat.parameters]
+movement = { distribution = "uniform" }
+
 [groups.pivot_seeker]
 voting = "pivotal"
 movement = "random_walk"
@@ -39,366 +49,609 @@ max_step = 0.03
 proximity_radius = 0.2
 capabilities = { sense_public_ballots = true }
 
+[groups.pivot_seeker.parameters]
+movement = { distribution = "uniform" }
+
 [network]
 radius = 0.2
-persistent_edges = [["v05", "v33"], ["v05", "v57"], ["v05", "v01"], ["v05", "v10"], ["v05", "v08"], ["v05", "v15"], ["v05", "v59"], ["v05", "v58"], ["v05", "v23"], ["v05", "v45"], ["v05", "v37"], ["v05", "v44"], ["v05", "v27"], ["v05", "v21"], ["v05", "v25"], ["v05", "v54"], ["v05", "v04"], ["v05", "v40"], ["v05", "v50"], ["v05", "v52"], ["v06", "v09"], ["v06", "v04"], ["v06", "v03"], ["v06", "v48"], ["v06", "v55"], ["v06", "v07"], ["v06", "v40"], ["v06", "v35"], ["v06", "v58"], ["v06", "v02"], ["v06", "v54"], ["v06", "v30"], ["v06", "v37"], ["v06", "v25"], ["v06", "v29"], ["v06", "v27"], ["v06", "v23"], ["v06", "v12"], ["v06", "v59"], ["v06", "v57"], ["v11", "v02"], ["v11", "v29"], ["v11", "v15"], ["v11", "v09"], ["v11", "v46"], ["v11", "v27"], ["v11", "v37"], ["v11", "v28"], ["v11", "v22"], ["v11", "v55"], ["v11", "v35"], ["v11", "v08"], ["v11", "v40"], ["v11", "v50"], ["v11", "v42"], ["v11", "v19"], ["v11", "v59"], ["v11", "v13"], ["v11", "v23"], ["v11", "v30"], ["v14", "v26"], ["v14", "v01"], ["v14", "v19"], ["v14", "v40"], ["v14", "v37"], ["v14", "v04"], ["v14", "v58"], ["v14", "v52"], ["v14", "v55"], ["v14", "v20"], ["v14", "v48"], ["v14", "v44"], ["v14", "v15"], ["v14", "v47"], ["v14", "v13"], ["v14", "v30"], ["v14", "v45"], ["v14", "v56"], ["v14", "v54"], ["v14", "v18"], ["v16", "v22"], ["v16", "v08"], ["v16", "v13"], ["v16", "v47"], ["v16", "v37"], ["v16", "v39"], ["v16", "v38"], ["v16", "v32"], ["v16", "v19"], ["v16", "v40"], ["v16", "v04"], ["v16", "v44"], ["v16", "v54"], ["v16", "v33"], ["v16", "v28"], ["v16", "v48"], ["v16", "v18"], ["v16", "v26"], ["v16", "v56"], ["v16", "v12"], ["v17", "v46"], ["v17", "v48"], ["v17", "v43"], ["v17", "v18"], ["v17", "v00"], ["v17", "v02"], ["v17", "v50"], ["v17", "v22"], ["v17", "v25"], ["v17", "v53"], ["v17", "v33"], ["v17", "v35"], ["v17", "v15"], ["v17", "v40"], ["v17", "v04"], ["v17", "v31"], ["v17", "v38"], ["v17", "v01"], ["v17", "v34"], ["v17", "v52"]]
+persistent_edges = [["v06", "v14"], ["v06", "v75"], ["v06", "v74"], ["v06", "v77"], ["v06", "v70"], ["v06", "v28"], ["v06", "v24"], ["v06", "v32"], ["v06", "v80"], ["v06", "v54"], ["v06", "v20"], ["v06", "v47"], ["v06", "v15"], ["v06", "v27"], ["v06", "v48"], ["v06", "v69"], ["v06", "v13"], ["v06", "v19"], ["v06", "v25"], ["v06", "v03"], ["v07", "v89"], ["v07", "v25"], ["v07", "v75"], ["v07", "v55"], ["v07", "v49"], ["v07", "v56"], ["v07", "v02"], ["v07", "v43"], ["v07", "v03"], ["v07", "v67"], ["v07", "v00"], ["v07", "v50"], ["v07", "v46"], ["v07", "v99"], ["v07", "v70"], ["v07", "v68"], ["v07", "v08"], ["v07", "v04"], ["v07", "v13"], ["v07", "v63"], ["v09", "v45"], ["v09", "v68"], ["v09", "v89"], ["v09", "v13"], ["v09", "v92"], ["v09", "v64"], ["v09", "v12"], ["v09", "v03"], ["v09", "v60"], ["v09", "v02"], ["v09", "v43"], ["v09", "v01"], ["v09", "v97"], ["v09", "v77"], ["v09", "v85"], ["v09", "v11"], ["v09", "v96"], ["v09", "v00"], ["v09", "v50"], ["v09", "v16"], ["v17", "v73"], ["v17", "v65"], ["v17", "v16"], ["v17", "v52"], ["v17", "v76"], ["v17", "v03"], ["v17", "v01"], ["v17", "v97"], ["v17", "v19"], ["v17", "v82"], ["v17", "v94"], ["v17", "v91"], ["v17", "v04"], ["v17", "v89"], ["v17", "v37"], ["v17", "v67"], ["v17", "v39"], ["v17", "v54"], ["v17", "v57"], ["v17", "v81"], ["v22", "v11"], ["v22", "v76"], ["v22", "v19"], ["v22", "v39"], ["v22", "v42"], ["v22", "v84"], ["v22", "v67"], ["v22", "v69"], ["v22", "v73"], ["v22", "v05"], ["v22", "v93"], ["v22", "v13"], ["v22", "v29"], ["v22", "v26"], ["v22", "v89"], ["v22", "v33"], ["v22", "v81"], ["v22", "v87"], ["v22", "v82"], ["v22", "v31"], ["v23", "v38"], ["v23", "v46"], ["v23", "v05"], ["v23", "v20"], ["v23", "v54"], ["v23", "v84"], ["v23", "v86"], ["v23", "v68"], ["v23", "v50"], ["v23", "v66"], ["v23", "v73"], ["v23", "v00"], ["v23", "v48"], ["v23", "v87"], ["v23", "v19"], ["v23", "v56"], ["v23", "v31"], ["v23", "v24"], ["v23", "v83"], ["v23", "v77"], ["v34", "v28"], ["v34", "v10"], ["v34", "v37"], ["v34", "v42"], ["v34", "v76"], ["v34", "v04"], ["v34", "v74"], ["v34", "v01"], ["v34", "v90"], ["v34", "v16"], ["v34", "v30"], ["v34", "v70"], ["v34", "v68"], ["v34", "v44"], ["v34", "v65"], ["v34", "v39"], ["v34", "v46"], ["v34", "v52"], ["v34", "v49"], ["v34", "v54"], ["v36", "v72"], ["v36", "v64"], ["v36", "v95"], ["v36", "v11"], ["v36", "v32"], ["v36", "v33"], ["v36", "v73"], ["v36", "v69"], ["v36", "v93"], ["v36", "v51"], ["v36", "v25"], ["v36", "v68"], ["v36", "v94"], ["v36", "v78"], ["v36", "v61"], ["v36", "v03"], ["v36", "v24"], ["v36", "v70"], ["v36", "v82"], ["v36", "v84"], ["v40", "v75"], ["v40", "v08"], ["v40", "v71"], ["v40", "v42"], ["v40", "v00"], ["v40", "v16"], ["v40", "v69"], ["v40", "v05"], ["v40", "v35"], ["v40", "v19"], ["v40", "v94"], ["v40", "v02"], ["v40", "v21"], ["v40", "v12"], ["v40", "v59"], ["v40", "v77"], ["v40", "v03"], ["v40", "v80"], ["v40", "v53"], ["v40", "v32"], ["v41", "v42"], ["v41", "v92"], ["v41", "v81"], ["v41", "v45"], ["v41", "v50"], ["v41", "v33"], ["v41", "v37"], ["v41", "v63"], ["v41", "v08"], ["v41", "v93"], ["v41", "v79"], ["v41", "v88"], ["v41", "v01"], ["v41", "v77"], ["v41", "v38"], ["v41", "v98"], ["v41", "v66"], ["v41", "v53"], ["v41", "v51"], ["v41", "v57"]]
 
 [[people]]
 id = "v00"
-group = "sincere"
+group = "front_runner"
 preference = ["Right", "Centre", "Left"]
-position = [0.693, 0.0365]
+position = [0.0419, 0.5694]
 
 [[people]]
 id = "v01"
-group = "front_runner"
+group = "sincere"
 preference = ["Left", "Centre", "Right"]
-position = [0.481, 0.1426]
+position = [0.3428, 0.6341]
 
 [[people]]
 id = "v02"
-group = "front_runner"
-preference = ["Right", "Centre", "Left"]
-position = [0.5001, 0.3769]
+group = "pivot_seeker"
+preference = ["Left", "Centre", "Right"]
+position = [0.7643, 0.6538]
 
 [[people]]
 id = "v03"
 group = "copycat"
 preference = ["Right", "Centre", "Left"]
-position = [0.8441, 0.8671]
+position = [0.2127, 0.5123]
 
 [[people]]
 id = "v04"
-group = "sincere"
+group = "copycat"
 preference = ["Left", "Centre", "Right"]
-position = [0.0543, 0.384]
+position = [0.1772, 0.9]
 
 [[people]]
 id = "v05"
-group = "loyal_centre"
-preference = ["Centre", "Right", "Left"]
-position = [0.1368, 0.6929]
+group = "copycat"
+preference = ["Right", "Centre", "Left"]
+position = [0.8725, 0.8684]
 
 [[people]]
 id = "v06"
 group = "loyal_centre"
-preference = ["Centre", "Left", "Right"]
-position = [0.2772, 0.1507]
+preference = ["Centre", "Right", "Left"]
+position = [0.8524, 0.4238]
 
 [[people]]
 id = "v07"
-group = "sincere"
-preference = ["Left", "Centre", "Right"]
-position = [0.4092, 0.7213]
+group = "loyal_centre"
+preference = ["Centre", "Left", "Right"]
+position = [0.1327, 0.1227]
 
 [[people]]
 id = "v08"
-group = "front_runner"
-preference = ["Right", "Centre", "Left"]
-position = [0.3131, 0.6667]
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.8376, 0.1214]
 
 [[people]]
 id = "v09"
-group = "sincere"
-preference = ["Right", "Centre", "Left"]
-position = [0.2267, 0.6762]
+group = "loyal_centre"
+preference = ["Centre", "Left", "Right"]
+position = [0.1479, 0.3964]
 
 [[people]]
 id = "v10"
-group = "copycat"
+group = "sincere"
 preference = ["Left", "Centre", "Right"]
-position = [0.1252, 0.0925]
+position = [0.1078, 0.4881]
 
 [[people]]
 id = "v11"
-group = "loyal_centre"
-preference = ["Centre", "Right", "Left"]
-position = [0.5054, 0.6471]
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.7951, 0.3226]
 
 [[people]]
 id = "v12"
-group = "sincere"
-preference = ["Right", "Centre", "Left"]
-position = [0.4406, 0.2883]
+group = "pivot_seeker"
+preference = ["Left", "Centre", "Right"]
+position = [0.1193, 0.8089]
 
 [[people]]
 id = "v13"
 group = "sincere"
-preference = ["Left", "Centre", "Right"]
-position = [0.1909, 0.2987]
+preference = ["Right", "Centre", "Left"]
+position = [0.6155, 0.1652]
 
 [[people]]
 id = "v14"
-group = "loyal_centre"
-preference = ["Centre", "Right", "Left"]
-position = [0.469, 0.1355]
+group = "copycat"
+preference = ["Left", "Centre", "Right"]
+position = [0.0346, 0.0881]
 
 [[people]]
 id = "v15"
-group = "front_runner"
-preference = ["Left", "Centre", "Right"]
-position = [0.856, 0.6729]
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.7214, 0.2956]
 
 [[people]]
 id = "v16"
-group = "loyal_centre"
-preference = ["Centre", "Left", "Right"]
-position = [0.0939, 0.6396]
+group = "pivot_seeker"
+preference = ["Left", "Centre", "Right"]
+position = [0.8775, 0.7916]
 
 [[people]]
 id = "v17"
 group = "loyal_centre"
-preference = ["Centre", "Right", "Left"]
-position = [0.6258, 0.0382]
+preference = ["Centre", "Left", "Right"]
+position = [0.0926, 0.4711]
 
 [[people]]
 id = "v18"
-group = "sincere"
-preference = ["Left", "Centre", "Right"]
-position = [0.6434, 0.9231]
+group = "pivot_seeker"
+preference = ["Right", "Centre", "Left"]
+position = [0.0394, 0.7176]
 
 [[people]]
 id = "v19"
-group = "pivot_seeker"
+group = "sincere"
 preference = ["Right", "Centre", "Left"]
-position = [0.5654, 0.5835]
+position = [0.7361, 0.6151]
 
 [[people]]
 id = "v20"
-group = "pivot_seeker"
+group = "sincere"
 preference = ["Right", "Centre", "Left"]
-position = [0.228, 0.5086]
+position = [0.0446, 0.2909]
 
 [[people]]
 id = "v21"
-group = "sincere"
-preference = ["Centre", "Right", "Left"]
-position = [0.7581, 0.6444]
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.9384, 0.0323]
 
 [[people]]
 id = "v22"
-group = "sincere"
-preference = ["Right", "Centre", "Left"]
-position = [0.2153, 0.5223]
+group = "loyal_centre"
+preference = ["Centre", "Right", "Left"]
+position = [0.9555, 0.2286]
 
 [[people]]
 id = "v23"
-group = "copycat"
-preference = ["Left", "Centre", "Right"]
-position = [0.1577, 0.334]
+group = "loyal_centre"
+preference = ["Centre", "Right", "Left"]
+position = [0.2245, 0.9221]
 
 [[people]]
 id = "v24"
 group = "front_runner"
-preference = ["Left", "Centre", "Right"]
-position = [0.2755, 0.8614]
+preference = ["Right", "Centre", "Left"]
+position = [0.1035, 0.8267]
 
 [[people]]
 id = "v25"
 group = "copycat"
 preference = ["Left", "Centre", "Right"]
-position = [0.9281, 0.6325]
+position = [0.4462, 0.7915]
 
 [[people]]
 id = "v26"
-group = "front_runner"
-preference = ["Centre", "Right", "Left"]
-position = [0.2983, 0.5044]
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.6154, 0.8754]
 
 [[people]]
 id = "v27"
 group = "front_runner"
-preference = ["Centre", "Left", "Right"]
-position = [0.4797, 0.0887]
+preference = ["Left", "Centre", "Right"]
+position = [0.4004, 0.0334]
 
 [[people]]
 id = "v28"
 group = "copycat"
 preference = ["Left", "Centre", "Right"]
-position = [0.1752, 0.4608]
+position = [0.4613, 0.577]
 
 [[people]]
 id = "v29"
-group = "pivot_seeker"
+group = "front_runner"
 preference = ["Right", "Centre", "Left"]
-position = [0.5122, 0.8464]
+position = [0.2464, 0.219]
 
 [[people]]
 id = "v30"
-group = "sincere"
-preference = ["Centre", "Left", "Right"]
-position = [0.4688, 0.3865]
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.8644, 0.3874]
 
 [[people]]
 id = "v31"
-group = "sincere"
+group = "front_runner"
 preference = ["Right", "Centre", "Left"]
-position = [0.3772, 0.4485]
+position = [0.3573, 0.9489]
 
 [[people]]
 id = "v32"
 group = "copycat"
-preference = ["Centre", "Left", "Right"]
-position = [0.9427, 0.1189]
+preference = ["Left", "Centre", "Right"]
+position = [0.3753, 0.7449]
 
 [[people]]
 id = "v33"
 group = "front_runner"
-preference = ["Right", "Centre", "Left"]
-position = [0.5271, 0.4184]
+preference = ["Left", "Centre", "Right"]
+position = [0.5393, 0.3082]
 
 [[people]]
 id = "v34"
-group = "sincere"
-preference = ["Left", "Centre", "Right"]
-position = [0.3701, 0.328]
+group = "loyal_centre"
+preference = ["Centre", "Left", "Right"]
+position = [0.7147, 0.1613]
 
 [[people]]
 id = "v35"
 group = "sincere"
-preference = ["Centre", "Left", "Right"]
-position = [0.5879, 0.3751]
+preference = ["Left", "Centre", "Right"]
+position = [0.5285, 0.0478]
 
 [[people]]
 id = "v36"
-group = "sincere"
-preference = ["Left", "Centre", "Right"]
-position = [0.2878, 0.9486]
+group = "loyal_centre"
+preference = ["Centre", "Left", "Right"]
+position = [0.4367, 0.452]
 
 [[people]]
 id = "v37"
-group = "sincere"
+group = "pivot_seeker"
 preference = ["Left", "Centre", "Right"]
-position = [0.9445, 0.1857]
+position = [0.9504, 0.6792]
 
 [[people]]
 id = "v38"
-group = "front_runner"
+group = "copycat"
 preference = ["Right", "Centre", "Left"]
-position = [0.5512, 0.6973]
+position = [0.8842, 0.5056]
 
 [[people]]
 id = "v39"
 group = "front_runner"
-preference = ["Centre", "Right", "Left"]
-position = [0.8514, 0.5823]
+preference = ["Right", "Centre", "Left"]
+position = [0.9632, 0.6134]
 
 [[people]]
 id = "v40"
-group = "sincere"
-preference = ["Left", "Centre", "Right"]
-position = [0.6717, 0.6064]
+group = "loyal_centre"
+preference = ["Centre", "Right", "Left"]
+position = [0.7552, 0.645]
 
 [[people]]
 id = "v41"
-group = "sincere"
-preference = ["Left", "Centre", "Right"]
-position = [0.7168, 0.8156]
+group = "loyal_centre"
+preference = ["Centre", "Left", "Right"]
+position = [0.2825, 0.7246]
 
 [[people]]
 id = "v42"
-group = "sincere"
-preference = ["Right", "Centre", "Left"]
-position = [0.1695, 0.3018]
+group = "front_runner"
+preference = ["Left", "Centre", "Right"]
+position = [0.7216, 0.2516]
 
 [[people]]
 id = "v43"
-group = "front_runner"
-preference = ["Centre", "Right", "Left"]
-position = [0.4475, 0.0979]
+group = "sincere"
+preference = ["Centre", "Left", "Right"]
+position = [0.8316, 0.338]
 
 [[people]]
 id = "v44"
-group = "front_runner"
+group = "copycat"
 preference = ["Left", "Centre", "Right"]
-position = [0.5444, 0.574]
+position = [0.8787, 0.1629]
 
 [[people]]
 id = "v45"
-group = "sincere"
+group = "copycat"
 preference = ["Left", "Centre", "Right"]
-position = [0.7682, 0.6662]
+position = [0.7074, 0.6753]
 
 [[people]]
 id = "v46"
-group = "sincere"
+group = "pivot_seeker"
 preference = ["Right", "Centre", "Left"]
-position = [0.3556, 0.8998]
+position = [0.1458, 0.2821]
 
 [[people]]
 id = "v47"
 group = "sincere"
 preference = ["Left", "Centre", "Right"]
-position = [0.4506, 0.3158]
+position = [0.2081, 0.3973]
 
 [[people]]
 id = "v48"
 group = "front_runner"
 preference = ["Right", "Centre", "Left"]
-position = [0.7774, 0.1461]
+position = [0.6923, 0.7939]
 
 [[people]]
 id = "v49"
-group = "sincere"
+group = "front_runner"
 preference = ["Left", "Centre", "Right"]
-position = [0.0899, 0.1484]
+position = [0.9115, 0.1583]
 
 [[people]]
 id = "v50"
-group = "front_runner"
-preference = ["Centre", "Left", "Right"]
-position = [0.4896, 0.9188]
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.0537, 0.658]
 
 [[people]]
 id = "v51"
-group = "front_runner"
+group = "sincere"
 preference = ["Left", "Centre", "Right"]
-position = [0.5239, 0.0549]
+position = [0.7631, 0.3493]
 
 [[people]]
 id = "v52"
 group = "sincere"
-preference = ["Right", "Centre", "Left"]
-position = [0.3208, 0.2591]
+preference = ["Left", "Centre", "Right"]
+position = [0.7619, 0.3288]
 
 [[people]]
 id = "v53"
-group = "copycat"
-preference = ["Left", "Centre", "Right"]
-position = [0.422, 0.1581]
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.2736, 0.1544]
 
 [[people]]
 id = "v54"
-group = "front_runner"
-preference = ["Right", "Centre", "Left"]
-position = [0.1768, 0.2049]
+group = "pivot_seeker"
+preference = ["Centre", "Right", "Left"]
+position = [0.4956, 0.5038]
 
 [[people]]
 id = "v55"
 group = "front_runner"
-preference = ["Left", "Centre", "Right"]
-position = [0.1108, 0.7413]
+preference = ["Right", "Centre", "Left"]
+position = [0.3979, 0.8481]
 
 [[people]]
 id = "v56"
-group = "front_runner"
-preference = ["Right", "Centre", "Left"]
-position = [0.0905, 0.6636]
+group = "copycat"
+preference = ["Centre", "Left", "Right"]
+position = [0.1196, 0.8782]
 
 [[people]]
 id = "v57"
-group = "pivot_seeker"
-preference = ["Centre", "Right", "Left"]
-position = [0.7242, 0.8209]
+group = "copycat"
+preference = ["Left", "Centre", "Right"]
+position = [0.322, 0.5469]
 
 [[people]]
 id = "v58"
 group = "pivot_seeker"
-preference = ["Left", "Centre", "Right"]
-position = [0.2852, 0.4871]
+preference = ["Right", "Centre", "Left"]
+position = [0.1908, 0.4465]
 
 [[people]]
 id = "v59"
 group = "copycat"
 preference = ["Right", "Centre", "Left"]
-position = [0.4031, 0.9388]
+position = [0.5174, 0.8136]
+
+[[people]]
+id = "v60"
+group = "sincere"
+preference = ["Centre", "Right", "Left"]
+position = [0.2192, 0.1406]
+
+[[people]]
+id = "v61"
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.4697, 0.8304]
+
+[[people]]
+id = "v62"
+group = "copycat"
+preference = ["Left", "Centre", "Right"]
+position = [0.3182, 0.5326]
+
+[[people]]
+id = "v63"
+group = "copycat"
+preference = ["Centre", "Left", "Right"]
+position = [0.7077, 0.8081]
+
+[[people]]
+id = "v64"
+group = "sincere"
+preference = ["Centre", "Right", "Left"]
+position = [0.3171, 0.9585]
+
+[[people]]
+id = "v65"
+group = "front_runner"
+preference = ["Left", "Centre", "Right"]
+position = [0.9644, 0.8326]
+
+[[people]]
+id = "v66"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.5175, 0.7333]
+
+[[people]]
+id = "v67"
+group = "pivot_seeker"
+preference = ["Centre", "Right", "Left"]
+position = [0.5569, 0.3798]
+
+[[people]]
+id = "v68"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.0401, 0.7845]
+
+[[people]]
+id = "v69"
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.5112, 0.8493]
+
+[[people]]
+id = "v70"
+group = "copycat"
+preference = ["Right", "Centre", "Left"]
+position = [0.5097, 0.1978]
+
+[[people]]
+id = "v71"
+group = "copycat"
+preference = ["Right", "Centre", "Left"]
+position = [0.5205, 0.1394]
+
+[[people]]
+id = "v72"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.4226, 0.8836]
+
+[[people]]
+id = "v73"
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.5968, 0.8694]
+
+[[people]]
+id = "v74"
+group = "front_runner"
+preference = ["Centre", "Right", "Left"]
+position = [0.413, 0.7033]
+
+[[people]]
+id = "v75"
+group = "copycat"
+preference = ["Right", "Centre", "Left"]
+position = [0.1949, 0.1931]
+
+[[people]]
+id = "v76"
+group = "copycat"
+preference = ["Centre", "Right", "Left"]
+position = [0.4966, 0.5925]
+
+[[people]]
+id = "v77"
+group = "copycat"
+preference = ["Left", "Centre", "Right"]
+position = [0.3104, 0.2585]
+
+[[people]]
+id = "v78"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.2491, 0.1184]
+
+[[people]]
+id = "v79"
+group = "front_runner"
+preference = ["Centre", "Left", "Right"]
+position = [0.5868, 0.4358]
+
+[[people]]
+id = "v80"
+group = "copycat"
+preference = ["Right", "Centre", "Left"]
+position = [0.5394, 0.1873]
+
+[[people]]
+id = "v81"
+group = "sincere"
+preference = ["Centre", "Right", "Left"]
+position = [0.1131, 0.0532]
+
+[[people]]
+id = "v82"
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.2697, 0.3667]
+
+[[people]]
+id = "v83"
+group = "pivot_seeker"
+preference = ["Right", "Centre", "Left"]
+position = [0.9427, 0.4081]
+
+[[people]]
+id = "v84"
+group = "pivot_seeker"
+preference = ["Left", "Centre", "Right"]
+position = [0.8425, 0.6683]
+
+[[people]]
+id = "v85"
+group = "front_runner"
+preference = ["Left", "Centre", "Right"]
+position = [0.3717, 0.088]
+
+[[people]]
+id = "v86"
+group = "copycat"
+preference = ["Left", "Centre", "Right"]
+position = [0.828, 0.1782]
+
+[[people]]
+id = "v87"
+group = "front_runner"
+preference = ["Centre", "Left", "Right"]
+position = [0.7196, 0.4255]
+
+[[people]]
+id = "v88"
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.5956, 0.2347]
+
+[[people]]
+id = "v89"
+group = "front_runner"
+preference = ["Left", "Centre", "Right"]
+position = [0.9227, 0.7858]
+
+[[people]]
+id = "v90"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.7473, 0.8371]
+
+[[people]]
+id = "v91"
+group = "copycat"
+preference = ["Centre", "Right", "Left"]
+position = [0.8367, 0.7609]
+
+[[people]]
+id = "v92"
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.3388, 0.4486]
+
+[[people]]
+id = "v93"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.6271, 0.7289]
+
+[[people]]
+id = "v94"
+group = "copycat"
+preference = ["Centre", "Right", "Left"]
+position = [0.2058, 0.2207]
+
+[[people]]
+id = "v95"
+group = "sincere"
+preference = ["Centre", "Right", "Left"]
+position = [0.0304, 0.079]
+
+[[people]]
+id = "v96"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.4306, 0.5062]
+
+[[people]]
+id = "v97"
+group = "front_runner"
+preference = ["Left", "Centre", "Right"]
+position = [0.6594, 0.6035]
+
+[[people]]
+id = "v98"
+group = "front_runner"
+preference = ["Centre", "Right", "Left"]
+position = [0.5936, 0.9227]
+
+[[people]]
+id = "v99"
+group = "sincere"
+preference = ["Centre", "Left", "Right"]
+position = [0.9098, 0.0803]

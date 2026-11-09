@@ -9,6 +9,7 @@ import random
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.alignment import _bounded_move
@@ -23,7 +24,7 @@ def example():
         return tomllib.load(handle)
 
 
-class AlignmentTests(unittest.TestCase):
+class AlignmentTests(VerificationTestCase):
     def test_hand_worked_attack_ranking_cost_and_fixed_platform(self):
         sim = Simulation(make_scenario(example())); sim.run()
         frames = [f.as_dict() for f in sim.frames]

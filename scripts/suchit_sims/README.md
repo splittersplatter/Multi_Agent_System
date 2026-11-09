@@ -11,7 +11,9 @@ figures, GIFs and a `summary.json`.
 | `foreign_intel.py` | Sleeper spy cells spreading targeted disinformation | 64 | ~1.5 min |
 | `propaganda.py` | Long-term issue-position propaganda with natural drift | 25 | ~1 min |
 | `echo_chambers.py` | Echo chambers and three strategic party campaigns (5×5×5 factorial) | 435 | ~8 min |
-| `marl_demo.py` | Rolls out two simple policies through the new `MovementEnv` | 10 | ~20 s |
+| `marl_demo.py` | Rolls out two simple policies through `MovementEnv` (100 agents, 15 spies) | 10 | ~20 s |
+| `showcase100.py` | Writes `showcase100.toml`: 100-agent viewer demo with campaigns, a rigged poll and a watchdog | 1 | instant |
+| `exp4_followers.py` | Writes the Experiment 4-style viewer scenarios: 100 voters, 10 loyal fans, 0/5/20 followers | 3 | instant |
 
 `common.py` holds the shared tools: a TOML writer, the runner, and drawing with
 shape = agent profile and colour = current ballot, plus GIFs. `spatial.py` holds
@@ -43,3 +45,6 @@ Verified: this reproduces F2 seed 1's final counts exactly (A 38, B 41, C 21).
 
 The engine refuses to keep running if its own source changes during a run (a
 provenance guard). Don't edit `src/` while a study is running.
+
+All scenarios here have at least 100 people, as `main` requires, and pin uniform random-walk steps
+(`common.pin_uniform_walk`) so results match the published reports.

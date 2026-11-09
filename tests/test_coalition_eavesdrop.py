@@ -7,6 +7,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.cli import main
@@ -19,7 +20,7 @@ def example():
         return tomllib.load(handle)
 
 
-class EavesdropTests(unittest.TestCase):
+class EavesdropTests(VerificationTestCase):
     def test_private_packet_delay_budget_and_replay(self):
         sim=Simulation(make_scenario(example())); sim.run()
         frames=[f.as_dict() for f in sim.frames]

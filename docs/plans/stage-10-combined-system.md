@@ -4,6 +4,8 @@ Partly implemented; acceptance open; inherits 09. [Gates](README.md).
 
 ## Deliverables
 
+Checked = implemented; unchecked = full acceptance pending, including implemented subsets below.
+
 - [ ] Role/observation/action contract; one ballot/person despite overlapping roles.
 - [ ] Nomination before round 0; stable >=k candidates; Stage 01 phase order.
   Conflicts: stable controller order, fixed phase-start observations,
@@ -29,11 +31,10 @@ Partly implemented; acceptance open; inherits 09. [Gates](README.md).
 
 ## Progress
 
-| Date | Work/status | Evidence | Prior integration | Remaining |
-| --- | --- | --- | --- | --- |
-| 8 Nov 2026 | Initial all-enabled integration scenario | [Example](../../examples/all-enabled.toml), [tests](../../tests/test_all_enabled.py): all seven mechanisms, budgets/phase timing, attacker-perception boundary, no-signal invariant, CLI/HTTP/CSV/checkpoint/rewind and GIF | Inherits stages 01–09, one ballot per person; detector remains aggregate-only | Isolated/leave-one-out manifest matrix, rejection audit, benchmark, full shared gates and live browser validation pending |
-| 8 Nov 2026 | Cumulative regression | Full suite 304 pass; `python3 -S`: 300 pass + 4 optional-image skips; proof checker and playback harness pass | Shared engine/CSV/HTTP/replay/GIF exercised with all-enabled scenario | No claim of combined-stage completion or formal experimental evidence |
-| 8 Nov 2026 | Versioned 17-arm cumulative controls | [Contract](../simulator-guide.md#combined-mechanism-matrix), [tests](../../tests/test_combined_ablation.py): seven isolated/leave-one-out, no-op detector, nominee preservation, source/config hashes, independent replay, failure retention and exposure residuals | All seven engine mechanisms, prior controls and exogenous streams retained | Full cross-feature rejection audit, combined benchmark, formal experiments, remaining gates and live browser check pending |
-| 8 Nov 2026 | Combined matrix regression | Full suite 308 pass; `python3 -S`: 304 pass + 4 optional-image skips; proof checker, playback harness and `git diff --check` pass | Prior stages, 17 replayable arms, HTTP/session and checkpoint/GIF tests retained | Rejection audit, combined benchmark, research protocol/experiments, stage gates and live browser check remain open |
-| 8 Nov 2026 | User-requested code audit/refinement | [Plan](code-quality-refinement.md), [report](../code-audit-and-refinement-report.md): focused output/replay/observation/coalition/study modules; shared run lifecycle; canonical scenario validation; web provenance; deterministic example/comparison audits | All seven mechanisms and existing imports/record fields retained; numerical residual-movement defect reproduced and repaired | Final regression/scale evidence recorded in report; shared acceptance/research/manual browser gates stay open |
-| 8 Nov 2026 | Audit regression and combined scale verified | 319 pass; stdlib 315 + 4 image skips; proof/harness pass; 30 example fingerprints and 12 comparison records unchanged; 10k × 100 CLI 90.768 s / 217,372 KiB; 500 × 100 HTTP p95 104.12 ms / 263,932 KiB | All seven configured mechanisms realized; original rounding failure retained with successful repair rerun | One lopsided two-nominee workload; no ballot switches; browser rendering/manual downloads, rejection ledger and formal research remain open |
+Consolidated9 November2026; [current verification](../implementation-status-report.md#verification).
+All-enabled integration and17-arm matrix implemented (`test_all_enabled.py`,
+`test_combined_ablation.py`). Historical combined benchmark retained in [history](../history/benchmarks.md).
+Remaining: comprehensive rejection/conflict audit, manual acceptance, approved
+factorial interaction design and formal research.17 arms are not a complete factorial.
+All outcome workloads N>=100; small linked examples are verification fixtures.
+Retain prior-stage APIs/evidence; no broader stage completion or convergence inferred.

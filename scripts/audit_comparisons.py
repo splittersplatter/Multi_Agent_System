@@ -15,6 +15,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from multi_agent_election import make_scenario
 from multi_agent_election import combined, experiments
 from multi_agent_election.provenance import manifest
+from multi_agent_election.population import verification_scope
 
 
 def fingerprint(value):
@@ -43,6 +44,7 @@ def load(name):
     return make_scenario(tomllib.loads((ROOT / "examples" / (name + ".toml")).read_text()))
 
 
+@verification_scope("comparison orchestration regression, not outcome study")
 def audit(commit):
     old = baseline_module(commit, "experiments")
     old_combined = baseline_module(commit, "combined")

@@ -1,11 +1,12 @@
 import copy
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from test_baseline import example
 
 
-class MessageTests(unittest.TestCase):
+class MessageTests(VerificationTestCase):
     def scenario(self):
         data = example()
         data["groups"]["residents"]["communication"] = "truthful"

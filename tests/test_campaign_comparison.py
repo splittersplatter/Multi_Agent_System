@@ -6,6 +6,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 from unittest.mock import patch
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
@@ -19,7 +20,7 @@ def example():
         return tomllib.load(handle)
 
 
-class CampaignComparisonTests(unittest.TestCase):
+class CampaignComparisonTests(VerificationTestCase):
     def test_matched_policies_have_same_budget_and_replayable_data(self):
         for stationary in (False,True):
             data=example()

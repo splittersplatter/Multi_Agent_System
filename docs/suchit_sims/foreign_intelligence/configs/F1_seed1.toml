@@ -9,11 +9,17 @@ movement = "random_walk"
 max_step = 0.015
 communication = "truthful"
 
+[groups.committed.parameters]
+movement = { distribution = "uniform" }
+
 [groups.trusting]
 voting = "local_plurality"
 movement = "random_walk"
 max_step = 0.015
 communication = "truthful"
+
+[groups.trusting.parameters]
+movement = { distribution = "uniform" }
 
 [groups.sensor]
 voting = "sensed_plurality"
@@ -22,12 +28,19 @@ max_step = 0.015
 communication = "truthful"
 capabilities = { sense_public_ballots = true }
 
+[groups.sensor.parameters]
+movement = { distribution = "uniform" }
+
 [groups.spies]
 voting = "sincere"
 movement = "random_walk"
 max_step = 0.01
 communication = "python:spy_comms:disinform"
-parameters = { target = "B", mode = "blind" }
+
+[groups.spies.parameters]
+target = "B"
+mode = "blind"
+movement = { distribution = "uniform" }
 
 [groups.spies.capabilities]
 observe_target_preferences = false

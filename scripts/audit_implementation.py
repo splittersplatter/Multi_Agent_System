@@ -14,12 +14,14 @@ sys.path.insert(0, str(ROOT / "examples"))
 from multi_agent_election import Simulation, make_scenario
 from multi_agent_election.metrics import series
 from multi_agent_election.provenance import manifest
+from multi_agent_election.population import verification_scope
 
 
 def digest(value):
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
 
 
+@verification_scope("bounded example regression audit, not outcome simulation")
 def audit(max_rounds):
     rows = []
     for path in sorted((ROOT / "examples").glob("*.toml")):

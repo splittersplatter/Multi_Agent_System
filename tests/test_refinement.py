@@ -6,6 +6,7 @@ import random
 from dataclasses import replace
 from pathlib import Path
 import unittest
+from verification_support import VerificationTestCase
 from unittest.mock import patch
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
@@ -17,7 +18,7 @@ from scripts.audit_implementation import compare
 from test_baseline import example
 
 
-class RefinementTests(unittest.TestCase):
+class RefinementTests(VerificationTestCase):
     def test_representable_residual_moves_respect_hard_path_budget(self):
         origin = (0.0568202538227679, 0.24859391180086332)
         direction = (-0.15690670490956715, -0.987613429411742)

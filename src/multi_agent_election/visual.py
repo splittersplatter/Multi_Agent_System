@@ -4,6 +4,7 @@ import json
 import secrets
 import tempfile
 import threading
+from contextlib import nullcontext
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib import resources
@@ -15,6 +16,8 @@ from .engine import Simulation
 from .exports import write_metrics_csv
 from .metrics import frame_metrics, series
 from .model import ElectionError
+from .population import verification_scope
+from .state_recording import active_recordings
 from .voting import VOTING_POLICIES, COALITION_POLICIES, SIGNAL_POLICIES, configure_voting
 from .epistemic import EPISTEMIC_POLICIES
 
@@ -28,6 +31,8 @@ class Session:
 
     def snapshot(self) -> dict[str, Any]:
         return {"revision": self.revision, "parties": self.simulation.scenario.parties,
+                **({"verification_only": True, "verification_reason": self.simulation.verification_reason}
+                   if self.simulation.verification_reason is not None else {}),
                 "k": self.simulation.scenario.k,
                 "group_names": [g.id for g in self.simulation.scenario.groups],
                 "group_capabilities": {g.id: asdict(g.capabilities) for g in self.simulation.scenario.groups},
@@ -69,7 +74,16 @@ class Session:
             if self.simulation.current.round != 0 or self.simulation.manual_interventions:
                 raise ElectionError("voting choice is only available before the first step/edit; restart for another episode")
             configured = configure_voting(self.simulation.scenario, value["policy"], value["parameters"])
-            self.simulation = Simulation(configured)
+            # Preserve explicit verification purpose across HTTP worker threads;
+            # clients cannot enable it through a command or scenario field.
+            reason = self.simulation.verification_reason
+            owner = self.simulation.state_recorder.owner if self.simulation.state_recorder else None
+            recording_token = active_recordings.set(owner)
+            try:
+                with verification_scope(reason) if reason is not None else nullcontext():
+                    self.simulation = Simulation(configured)
+            finally:
+                active_recordings.reset(recording_token)
         elif value.get("action") == "step" and set(value) == {"revision", "action"}:
             previous = self.simulation.current
             self.simulation.step()
@@ -202,4 +216,6 @@ def make_server(simulation: Simulation, port: int = 0) -> ThreadingHTTPServer:
         def log_message(self, format: str, *args: Any) -> None:
             pass
 
-    return ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
+    server.session = session
+    return server

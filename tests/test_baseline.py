@@ -3,6 +3,7 @@ import io
 import contextlib
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 from pathlib import Path
 
 from multi_agent_election import ElectionError, Simulation, count_plurality, make_scenario
@@ -14,7 +15,7 @@ def example():
         return tomllib.load(handle)
 
 
-class BaselineTests(unittest.TestCase):
+class BaselineTests(VerificationTestCase):
     def test_hand_worked_case_and_repeat(self):
         simulation = Simulation(make_scenario(example()))
         frames = simulation.run()

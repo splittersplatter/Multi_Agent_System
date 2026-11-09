@@ -5,6 +5,7 @@ import json
 import tempfile
 from pathlib import Path
 import unittest
+from verification_support import VerificationTestCase
 from dataclasses import replace
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.experiments import batch
@@ -13,7 +14,7 @@ from multi_agent_election.cli import main
 from test_baseline import example
 
 
-class MetricTests(unittest.TestCase):
+class MetricTests(VerificationTestCase):
     def test_hand_computed_counts_ranks_and_margin(self):
         scenario = make_scenario(example())
         sim = Simulation(scenario); sim.run()

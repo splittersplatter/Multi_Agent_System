@@ -3,12 +3,13 @@ import os
 import subprocess
 import sys
 import unittest
+from verification_support import VerificationTestCase
 
 
-class ExampleTests(unittest.TestCase):
+class ExampleTests(VerificationTestCase):
     def test_campaign_layer_example_survives_then_is_removed(self):
         env = {**os.environ, "PYTHONPATH": "src"}
-        result = subprocess.run([sys.executable, "-m", "multi_agent_election.cli", "run", "examples/campaign-layer.toml"],
+        result = subprocess.run([sys.executable, "scripts/verify_fixture.py", "run", "examples/campaign-layer.toml"],
                                 capture_output=True, text=True, env=env, check=True)
         data = json.loads(result.stdout)
         self.assertEqual([row["campaign_edge_count"] for row in data["metrics"]], [1, 1, 0, 0])
@@ -18,7 +19,7 @@ class ExampleTests(unittest.TestCase):
 
     def test_sensor_example_distinguishes_trusted_ballots_from_reports(self):
         env = {**os.environ, "PYTHONPATH": "src"}
-        result = subprocess.run([sys.executable, "-m", "multi_agent_election.cli", "run", "examples/sensors.toml"],
+        result = subprocess.run([sys.executable, "scripts/verify_fixture.py", "run", "examples/sensors.toml"],
                                 capture_output=True, text=True, env=env, check=True)
         data = json.loads(result.stdout)
         self.assertEqual([frame["ballots"]["2"] for frame in data["frames"]], [["B", "A"], ["A", "B"], ["C", "B"]])
@@ -28,7 +29,7 @@ class ExampleTests(unittest.TestCase):
 
     def test_restricted_example_delivers_only_authorized_reports(self):
         env = {**os.environ, "PYTHONPATH": "src"}
-        result = subprocess.run([sys.executable, "-m", "multi_agent_election.cli", "run", "examples/restricted.toml"],
+        result = subprocess.run([sys.executable, "scripts/verify_fixture.py", "run", "examples/restricted.toml"],
                                 capture_output=True, text=True, env=env, check=True)
         data = json.loads(result.stdout)
         delivered = data["frames"][2]["delivered"]
@@ -38,7 +39,7 @@ class ExampleTests(unittest.TestCase):
 
     def test_custom_example_executes_all_four_policy_phases(self):
         env = {**os.environ, "PYTHONPATH": "src:examples"}
-        result = subprocess.run([sys.executable, "-m", "multi_agent_election.cli", "run", "examples/custom.toml"],
+        result = subprocess.run([sys.executable, "scripts/verify_fixture.py", "run", "examples/custom.toml"],
                                 capture_output=True, text=True, env=env, check=True)
         data = json.loads(result.stdout)
         self.assertEqual(len(data["frames"]), 4)

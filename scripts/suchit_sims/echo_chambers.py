@@ -24,7 +24,7 @@ from collections import Counter
 
 import numpy as np
 
-from common import DOCS, INK, INK2, MUTED, PALETTE, Style, plt, run_config, save_fig, save_gif, save_snapshots, share_plot, write_json
+from common import DOCS, pin_uniform_walk, INK, INK2, MUTED, PALETTE, Style, plt, run_config, save_fig, save_gif, save_snapshots, share_plot, write_json
 
 OUT = DOCS / "echo_chambers"
 PARTIES = ["A", "B", "C"]
@@ -92,8 +92,8 @@ def build(strategies: dict, seed: int, max_active: int = 6, new_per_round: int =
                            "new_per_round": new_per_round, "campaigners": CAMPAIGNERS},
             "capabilities": {"sense_public_ballots": True, "observe_electorate": True, "modify_persistent_edges": True},
         }
-    return {"parties": PARTIES, "k": 1, "seed": seed, "rounds": ROUNDS, "groups": groups,
-            "network": {"radius": RESIDENT_RADIUS}, "people": PEOPLE}
+    return pin_uniform_walk({"parties": PARTIES, "k": 1, "seed": seed, "rounds": ROUNDS, "groups": groups,
+            "network": {"radius": RESIDENT_RADIUS}, "people": PEOPLE})
 
 
 def key(s):

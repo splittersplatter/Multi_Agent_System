@@ -1,7 +1,7 @@
 """Experiment 4-style viewer scenarios: an organised minority with an audience.
 
-60 voters, parties Left / Right / Centre. Centre is almost everyone's second choice.
-6 loyal Centre fans (10%) always vote Centre. In the "followers" versions each fan
+100 voters, parties Left / Right / Centre. Centre is almost everyone's second choice.
+10 loyal Centre fans (10%) always vote Centre. In the "followers" versions each fan
 also gets F random followers: directed links that show the fan's vote to that voter
 every round, like a social-media audience. Everyone else uses one of the four voter
 types (sincere, front-runner Top-2, copycat, pivot-seeker), hears neighbours within
@@ -9,23 +9,23 @@ types (sincere, front-runner Top-2, copycat, pivot-seeker), hears neighbours wit
 
     python exp4_followers.py -> exp4_no_followers.toml, exp4_followers.toml, exp4_big_audience.toml
 
-Over 30 random seeds Centre wins 10, 21 and 29 times with 0, 8 and 20 followers per fan.
-Seed 19 (default) is a clear demo: Centre third without followers, leading from round 19
-with 8, and dominant with 20.
+Over 30 random seeds Centre wins 16, 22 and 29 times with 0, 5 and 20 followers per fan
+(the deck reports 16, 23 and 29). Seed 20 (default) is a clear demo: Centre third
+without followers (26 votes), leading from round 6 with 5 followers (49), 58 with 20.
 """
 
 import random
 from pathlib import Path
 
-from common import to_toml
+from common import pin_uniform_walk, to_toml
 
 PARTIES = ["Left", "Right", "Centre"]
 
 
-def build(followers: int, seed: int = 19, n: int = 60, loyal: int = 6) -> dict:
+def build(followers: int, seed: int = 20, n: int = 100, loyal: int = 10) -> dict:
     rng = random.Random(seed)
-    rankings = ([["Left", "Centre", "Right"]] * 24 + [["Right", "Centre", "Left"]] * 20 +
-                [["Centre", "Right", "Left"]] * 9 + [["Centre", "Left", "Right"]] * 7)
+    rankings = ([["Left", "Centre", "Right"]] * 40 + [["Right", "Centre", "Left"]] * 33 +
+                [["Centre", "Right", "Left"]] * 15 + [["Centre", "Left", "Right"]] * 12)
     people = []
     centre_fans = []
     order = list(range(n))
@@ -48,7 +48,7 @@ def build(followers: int, seed: int = 19, n: int = 60, loyal: int = 6) -> dict:
             edges.append([fan, follower])
     walk = {"movement": "random_walk", "max_step": 0.03, "proximity_radius": 0.2}
     sensing = {"capabilities": {"sense_public_ballots": True}}
-    return {
+    return pin_uniform_walk({
         "parties": PARTIES, "k": 1, "seed": seed, "rounds": 40,
         "groups": {
             "loyal_centre": {"voting": "sincere", **walk},
@@ -59,10 +59,10 @@ def build(followers: int, seed: int = 19, n: int = 60, loyal: int = 6) -> dict:
         },
         "network": {"radius": 0.2, "persistent_edges": edges},
         "people": people,
-    }
+    })
 
 
-VERSIONS = {"exp4_no_followers": 0, "exp4_followers": 8, "exp4_big_audience": 20}
+VERSIONS = {"exp4_no_followers": 0, "exp4_followers": 5, "exp4_big_audience": 20}
 
 if __name__ == "__main__":
     here = Path(__file__).parent

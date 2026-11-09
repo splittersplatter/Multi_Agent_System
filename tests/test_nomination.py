@@ -7,6 +7,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.cli import main
@@ -20,7 +21,7 @@ def example():
         return tomllib.load(handle)
 
 
-class NominationTests(unittest.TestCase):
+class NominationTests(VerificationTestCase):
     def test_hand_worked_nomination_preferences_and_representation(self):
         scenario = make_scenario(example())
         self.assertEqual(scenario.parties, ("alice", "cara"))

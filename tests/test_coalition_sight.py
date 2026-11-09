@@ -7,6 +7,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
 from multi_agent_election.cli import main
@@ -19,7 +20,7 @@ def example():
         return tomllib.load(handle)
 
 
-class CoalitionSightTests(unittest.TestCase):
+class CoalitionSightTests(VerificationTestCase):
     def test_separate_budgets_replay_and_rewind(self):
         sim = Simulation(make_scenario(example())); sim.run()
         frames = [frame.as_dict() for frame in sim.frames]

@@ -1,4 +1,4 @@
-"""MARL smoke demo: 75 agents, 11 spies (15%) with ``movement = "external"``.
+"""MARL smoke demo: 100 agents, 15 spies (15%) with ``movement = "external"``.
 
 Spies vote for B and are visible to nearby conformist residents. A learner
 would replace ``policy``; here a random policy and a hand-written "go where
@@ -14,7 +14,7 @@ import statistics as stats
 import time
 import tomllib
 
-from common import to_toml
+from common import pin_uniform_walk, to_toml
 from multi_agent_election.marl import MovementEnv
 from multi_agent_election.model import make_scenario
 
@@ -22,20 +22,20 @@ from multi_agent_election.model import make_scenario
 def scenario(seed: int = 3) -> dict:
     rng = random.Random(seed)
     people = []
-    for i in range(64):
+    for i in range(85):
         first = rng.choices(["A", "B", "C"], weights=[0.42, 0.33, 0.25])[0]
         rest = [p for p in "ABC" if p != first]
         people.append({"id": f"r{i:02d}", "group": "residents", "preference": [first, *rest],
                        "position": [round(rng.random(), 4), round(rng.random(), 4)]})
-    for i in range(11):
+    for i in range(15):
         people.append({"id": f"spy{i:02d}", "group": "spies", "preference": ["B", "A", "C"],
                        "position": [round(rng.random(), 4), round(rng.random(), 4)]})
-    return {"parties": ["A", "B", "C"], "k": 1, "seed": seed, "rounds": 40,
+    return pin_uniform_walk({"parties": ["A", "B", "C"], "k": 1, "seed": seed, "rounds": 40,
             "groups": {"residents": {"voting": "sensed_plurality", "movement": "random_walk", "max_step": 0.01,
                                      "proximity_radius": 0.12, "capabilities": {"sense_public_ballots": True}},
                        "spies": {"voting": "sincere", "movement": "external", "max_step": 0.04, "proximity_radius": 0.25,
                                  "capabilities": {"sense_public_ballots": True}}},
-            "network": {"radius": 0.12}, "people": people}
+            "network": {"radius": 0.12}, "people": people})
 
 
 def random_policy(obs, rng):

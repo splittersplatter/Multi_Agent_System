@@ -127,4 +127,3 @@ def write_metrics_csv(path: Path, scenario, rows: list[dict]) -> None:
             if scenario.convergence_case:
                 values += [row["convergence"].get(field) for field in convergence_fields]
             writer.writerow(values)
-

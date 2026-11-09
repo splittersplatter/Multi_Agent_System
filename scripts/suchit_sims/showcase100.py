@@ -1,17 +1,17 @@
-"""Write a 70-agent showcase scenario for the browser viewer: echo chambers,
+"""Write a 100-agent showcase scenario for the browser viewer: echo chambers,
 three campaign teams with different strategies, a paid campaign controller,
 a rigged public poll with poll-trusting voters, and a watchdog alarm.
 
-    python showcase70.py   ->  scripts/suchit_sims/showcase70.toml
+    python showcase100.py   ->  scripts/suchit_sims/showcase100.toml
 """
 
 import random
 from pathlib import Path
 
-from common import to_toml
+from common import pin_uniform_walk, to_toml
 
 PARTIES = ["A", "B", "C"]
-CHAMBERS = {"A": ((0.22, 0.28), 22), "B": ((0.78, 0.28), 20), "C": ((0.50, 0.78), 16)}
+CHAMBERS = {"A": ((0.22, 0.28), 34), "B": ((0.78, 0.28), 30), "C": ((0.50, 0.78), 24)}  # 88 residents + 12 campaigners
 RIVAL = {"A": "B", "B": "A", "C": "A"}
 STRATEGY = {"A": "infiltrate", "B": "bridge", "C": "fortify"}
 
@@ -56,16 +56,16 @@ def build(seed=7):
                            "rival": list(CHAMBERS[RIVAL[party]][0]), "max_step": 0.06, "max_active": 6,
                            "new_per_round": 2, "campaigners": campaigners},
             "capabilities": {"sense_public_ballots": True, "observe_electorate": True, "modify_persistent_edges": True}}
-    return {"parties": PARTIES, "k": 2, "seed": seed, "rounds": 60, "groups": groups,
+    return pin_uniform_walk({"parties": PARTIES, "k": 2, "seed": seed, "rounds": 60, "groups": groups,
             "network": {"radius": 0.1},
             "campaign_controller": {"target": "B", "policy": "target_heuristic", "per_round_budget": 1, "lifetime_budget": 15},
             "signal_controller": {"target": "C", "policy": "target_biased", "schedule": "repeated",
                                   "per_broadcast_budget": 3, "lifetime_budget": 60},
             "detector": {"target": "C", "threshold": 0.05},
-            "people": people}
+            "people": people})
 
 
 if __name__ == "__main__":
-    out = Path(__file__).with_name("showcase70.toml")
+    out = Path(__file__).with_name("showcase100.toml")
     out.write_text(to_toml(build()), encoding="utf-8")
     print(out)

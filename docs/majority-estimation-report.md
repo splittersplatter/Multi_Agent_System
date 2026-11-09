@@ -3,6 +3,11 @@
 9 November 2026. [Usage/configuration](recent-encounter-majority.md) ·
 [Plan/progress](plans/recent-encounter-majority.md).
 
+Population follow-up: current demo200, normal runs N>=100. Earlier four-person
+browser observations below remain dated verification evidence, not outcome studies.
+Prior manifests identify the source at collection time; the later population guard
+changes current source hashes. [Current checks](plans/minimum-population.md).
+
 ## Implemented
 
 - Passive opt-in estimator; election policies, ballots and existing defaults unchanged.
@@ -12,8 +17,8 @@
 - One latest first choice/person; encounter/source timestamps; visited IDs derived
   from cache. Refresh/expiry update counts; no lifetime history or repeated-person weight.
 - Encounter-ordered map, immutable frames; exact tied-leader comparison.
-- Separate voting/cache memory; rewind/edit/replay; checkpoint22 when enabled,
-  existing version21 disabled output preserved. Earlier supported replay retained.
+- Separate voting/cache memory; rewind/edit/replay; checkpoint22 for the original
+  fixed-poll mode, version21 disabled. Later periodic mode uses version23.
 - CLI summary/full history, browser inspector, JSON/JSONL, CSV cache metrics;
   matched pilot/sensitivity runner, compressed raw data, configurations/hashes.
 
@@ -24,19 +29,9 @@
   asymmetric/coincident contacts, hidden-ballot trap, atomic failure, policy changes,
   replay/tampering, CLI/HTTP/CSV/inspector parity, exclusive output and byte-identical
   repeated compressed predictions/traces.
-- Full suite: **343 pass**. Standard-library-only: **339 pass, four optional-image skips**.
-  Logs: `outputs/majority-tests-2026-11-09.log`, `outputs/majority-tests-stdlib-2026-11-09.log`.
-- 28 available pre-change frame fingerprints unchanged; initial ad-hoc capture had
-  two plugin-path errors. Proper example audit includes that path: **31/31 replay and
-  next-round checks pass**, including new example; `outputs/majority-audit-2026-11-09.json`.
-- **12/12 comparison orchestrations unchanged** against trusted HEAD functions
-  using current engine; not a previous-engine full comparison.
-  `outputs/majority-comparison-audit-2026-11-09.json`.
-- Existing abstract convergence checker and JS playback harness pass; neither
-  certifies new estimator convergence.
-- Live in-app browser: step recent-majority example, expand agent memory; person1
-  records neighbor2=B, seen1/source0; shares A=.25/B=.625/C=.125, leader B.
-  Temporary browser/server closed afterward; broader historical UI gates remain open.
+- Current regression evidence is centralized in [status](implementation-status-report.md#verification).
+  Original pilot/audit logs remain under `outputs/majority-*-2026-11-09*`.
+  Historical four-person inspector checks are verification-only; current demo200.
 - Adversarial extreme integer weight exposed `OverflowError`; fixed explicit range
   rejection. Malformed encounter records also fail with domain errors.
 
@@ -50,7 +45,8 @@ truth source round r−1. Recovery means first exact leader-set match, not susta
 Initial artifact set: `outputs/majority-pilot-2026-11-09` (30 successful trajectories).
 Final-source repeat: `outputs/majority-pilot-2026-11-09-final`: **30 successful trajectories,
 zero failures**. All60 compressed prediction/trace artifacts byte-identical to first
-run; all artifact hashes verify; final manifest matches current core/pipeline.
+run; artifact hashes verified at collection; manifest identifies that source, not the
+later population-enforced runtime.
 Raw predictions/traces/configs/sample IDs and SHA-256 manifests retained; no overwritten runs.
 
 Confirmed final-run mean leader-set accuracy (%), equal weighting across five seeds:
@@ -95,9 +91,9 @@ agents/rounds within one run are not independent replicates.
   if saved uncompressed. JSON bytes are not Python heap measurements. Actual pilot
   streams traces/predictions and discards past frames; combined artifacts ~56MiB.
 - Fixed poll can become stale; movement/window expiry can cause belief oscillation.
-- **No strategic ballot-changing heuristic or convergence guarantee implemented.**
-  Separate full-model convergence decision, frozen calibration and ≥30 held-out
-  seeds/scenario precede formal heuristic selection.
+- Estimator itself is passive. Later `memory_pivotal` uses its estimates for
+  exploratory ballot changes; it has no convergence guarantee. Frozen calibration
+  and ≥30 held-out seeds/scenario precede formal heuristic selection.
 
 Final core hash: `8e1e0d240b7ce898f64cab3b39405d927aa20c2206da4fd222412b6ce5d146b8`.
 Final pipeline hash: `53f64af873db864a843e1dbe3b9b8813e1591990cb465b03e5b217993d4cf13b`.

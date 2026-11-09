@@ -13,20 +13,25 @@ class MajorityConfig:
     memory_rounds: int = 10
     poll_weight: float = 0.5
     poll_round: int = 0
+    poll_refresh_rounds: int | None = None
 
     def as_dict(self):
         return {"poll_counts": list(self.poll_counts), "memory_rounds": self.memory_rounds,
-                "poll_weight": self.poll_weight, "poll_round": self.poll_round}
+                "poll_weight": self.poll_weight, "poll_round": self.poll_round,
+                **({"poll_refresh_rounds": self.poll_refresh_rounds} if self.poll_refresh_rounds is not None else {})}
 
 
 def parse_config(raw, parties):
-    if not isinstance(raw, dict) or set(raw) - {"enabled", "poll_counts", "memory_rounds", "poll_weight", "poll_round"}:
+    if not isinstance(raw, dict) or set(raw) - {"enabled", "poll_counts", "memory_rounds", "poll_weight", "poll_round", "poll_refresh_rounds"}:
         raise ElectionError("majority_estimation: unsupported configuration")
     if type(raw.get("enabled", True)) is not bool:
         raise ElectionError("majority_estimation enabled must be boolean")
     window = raw.get("memory_rounds", 10)
     weight = raw.get("poll_weight", 0.5)
     poll_round = raw.get("poll_round", 0)
+    refresh = raw.get("poll_refresh_rounds")
+    if refresh is not None and (type(refresh) is not int or refresh < 1):
+        raise ElectionError("poll_refresh_rounds must be an integer >= 1")
     if type(window) is not int or window < 1:
         raise ElectionError("memory_rounds must be an integer >= 1")
     if isinstance(weight, bool) or not isinstance(weight, (int, float)) or not 0 <= weight <= 1 or not math.isfinite(weight):
@@ -41,7 +46,7 @@ def parse_config(raw, parties):
         return None
     if counts is None:
         raise ElectionError("majority_estimation requires explicit initial poll_counts; no census fallback")
-    return MajorityConfig(tuple(counts), window, float(weight), poll_round)
+    return MajorityConfig(tuple(counts), window, float(weight), poll_round, refresh)
 
 
 @dataclass(frozen=True, slots=True)
@@ -50,6 +55,8 @@ class MajorityState:
     # Recency order; each person appears exactly once. No full ranked ballots.
     entries: tuple[tuple[str, str, int, int], ...]
     counts: tuple[int, ...]
+    published_poll: tuple[int, ...] | None = None
+    published_round: int = 0
 
     @classmethod
     def initial(cls, parties):
@@ -58,10 +65,16 @@ class MajorityState:
     def as_dict(self, parties, config):
         shares = estimate(self, config)
         leaders = leader_indices(self, config)
+        poll = self.published_poll if self.published_poll is not None else config.poll_counts
+        poll_round = self.published_round if self.published_poll is not None else config.poll_round
+        weight_num, weight_den = poll_weight_ratio(self, config)
         return {"round": self.round, "ballot_source_round": max(0, self.round - 1),
-                "poll_round": config.poll_round, "poll_counts": list(config.poll_counts),
-                "poll_age": max(0, self.round - 1) - config.poll_round,
-                "memory_rounds": config.memory_rounds, "poll_weight": config.poll_weight,
+                "poll_round": poll_round, "poll_counts": list(poll),
+                "poll_age": max(0, self.round - 1) - poll_round,
+                "memory_rounds": config.memory_rounds, "poll_weight": weight_num / weight_den,
+                **({"poll_refresh_rounds": config.poll_refresh_rounds,
+                    "effective_poll_weight": weight_num / weight_den if self.entries else 1.0}
+                   if config.poll_refresh_rounds is not None else {}),
                 "entries": [{"neighbor_id": p, "first_choice": c, "last_seen_round": seen,
                              "ballot_source_round": source, "encounter_age": self.round - seen,
                              "ballot_age": max(0, self.round - 1) - source}
@@ -77,15 +90,26 @@ def estimate(state, config):
     return tuple(score / denominator for score in scores)
 
 
+def poll_weight_ratio(state, config):
+    if config.poll_refresh_rounds is None:
+        return float(config.poll_weight).as_integer_ratio()
+    interval = config.poll_refresh_rounds
+    age = max(0, state.round - state.published_round - 1)
+    if age >= interval:
+        raise ElectionError("periodic poll update missing at scheduled boundary")
+    return interval - age, interval
+
+
 def _scores(state, config):
     # Exact comparisons for ties; floats are only the exported presentation.
-    total = sum(config.poll_counts)
+    poll = state.published_poll if state.published_poll is not None else config.poll_counts
+    total = sum(poll)
     size = len(state.entries)
     if not size:
-        return config.poll_counts, total
-    numerator, denominator = float(config.poll_weight).as_integer_ratio()
+        return poll, total
+    numerator, denominator = poll_weight_ratio(state, config)
     return (tuple(numerator * p * size + (denominator - numerator) * n * total
-                  for p, n in zip(config.poll_counts, state.counts)), denominator * total * size)
+                  for p, n in zip(poll, state.counts)), denominator * total * size)
 
 
 def leader_indices(state, config):
@@ -94,7 +118,7 @@ def leader_indices(state, config):
     return tuple(i for i, score in enumerate(scores) if score == highest)
 
 
-def advance(state, *, observer, parties, config, round_number, encounters):
+def advance(state, *, observer, parties, config, round_number, encounters, published_counts=None):
     """Pure atomic update. Encounters: (neighbor, first_choice, source_round).
 
     Map operations are expected O(1); immutable snapshot copying is O(U).
@@ -102,6 +126,17 @@ def advance(state, *, observer, parties, config, round_number, encounters):
     """
     if type(round_number) is not int or round_number <= state.round:
         raise ElectionError("majority observation rounds must increase")
+    source_round = round_number - 1
+    publish = config.poll_refresh_rounds is not None and source_round > 0 and source_round % config.poll_refresh_rounds == 0
+    if publish:
+        if (not isinstance(published_counts, (tuple, list)) or len(published_counts) != len(parties)
+                or any(type(n) is not int or n < 0 for n in published_counts) or sum(published_counts) < 1):
+            raise ElectionError("periodic poll requires the completed tally in party order")
+        published_poll, published_round = tuple(published_counts), source_round
+    else:
+        if published_counts is not None:
+            raise ElectionError("poll tally supplied outside the publication schedule")
+        published_poll, published_round = state.published_poll, state.published_round
     index = {party: i for i, party in enumerate(parties)}
     cache = OrderedDict((p, (c, seen, source)) for p, c, seen, source in state.entries)
     counts = list(state.counts)
@@ -135,15 +170,18 @@ def advance(state, *, observer, parties, config, round_number, encounters):
             counts[index[previous[0]]] -= 1
         cache[person] = (choice, round_number, source)
         counts[index[choice]] += 1
-    return MajorityState(round_number, tuple((p, *record) for p, record in cache.items()), tuple(counts))
+    result = MajorityState(round_number, tuple((p, *record) for p, record in cache.items()), tuple(counts),
+                           published_poll, published_round)
+    poll_weight_ratio(result, config)
+    return result
 
 
-def advance_population(previous, parties, config, round_number, proximity, ballots):
+def advance_population(previous, parties, config, round_number, proximity, ballots, published_counts=None):
     """Observe only incoming proximity arcs; never inspect preferences/reports."""
     contacts = {person: [] for person, _ in previous}
     for sender, receiver in proximity:
         if sender != receiver:
             contacts[receiver].append((sender, ballots[sender][0], round_number - 1))
     return tuple((person, advance(state, observer=person, parties=parties, config=config,
-                                  round_number=round_number, encounters=contacts[person]))
+                                  round_number=round_number, encounters=contacts[person], published_counts=published_counts))
                  for person, state in previous)

@@ -7,6 +7,7 @@ import json
 import tomllib
 import tempfile
 import unittest
+from verification_support import VerificationTestCase
 from dataclasses import replace
 from pathlib import Path
 
@@ -23,7 +24,7 @@ def example():
         return tomllib.load(handle)
 
 
-class CertifiedDirectTests(unittest.TestCase):
+class CertifiedDirectTests(VerificationTestCase):
     def test_tiny_profiles_against_independent_winner_oracle(self):
         parties = ("A", "B", "C")
         for ballots in itertools.product(parties, repeat=4):

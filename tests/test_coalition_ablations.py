@@ -6,6 +6,7 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 from unittest.mock import patch
 
 from multi_agent_election import ElectionError, Simulation, make_scenario
@@ -19,7 +20,7 @@ def example():
         return tomllib.load(handle)
 
 
-class CoalitionAblationTests(unittest.TestCase):
+class CoalitionAblationTests(VerificationTestCase):
     def test_each_arm_is_paired_and_preserves_raw_evidence(self):
         scenario=make_scenario(example()); result=coalition_ablations(scenario,[1,2])
         self.assertEqual(result["record_type"],"eclipse.coalition-ablations")

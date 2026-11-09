@@ -5,6 +5,7 @@ import itertools
 import json
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 from pathlib import Path
 from dataclasses import replace
 
@@ -19,7 +20,7 @@ def example():
     return json.loads(Path("examples/knowledge-profile.json").read_text())
 
 
-class KnowledgeModelTests(unittest.TestCase):
+class KnowledgeModelTests(VerificationTestCase):
     def test_de_dicto_de_re_dominance_and_pessimism(self):
         model = KnowledgeModel.from_dict(example())
         result = model.analyze("1")
@@ -420,7 +421,7 @@ class KnowledgeModelTests(unittest.TestCase):
                             entry.pop("generated_round"); entry.pop("delivered_round"); entry["source_round"] = None
         restored = Simulation.from_checkpoint(old)
         self.assertEqual(restored.current, sim.current)
-        self.assertEqual(restored.checkpoint()["version"], 21)
+        self.assertEqual(restored.checkpoint()["version"], 25)
         old["frames"][2]["policy_memory"]["1"]["observation_history"][1]["received_reports"][0]["ballot"] = ["C"]
         with self.assertRaisesRegex(ElectionError, "history does not match"):
             Simulation.from_checkpoint(old)

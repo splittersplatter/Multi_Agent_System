@@ -10,6 +10,7 @@ import random
 import threading
 import tomllib
 import unittest
+from verification_support import VerificationTestCase
 from pathlib import Path
 from urllib.request import Request, urlopen
 
@@ -21,7 +22,7 @@ from multi_agent_election.visual import make_server
 from multi_agent_election.voting import VOTING_POLICIES, _exact_gains, _pivot_weights, configure_voting, decide
 
 
-class VotingVerificationTests(unittest.TestCase):
+class VotingVerificationTests(VerificationTestCase):
     def test_top_two_exact_tie_model_exposes_electorate_parity_limit(self):
         # This is a documented modelling limitation, not a desired convergence test.
         # N=500 -> 499 other ballots: no exact tie when only two candidates exist.
@@ -85,14 +86,15 @@ class VotingVerificationTests(unittest.TestCase):
             self.assertEqual(actual[0],wanted)
 
     def test_every_policy_real_http_equals_cli_and_exports_replayable_history(self):
-        with Path('examples/heuristics.toml').open('rb') as handle:raw=tomllib.load(handle)
         for policy in VOTING_POLICIES:
             with self.subTest(policy=policy):
+                path = 'examples/recent-majority.toml' if policy == 'memory_pivotal' else 'examples/heuristics.toml'
+                with Path(path).open('rb') as handle: raw=tomllib.load(handle)
                 scenario=configure_voting(make_scenario(raw),policy)
                 expected=Simulation(scenario);expected.run(3)
                 output=io.StringIO()
                 with contextlib.redirect_stdout(output):
-                    self.assertEqual(main(['run','examples/heuristics.toml','--voting',policy]),0)
+                    self.assertEqual(main(['run',path,'--voting',policy]),0)
                 cli=json.loads(output.getvalue())
                 self.assertEqual(cli['frames'][:4],[f.as_dict() for f in expected.frames])
                 server=make_server(Simulation(make_scenario(raw)))

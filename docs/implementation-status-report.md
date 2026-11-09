@@ -1,206 +1,115 @@
-# Implementation status and browser checks
+# Implementation status
 
-Updated: 8 November 2026. Scope: current workspace implementation.
-Current assessment/evidence: [audit report](code-audit-and-refinement-report.md).
+Updated 9 November 2026. [Quickstart](../README.md#run) · [Architecture](code-audit-and-refinement-report.md).
+Implemented != accepted stage != validated scientific result.
 
-## Status
+## Scope
 
-| Checkpoint | Status |
+| Area | Implemented | Remaining |
+| --- | --- | --- |
+| Stage00 | Baseline/phase/information/reproducibility contracts | Maintain against adopted scope |
+| Stage01 | Repeated engine; groups/capabilities; ranked ballots; motion/layers; plugins; CLI/HTTP; editing; history; plots/GIFs | Full manual browser/download acceptance; current workload/resource limits |
+| Stage02 | Scoped observations/provenance; strategic variants; finite knowledge; conditional equilibria; rolling estimates; exploratory memory-pivotal voter | General temporal/higher-order/adversarial models; convergence proof for memory voter |
+| Stage03 | Receiver radii; dynamic/frozen/calibrated static proximity; normal-step motion; turnover/exposure/reactivation metrics | Held-out controls; causal studies; future-contact certification |
+| Stage04 | Coalition sight, private coordination, false reports/interception; capability ablations | Adaptive selection, complete rejected-action ledger, research comparisons |
+| Stage05 | Budgeted campaign layer; none/random/outdegree heuristic; paired controls; exact one-round oracle | Multi-round bound and source-algorithm replications |
+| Stage06 | Bounded truthful/random/target signals; trusting/known-bound epistemic responses; paired controls | Temporal signal semantics; paper replication and evaluation |
+| Stage07 | Spatial nomination; fixed/random controls; representation distances | Broader composition studies |
+| Stage08 | Bounded ideal shifts/drift; passive aggregate detector; disjoint calibration | Held-out uncertainty/generalization and composition certification |
+| Stage09 | Hidden leader shifts; public signals/perceptions; fixed/no-signal controls | Broader strategies and certified compositions |
+| Stage10 | All-enabled integration;17-arm isolated/leave-one-out/detector-off matrix | Cross-feature rejection audit/manual acceptance; factorial interactions |
+| Stage11 | Plans, metric contracts, experiment utilities | Frozen protocol, approved studies, uncertainty, final report/package |
+
+## Current contracts
+
+- All normal simulations N>=100;200-person browser demo. Older small examples
+  remain fixtures and ordinary CLI rejects them. Explicit verification scope only.
+- Ballots contain exactly global k distinct candidates; tally uses first-choice
+  plurality with configured party-order ties. Own rankings, cast votes, reports,
+  public signals and perceived positions are separate.
+- One engine powers CLI/browser/replay/export. Timeline reads do not execute
+  policies; edits replace future history. Plugins are trusted, not sandboxed.
+- Current checkpoints use25, with explicit resolved Gaussian group parameters.
+  Legacy non-grid group kernels are pinned before replay; ambiguous implicit
+  overrides require the archived runtime. Retired grid inputs fail explicitly.
+  Earlier supported schemas require successful replay; reviewed environment/source
+  changes require explicit migration approval. No fabricated legacy compatibility.
+- Estimates alone do not manipulate ballots. Opt-in `memory_pivotal` uses them
+  for exploratory simultaneous response and records decision traces.
+  F1–F5 guarantees apply only inside guarded proof domains; moving/mixed/continuing
+  attacker compositions are not certified by a quiet winner/ballot window.
+- Default random-walk kernel is Gaussian (mean=cap/2, std=cap/8 unless configured).
+  Grid runtime removed; Gaussian memory-pivotal preset replaces it. Streaming
+  frequencies/phase summaries, plots, states and playback remain available.
+  [Historical grid proof](plans/stochastic-stability.md) does not certify this model.
+
+## Verification
+
+Latest Gaussian-default update,9 November:427 full-suite tests pass
+(`/tmp/eclipse-gaussian-final.log`);20 Gaussian integration tests pass under
+stdlib-only Python (`/tmp/eclipse-gaussian-stdlib.log`); JS playback harness and
+`git diff --check` pass. Retired grid correspondence tests replaced with Gaussian
+runtime/replay/bounds/HTTP/rejection checks; standalone historical proof tests retained.
+New checkpoint25 and diagnostics2 distinguish current contracts. Legacy uniform
+group replay, implicit normal parameters, ambiguous overrides, control matching,
+99/100/101 boundary, rewind/tamper and state playback covered.
+
+200-voter/30-round CLI smoke, seed2000, completed; JSON/CSV/SVG plus31 saved frames
+validated through playback loader:
+`outputs/frequencies-20261109T085404-432726Z*`.
+Command: `PYTHONPATH=src python3 -m multi_agent_election.cli frequencies examples/gaussian-memory.toml --rounds 30 --burn-in 0 --batch-size 10 --seed 2000 --save-plots --save-states`.
+Validation only, not mixing evidence or a research comparison. Prior plot/state/
+browser integration preserved; cache10, poll10 and ballot policy unchanged.
+
+Historical state-recording/playback extension,9 November:427 tests pass;8 focused
+state tests pass under stdlib-only Python; JS playback harness passes. Streamed
+frames match engine outcomes, browser rewinds replace future records, I/O failure
+blocks round commit, malformed recordings fail validation. Actual200-node saved
+timeline inspected in-browser across rounds0/12/11. See
+[recording contract and commands](simulator-guide.md#setup-and-commands).
+
+Earlier recorded code checks,9 November2026:
+
+| Check | Result / local evidence |
 | --- | --- |
-| Stage 00: baseline/scope/research contract | Verified |
-| 1A: repeated engine, groups, ballots, CLI | Verified |
-| 1B: movement, graphs, channels, policy hooks, scheduled edits | Verified |
-| 1C: recording, checkpoints, replay/resume, batch commands | Verified |
-| 1D: metrics, plots, PNG/GIF and paired comparisons | Verified |
-| 1E: browser, inspection, playback, filters, downloads | Implemented; acceptance incomplete |
-| 1F: comprehensive interactive-edit acceptance | Features present; checkpoint pending |
-| 1G: documentation/examples/performance acceptance | Artifacts present; checkpoint pending |
-| Stages 02–10 | Implemented in part; shared acceptance incomplete |
-| Stage 11 | Formal experiments/delivery pending |
+| Full unittest suite |380 pass; `outputs/normal-walk-verified-tests.log` |
+| Standard-library-only suite |376 pass/4 optional-image skips; `outputs/normal-walk-verified-stdlib.log` |
+| Population boundary/integration |9 tests;99 rejected,100/101 accepted; CLI/pilot/checkpoint/environment/HTTP200 checked |
+| Normal CLI demo |100 rounds,101 metrics rows,200 ballots each; `outputs/population-demo-200-summary-2026-11-09.json` |
+| Fixture replay/next round |31/31; `outputs/population-audit-matched-2026-11-09.json`; only deliberately enlarged demo differs from prior matched audit |
+| JS playback harness |Pass; `node tests/playback_harness.js` |
 
-The simulator, finite epistemic policies and all seven mechanisms run. Stage
-acceptance and scientific evaluation remain incomplete; source presence alone
-does not establish a validated research result.
+Latest normal-walk update: suites above, JS harness and `git diff --check` pass.
+Normal draws/bounds, legacy draw identity,
+replay/overrides, matched motion and quiet-then-contact restart covered.
+200-voter seed101/100-round CLI comparison:2/2 successful arms; memory-pivotal22
+flips including one restart after>=10 quiet rounds; sincere0. Raw/source manifests:
+`outputs/normal-walk-comparison-2026-11-09.json`.
+[Motion contract, findings and conditional proof](dynamic-network-stability.md).
 
-## Implemented features
+Memory-pivotal oracle, 200-person HTTP/replay and exploratory runs are in
+[its report](memory-pivotal-exploration.md). Raw logs and manifests are ignored
+local evidence, not shipped test results.
+Periodic-poll checks: round1/2/10/11/20/21 weights and source tallies, empty-cache
+fallback, tamper/replay/rewind, periodic pilot controls and 200-person HTTP.
+Estimator pilot:30 trajectories/240 arm evaluations, five seeds, zero failures;
+[findings and limitations](majority-estimation-report.md). This is not heuristic selection.
 
-| Area | Available behavior |
-| --- | --- |
-| Election model | Stable person/party IDs; groups; private full rankings; exactly global `k` distinct ranked choices; first-choice plurality; deterministic party-order ties |
-| Strategies | Three baseline policies plus ten strategic plurality responses; startup selection, group defaults and individual overrides; [parameters/limits](voting-heuristics.md) |
-| Policy plugins | Separate voting, movement, graph and communication callables; parameters; isolated serializable memory and keyed RNG streams |
-| Space | Positions in `[0,1]²`; stationary/random-walk/custom movement; bounded steps and reflective built-in boundaries |
-| Networks | Directed persistent, proximity and campaign layers; proximity rebuilt after movement; overlapping private channels; public contacts deduplicated for observations |
-| Information | Delayed truthful reports; optional public/private ballot sensors; permissions for sensing, sending, receiving, movement and graph changes |
-| Interventions | Scheduled and interactive ranking, position, group, override, ballot, outgoing-edge and private-membership edits; one-round ballot overrides |
-| History | Immutable committed frames; rewind/seek; edit after a past frame replaces its future; pending messages, policy memory and interventions retained for replay |
-| Reproducibility | Scenario/seed/runtime manifest; source hashes; checkpoint verification by replay; resume; full/sampled/summary records; JSON/JSONL |
-| Metrics | Party counts/shares/rank frequencies; winner/margin; switching; group statistics; graph/channel/sensor counts; intervention origins |
-| Comparisons | Multi-seed scheduled-intervention versus no-intervention controls; target share/margin/win-rate changes; paired plots |
-| Exports | Metrics CSV, vote-share SVG/PNG, network PNG, timeline GIF; browser exports use recorded snapshots |
-| Browser | Play/pause/step/previous/seek; 1×/2×/5× pacing; public-layer/group filters; directed overlap arrows; party/group legends; keyboard agent selection |
-| Inspector | Displayed-round metrics; selected agent ballot/position/group; effective permissions; trusted observations; reports; voting/phase memory; interventions |
-| Color modes | True preference, submitted vote, observer-specific vote-based preference proxy; missing/conflicting proxy evidence appears gray |
-| Editing safety | Per-agent/per-frame local drafts; validation failures retain drafts; successful edits/history refresh invalidate stale drafts; stale server revisions rejected |
-| Saving | Checkpoint/export buttons; persistent save link for latest prepared file, labeled by source revision; export link also labels displayed round |
-| Epistemics/convergence | Bounded finite worlds, conditional equilibrium and report provenance; separate guarded F1–F5 convergence domains |
-| Mechanisms 1–4 | Per-receiver proximity; coalition sight/deception/interception; campaign-edge budgets; bounded public signals and matched response controls |
-| Mechanisms 5–7 | Spatial nomination; voter-ideal shifts; aggregate detector/calibration; hidden leader adaptation and perceived signals |
-| Integration | All-enabled scenario; 17-arm matrix; shared CLI/HTTP/replay/export tests |
+Documentation follow-up,9 November:24-work stability matrix,22 accessible full
+texts/2 access blockers; finite-grid transition/relative-age/startup contract and
+conditional occupation proof. This update does not rerun or extend the code checks
+above. Review and finite-model/engine equivalence are still pending; no outcome study.
 
-Private channels are inspected through membership and message panels; the
-network drawing's layer toggles show public layers. The preference proxy is a
-display heuristic. Finite exact knowledge models are available within explicit caps;
-general temporal/adversarial knowledge remains incomplete.
-Ballot length is global per scenario, not independently variable per person.
+## Open gates
 
-## Run the browser
-
-Python 3.11+ is required. Core simulation and browser serving need no extra
-packages or API keys. Commands below assume the project root:
-
-```bash
-cd /home/dhruv/Desktop/projects/Multi_Agent_System
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli visual examples/integrated.toml --port 8000
-```
-
-Open **http://127.0.0.1:8000/** manually. Keep the terminal running; Ctrl-C stops
-the server. A restart creates a fresh session. If a port is occupied, use
-`--port 0` and open the URL printed by the command.
-
-PNG/GIF support is optional. To install it in an isolated environment:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python3 -m pip install -r requirements-visualization.txt
-```
-
-Then run the same browser commands using that activated environment. The audited
-environment has Python 3.14.4 and Pillow 12.1.1.
-
-### Scenario commands
-
-Run each long-running command in its own terminal, or stop one before starting
-the next. These ports allow independent sessions side by side.
-
-```bash
-# Main cumulative demo: http://127.0.0.1:8000/
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli visual examples/integrated.toml --port 8000
-
-# Honest baseline: http://127.0.0.1:8001/
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli visual examples/baseline.toml --port 8001
-
-# Movement, proximity, persistent links and private reports: http://127.0.0.1:8002/
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli visual examples/network.toml --port 8002
-
-# Four custom policy phases: http://127.0.0.1:8003/
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli visual examples/custom.toml --port 8003
-
-# Communication permissions: http://127.0.0.1:8004/
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli visual examples/restricted.toml --port 8004
-
-# Trusted sensors versus report-only voters: http://127.0.0.1:8005/
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli visual examples/sensors.toml --port 8005
-
-# Overlapping proximity/campaign layers: http://127.0.0.1:8006/
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli visual examples/campaign-layer.toml --port 8006
-```
-
-### Expected results before manual edits
-
-Use Next round to inspect exact rounds. Browser playback can continue beyond
-the scenario's configured `rounds`; that field sets the default CLI horizon.
-
-| Scenario | What to check |
-| --- | --- |
-| Integrated | Winners at rounds 0–3: **A, C, A, C**. Agent 1 moves right, votes for C and accumulates memory. At round 2 agent 3 moves to `(0.65, 0.2)`, casts `A,B` once and gains a campaign edge. At round 3 all three vote C first. |
-| Baseline | Four people; every round has `A=2, B=2, C=0`; tie order selects A. No public edges. |
-| Network | Agents 1–3 move; agent 4 uses local reports. At round 3 agent 1 is at `(0.5, 0.5)`; public edges change from 6 to 4. |
-| Custom | Agent 1 moves from x=0.20 to 0.23 in round 1, creates edge `1→2`, votes `C,A`; phase/voting memory increments. Winners 0–3: A, B, A, C. |
-| Restricted | Agent 2 rejects public reports. At round 2 it receives only the private `team` report from agent 1 and switches from `B,A` to `A,B`. Inspect effective capabilities. |
-| Sensors | Agent 2 ballots at rounds 0–2: `B,A → A,B → C,B`. Agent 3 stays `B,A`. Sensor timestamps refer to completed rounds, so a current ballot can differ from its observed predecessor. |
-| Campaign | Initially proximity and campaign overlap. At round 1 proximity disappears after agent 2 moves; campaign remains. At round 2 campaign is removed. Public-edge counts 0–3: `2,1,0,0`. |
-
-### Browser checklist
-
-1. Step through rounds; compare the table above with Round metrics and agent
-   details. Play/pause at different speeds; use Previous and the timeline slider.
-2. Toggle graph layers, group filter and color mode. Select agents by node or ID;
-   Tab plus Enter/Space also selects nodes. Inspect reports, sensor timestamps
-   and policy memory. The statistics sidebar always covers the full electorate.
-3. Enter an unsaved ballot/ranking; change filters, select another agent and return.
-   The draft should remain attached to its original agent and round.
-4. In a fresh integrated run, reach round 3, save a checkpoint, seek round 1 and
-   edit agent 3's ranking. Apply, then step: future frames are regenerated;
-   untouched scheduled edits remain effective. Drafts clear after a successful edit.
-5. With `k=2`, try ballot `A,A`: validation rejects it without advancing state;
-   the draft remains available for correction. A valid ballot override applies once.
-6. Download a checkpoint and each export. Open CSV/SVG/PNG/GIF in your normal
-   browser/filesystem; GIF should cover the retained timeline. Use the explicit
-   Save link if automatic downloading is suppressed. Check its revision label.
-7. For concurrency, open the same server URL in two tabs. Advance one tab;
-   the stale tab's next server command/checkpoint request must reject its old revision.
-
-Pause during a deliberately slow test-only policy to inspect boundary behavior:
-
-```bash
-PYTHONPATH=src:tests/fixtures python3 -m multi_agent_election.cli visual tests/fixtures/slow-playback.toml --port 8007
-```
-
-Open http://127.0.0.1:8007/. Play, then pause during a step: `Pausing…` and disabled
-editing/navigation remain until the round commits. This fixture intentionally
-waits three seconds per step and uses `k=1`.
-
-For a larger `k=3`, 500-person scenario:
-
-```bash
-eclipse_check_dir=$(mktemp -d /tmp/eclipse-check-XXXXXXXX)
-python3 scripts/benchmark_simulator.py generate --agents 500 --rounds 100 --seed 2026 --output "$eclipse_check_dir/500.toml"
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli visual "$eclipse_check_dir/500.toml" --port 8008
-```
-
-Open http://127.0.0.1:8008/. This has simple stationary voters and approximately
-5,470 directed proximity links; it exercises rendering rather than expensive policies.
-
-## CLI checks beyond the browser
-
-```bash
-# Automated regressions; Node.js enables the browser-script tests.
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=src python3 -m unittest discover -s tests -v
-
-# Matched treatment/control comparison across seeds.
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli batch examples/integrated.toml --seeds 1 2 3 --target C
-```
-
-To validate a downloaded checkpoint without advancing it, substitute its actual
-path; keep the same source/runtime and plugin search path:
-
-```bash
-PYTHONPATH=src:examples python3 -m multi_agent_election.cli resume /absolute/path/to/eclipse-checkpoint.json --rounds 0
-```
-
-The browser CLI currently starts from a scenario, not from a downloaded checkpoint.
-CLI resume verifies checkpoint history and can continue it.
-
-## Verification and remaining work
-
-- Current audit: **107 tests pass**; all seven example scenarios complete via
-  CLI and start via the browser command; HTML and all five frontend assets respond.
-- Previous live checks cover playback, selection, inspectors, filters, rewind,
-  draft isolation, stale requests, overlap rendering and speed invariance.
-- Export response contents and save-link behavior are tested. Actual browser-to-disk
-  downloads remain unverified in the in-app browser: its download inspection
-  times out even on an independent ordinary file link. Manual check 6 closes this gap.
-- 1F/1G acceptance remains open despite existing edit controls, examples and guide.
-- Alternative counting rules, exact epistemic strategies, deceptive/coalition
-  agents, campaign optimization/budgets, public-poll manipulation, nomination,
-  alignment attacks/detectives, adapting leaders and combined research experiments
-  remain future work. Current campaign links are researcher-controlled infrastructure.
-- Plugin Python is trusted local code. Dependency hashing is incomplete for
-  transitive imports. Performance measurements are preliminary single runs;
-  browser memory and costly/dense workloads still need measurement.
-
-References: [simulator guide](simulator-guide.md),
-[checkpoint evidence](plans/stage-01-political-simulator.md#progress),
-[benchmarks](stage-01-benchmarks.md), [overall roadmap](project-roadmap.md).
+- Current manual browser interaction/download bytes and200-node rendering/memory.
+- Complete rejected/conflicting-action actor/phase/reason audit without corrupting state.
+- Intended memory-voter convergence scope; original four-person refutation does
+  not itself certify/refute the new N>=100-only domain.
+- Gaussian mixing/occupation guarantees: open; retired grid theorem cannot apply.
+  Measure contact coverage, autocorrelation and seed sensitivity before claiming
+  improved mixing. Finite-window agreement is not a convergence certificate.
+- Frozen calibration/evaluation protocol,>=30 held-out seeds/cell, run-level
+  uncertainty; native intervention costs; failures/censoring retained.
+- Bounded dense-graph/history resources, expensive-policy limits, trusted-plugin
+  dependency/environment closure. No current universal performance guarantee.

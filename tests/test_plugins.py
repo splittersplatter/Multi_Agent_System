@@ -1,4 +1,5 @@
 import unittest
+from verification_support import VerificationTestCase
 import importlib
 import os
 import py_compile
@@ -10,7 +11,7 @@ from multi_agent_election import ElectionError, Simulation, make_scenario
 from test_baseline import example
 
 
-class PluginTests(unittest.TestCase):
+class PluginTests(VerificationTestCase):
     def test_policy_initialization_failure_is_actionable_and_not_cached(self):
         with tempfile.TemporaryDirectory() as directory:
             module = "policy_" + uuid4().hex
