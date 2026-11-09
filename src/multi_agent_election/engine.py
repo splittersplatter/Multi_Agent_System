@@ -171,7 +171,53 @@ class Simulation:
         if manifest() != self._runtime_manifest:
             raise ElectionError("runtime or core source changed during run; save history and restart")
 
-    def step(self) -> Frame:
+    def step(self, external_moves: Mapping[str, Sequence[float]] | None = None) -> Frame:
+        """Commit one round. ``external_moves`` maps people whose movement is
+        ``"external"`` to their new position for this round (omitted people stay put).
+
+        External moves are validated against the same rules as movement plugins
+        (``move`` capability, ``max_step``, unit square) and recorded as next-boundary
+        position interventions, so checkpoints replay them exactly. A failed step
+        leaves both the history and the queued interventions unchanged."""
+        if not external_moves:
+            return self._step()
+        previous = self.manual_interventions
+        self.manual_interventions = self._queue_external_moves(external_moves)
+        try:
+            return self._step()
+        except BaseException:
+            self.manual_interventions = previous
+            raise
+
+    def _queue_external_moves(self, moves: Mapping[str, Sequence[float]]) -> tuple[Intervention, ...]:
+        if not isinstance(moves, Mapping):
+            raise ElectionError("external_moves must map person IDs to positions")
+        frame = self.current
+        boundary = frame.round + 1
+        groups = {group.id: group for group in self.scenario.groups}
+        memberships, overrides, positions = dict(frame.groups), dict(frame.overrides), dict(frame.positions)
+        queued = {(a.round, a.person) for a in (*self.manual_interventions, *self.scenario.interventions)
+                  if a.position is not None}
+        added = []
+        for person, position in sorted(moves.items()):
+            if person not in positions:
+                raise ElectionError(f"external move for unknown person {person!r}")
+            group = apply_overrides(groups[memberships[person]], overrides[person])
+            if group.movement != "external":
+                raise ElectionError(f"person {person!r}: external moves require movement = \"external\"")
+            if not group.capabilities.move:
+                raise ElectionError(f"person {person!r}: external move denied by capability")
+            if (not isinstance(position, (list, tuple)) or len(position) != 2
+                    or any(isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x) or not 0 <= x <= 1 for x in position)):
+                raise ElectionError(f"person {person!r}: external move must be a finite position in [0,1]^2")
+            if math.dist(positions[person], position) > group.max_step + 1e-12:
+                raise ElectionError(f"person {person!r}: external move exceeds max_step {group.max_step}")
+            if (boundary, person) in queued:
+                raise ElectionError(f"person {person!r}: a position intervention is already queued for round {boundary}")
+            added.append(Intervention(boundary, person, position=(float(position[0]), float(position[1]))))
+        return tuple(sorted((*self.manual_interventions, *added), key=lambda a: (a.round, a.person)))
+
+    def _step(self) -> Frame:
         self._assert_runtime_unchanged()
         if self.scenario.convergence_case and self.manual_interventions:
             raise ElectionError("certified convergence episodes exclude interactive interventions")

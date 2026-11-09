@@ -415,7 +415,8 @@ def _make_group(group: str, policy: Mapping[str, Any]) -> Group:
     if not isinstance(policy, dict) or set(policy) - {"voting", "movement", "max_step", "proximity_radius", "communication", "graph", "parameters", "capabilities"} or not isinstance(policy.get("voting"), str) or not (policy["voting"] in VOTING_POLICIES + COALITION_POLICIES + SIGNAL_POLICIES + CERTIFIED_POLICIES + EPISTEMIC_POLICIES or policy["voting"].startswith("python:")):
         raise ElectionError(f"group {group!r}: expected supported voting and movement")
     movement = policy.get("movement", "stationary")
-    if not isinstance(movement, str) or not (movement in ("stationary", "random_walk") or movement.startswith("python:")):
+    # "external": positions come from Simulation.step(external_moves=...), e.g. a MARL learner.
+    if not isinstance(movement, str) or not (movement in ("stationary", "random_walk", "external") or movement.startswith("python:")):
         raise ElectionError(f"group {group!r}: unsupported movement {movement!r}")
     max_step = _number(policy.get("max_step", 0), "max_step", 0, 1)
     proximity_radius = _number(policy["proximity_radius"], "proximity_radius", 0, math.sqrt(2)) if "proximity_radius" in policy else None

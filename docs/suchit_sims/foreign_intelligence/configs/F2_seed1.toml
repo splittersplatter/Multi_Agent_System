@@ -1,0 +1,802 @@
+parties = ["A", "B", "C"]
+k = 1
+seed = 1
+rounds = 25
+
+[groups.committed]
+voting = "sincere"
+movement = "random_walk"
+max_step = 0.015
+communication = "truthful"
+
+[groups.trusting]
+voting = "local_plurality"
+movement = "random_walk"
+max_step = 0.015
+communication = "truthful"
+
+[groups.sensor]
+voting = "sensed_plurality"
+movement = "random_walk"
+max_step = 0.015
+communication = "truthful"
+capabilities = { sense_public_ballots = true }
+
+[groups.spies]
+voting = "sincere"
+movement = "random_walk"
+max_step = 0.01
+communication = "python:spy_comms:disinform"
+parameters = { target = "B", mode = "sight" }
+
+[groups.spies.capabilities]
+observe_target_preferences = true
+intercept_private_reports = false
+receive_private_reports = true
+send_private_reports = true
+
+[network]
+radius = 0.12
+persistent_edges = [["spy00", "r31"], ["spy00", "r03"], ["spy00", "r41"], ["spy00", "r28"], ["spy00", "r14"], ["spy00", "r82"], ["spy00", "r63"], ["spy00", "r76"], ["spy00", "r74"], ["spy00", "r45"], ["spy00", "r42"], ["spy00", "r58"], ["spy00", "r29"], ["spy00", "r37"], ["spy00", "r80"], ["spy01", "r11"], ["spy01", "r10"], ["spy01", "r83"], ["spy01", "r02"], ["spy01", "r53"], ["spy01", "r38"], ["spy01", "r61"], ["spy01", "r47"], ["spy01", "r04"], ["spy01", "r59"], ["spy01", "r51"], ["spy01", "r12"], ["spy01", "r00"], ["spy01", "r15"], ["spy01", "r66"], ["spy02", "r02"], ["spy02", "r11"], ["spy02", "r47"], ["spy02", "r51"], ["spy02", "r53"], ["spy02", "r38"], ["spy02", "r61"], ["spy02", "r15"], ["spy02", "r12"], ["spy02", "r10"], ["spy02", "r83"], ["spy02", "r70"], ["spy02", "r39"], ["spy02", "r22"], ["spy02", "r59"], ["spy03", "r76"], ["spy03", "r74"], ["spy03", "r36"], ["spy03", "r06"], ["spy03", "r58"], ["spy03", "r28"], ["spy03", "r41"], ["spy03", "r18"], ["spy03", "r03"], ["spy03", "r14"], ["spy03", "r45"], ["spy03", "r13"], ["spy03", "r37"], ["spy03", "r33"], ["spy03", "r31"], ["spy04", "r84"], ["spy04", "r62"], ["spy04", "r08"], ["spy04", "r73"], ["spy04", "r54"], ["spy04", "r65"], ["spy04", "r71"], ["spy04", "r77"], ["spy04", "r33"], ["spy04", "r21"], ["spy04", "r49"], ["spy04", "r68"], ["spy04", "r69"], ["spy04", "r50"], ["spy04", "r30"], ["spy05", "r41"], ["spy05", "r14"], ["spy05", "r82"], ["spy05", "r45"], ["spy05", "r03"], ["spy05", "r42"], ["spy05", "r63"], ["spy05", "r31"], ["spy05", "r76"], ["spy05", "r69"], ["spy05", "r74"], ["spy05", "r28"], ["spy05", "r80"], ["spy05", "r21"], ["spy05", "r49"], ["spy06", "r79"], ["spy06", "r50"], ["spy06", "r30"], ["spy06", "r07"], ["spy06", "r16"], ["spy06", "r05"], ["spy06", "r67"], ["spy06", "r26"], ["spy06", "r40"], ["spy06", "r43"], ["spy06", "r34"], ["spy06", "r77"], ["spy06", "r13"], ["spy06", "r71"], ["spy06", "r68"], ["spy07", "r44"], ["spy07", "r64"], ["spy07", "r22"], ["spy07", "r24"], ["spy07", "r55"], ["spy07", "r09"], ["spy07", "r19"], ["spy07", "r15"], ["spy07", "r17"], ["spy07", "r32"], ["spy07", "r52"], ["spy07", "r27"], ["spy07", "r60"], ["spy07", "r26"], ["spy07", "r05"], ["spy08", "r74"], ["spy08", "r76"], ["spy08", "r36"], ["spy08", "r58"], ["spy08", "r28"], ["spy08", "r41"], ["spy08", "r06"], ["spy08", "r03"], ["spy08", "r18"], ["spy08", "r14"], ["spy08", "r37"], ["spy08", "r31"], ["spy08", "r45"], ["spy08", "r82"], ["spy08", "r13"], ["spy09", "r83"], ["spy09", "r10"], ["spy09", "r11"], ["spy09", "r53"], ["spy09", "r04"], ["spy09", "r02"], ["spy09", "r00"], ["spy09", "r59"], ["spy09", "r38"], ["spy09", "r61"], ["spy09", "r66"], ["spy09", "r48"], ["spy09", "r15"], ["spy09", "r47"], ["spy09", "r51"], ["spy10", "r13"], ["spy10", "r43"], ["spy10", "r52"], ["spy10", "r16"], ["spy10", "r07"], ["spy10", "r26"], ["spy10", "r06"], ["spy10", "r05"], ["spy10", "r36"], ["spy10", "r55"], ["spy10", "r30"], ["spy10", "r24"], ["spy10", "r64"], ["spy10", "r22"], ["spy10", "r79"], ["spy11", "r80"], ["spy11", "r63"], ["spy11", "r42"], ["spy11", "r82"], ["spy11", "r45"], ["spy11", "r14"], ["spy11", "r49"], ["spy11", "r41"], ["spy11", "r69"], ["spy11", "r21"], ["spy11", "r03"], ["spy11", "r31"], ["spy11", "r65"], ["spy11", "r76"], ["spy11", "r73"], ["spy12", "r62"], ["spy12", "r08"], ["spy12", "r54"], ["spy12", "r84"], ["spy12", "r71"], ["spy12", "r73"], ["spy12", "r77"], ["spy12", "r65"], ["spy12", "r68"], ["spy12", "r33"], ["spy12", "r21"], ["spy12", "r69"], ["spy12", "r49"], ["spy12", "r50"], ["spy12", "r30"], ["spy13", "r24"], ["spy13", "r64"], ["spy13", "r55"], ["spy13", "r52"], ["spy13", "r44"], ["spy13", "r22"], ["spy13", "r26"], ["spy13", "r13"], ["spy13", "r19"], ["spy13", "r43"], ["spy13", "r05"], ["spy13", "r16"], ["spy13", "r07"], ["spy13", "r32"], ["spy13", "r17"], ["spy14", "r60"], ["spy14", "r27"], ["spy14", "r17"], ["spy14", "r32"], ["spy14", "r19"], ["spy14", "r09"], ["spy14", "r81"], ["spy14", "r20"], ["spy14", "r44"], ["spy14", "r25"], ["spy14", "r78"], ["spy14", "r24"], ["spy14", "r64"], ["spy14", "r22"], ["spy14", "r59"]]
+
+[network.private_channels]
+chat0 = ["r45", "r42", "r82", "r14", "r63", "r41", "r69", "spy00", "spy03", "spy04", "spy05", "spy08", "spy11", "spy12"]
+chat1 = ["r23", "r56", "r75", "r46", "r34", "r40", "r39", "spy06"]
+chat2 = ["r00", "r04", "r66", "r48", "r59", "r81", "r53"]
+chat3 = ["r42", "r45", "r82", "r63", "r14", "r41", "r69"]
+chat4 = ["r48", "r66", "r81", "r00", "r59", "r04", "r53"]
+chat5 = ["r10", "r83", "r11", "r38", "r61", "r02", "r53", "spy01", "spy02", "spy09"]
+chat6 = ["r60", "r27", "r17", "r19", "r09", "r32", "r81", "spy14"]
+chat7 = ["r35", "r57", "r20", "r01", "r25", "r72", "r29"]
+chat8 = ["r64", "r24", "r44", "r22", "r55", "r19", "r52", "spy07", "spy10", "spy13"]
+chat9 = ["r25", "r20", "r72", "r01", "r57", "r29", "r78"]
+
+[[coalitions]]
+id = "cell_spy00"
+members = ["spy00"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r31", "r03", "r41", "r28", "r14", "r82", "r63", "r76", "r74", "r45", "r42", "r58", "r29", "r37", "r80"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy01"
+members = ["spy01"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r11", "r10", "r83", "r02", "r53", "r38", "r61", "r47", "r04", "r59", "r51", "r12", "r00", "r15", "r66"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy02"
+members = ["spy02"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r02", "r11", "r47", "r51", "r53", "r38", "r61", "r15", "r12", "r10", "r83", "r70", "r39", "r22", "r59"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy03"
+members = ["spy03"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r76", "r74", "r36", "r06", "r58", "r28", "r41", "r18", "r03", "r14", "r45", "r13", "r37", "r33", "r31"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy04"
+members = ["spy04"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r84", "r62", "r08", "r73", "r54", "r65", "r71", "r77", "r33", "r21", "r49", "r68", "r69", "r50", "r30"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy05"
+members = ["spy05"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r41", "r14", "r82", "r45", "r03", "r42", "r63", "r31", "r76", "r69", "r74", "r28", "r80", "r21", "r49"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy06"
+members = ["spy06"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r79", "r50", "r30", "r07", "r16", "r05", "r67", "r26", "r40", "r43", "r34", "r77", "r13", "r71", "r68"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy07"
+members = ["spy07"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r44", "r64", "r22", "r24", "r55", "r09", "r19", "r15", "r17", "r32", "r52", "r27", "r60", "r26", "r05"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy08"
+members = ["spy08"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r74", "r76", "r36", "r58", "r28", "r41", "r06", "r03", "r18", "r14", "r37", "r31", "r45", "r82", "r13"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy09"
+members = ["spy09"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r83", "r10", "r11", "r53", "r04", "r02", "r00", "r59", "r38", "r61", "r66", "r48", "r15", "r47", "r51"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy10"
+members = ["spy10"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r13", "r43", "r52", "r16", "r07", "r26", "r06", "r05", "r36", "r55", "r30", "r24", "r64", "r22", "r79"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy11"
+members = ["spy11"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r80", "r63", "r42", "r82", "r45", "r14", "r49", "r41", "r69", "r21", "r03", "r31", "r65", "r76", "r73"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy12"
+members = ["spy12"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r62", "r08", "r54", "r84", "r71", "r73", "r77", "r65", "r68", "r33", "r21", "r69", "r49", "r50", "r30"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy13"
+members = ["spy13"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r24", "r64", "r55", "r52", "r44", "r22", "r26", "r13", "r19", "r43", "r05", "r16", "r07", "r32", "r17"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[coalitions]]
+id = "cell_spy14"
+members = ["spy14"]
+target = "B"
+report_budget_per_round = 4
+report_budget_total = 100
+sight_targets = ["r60", "r27", "r17", "r32", "r19", "r09", "r81", "r20", "r44", "r25", "r78", "r24", "r64", "r22", "r59"]
+sight_budget_per_round = 15
+sight_budget_total = 15
+
+[[people]]
+id = "r00"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.0754, 0.802]
+
+[[people]]
+id = "r01"
+group = "sensor"
+preference = ["A", "C", "B"]
+position = [0.2318, 0.1108]
+
+[[people]]
+id = "r02"
+group = "committed"
+preference = ["B", "C", "A"]
+position = [0.429, 0.8072]
+
+[[people]]
+id = "r03"
+group = "trusting"
+preference = ["A", "C", "B"]
+position = [0.578, 0.0882]
+
+[[people]]
+id = "r04"
+group = "sensor"
+preference = ["B", "C", "A"]
+position = [0.0738, 0.837]
+
+[[people]]
+id = "r05"
+group = "trusting"
+preference = ["A", "C", "B"]
+position = [0.5667, 0.5566]
+
+[[people]]
+id = "r06"
+group = "trusting"
+preference = ["B", "C", "A"]
+position = [0.6306, 0.3801]
+
+[[people]]
+id = "r07"
+group = "trusting"
+preference = ["B", "C", "A"]
+position = [0.6119, 0.4966]
+
+[[people]]
+id = "r08"
+group = "trusting"
+preference = ["B", "A", "C"]
+position = [0.898, 0.3699]
+
+[[people]]
+id = "r09"
+group = "trusting"
+preference = ["A", "C", "B"]
+position = [0.2595, 0.57]
+
+[[people]]
+id = "r10"
+group = "trusting"
+preference = ["B", "A", "C"]
+position = [0.3007, 0.9514]
+
+[[people]]
+id = "r11"
+group = "committed"
+preference = ["A", "B", "C"]
+position = [0.3515, 0.9073]
+
+[[people]]
+id = "r12"
+group = "trusting"
+preference = ["B", "C", "A"]
+position = [0.5686, 0.8529]
+
+[[people]]
+id = "r13"
+group = "trusting"
+preference = ["A", "B", "C"]
+position = [0.5751, 0.4588]
+
+[[people]]
+id = "r14"
+group = "trusting"
+preference = ["C", "A", "B"]
+position = [0.6543, 0.087]
+
+[[people]]
+id = "r15"
+group = "committed"
+preference = ["B", "A", "C"]
+position = [0.3926, 0.6585]
+
+[[people]]
+id = "r16"
+group = "committed"
+preference = ["A", "B", "C"]
+position = [0.6043, 0.4941]
+
+[[people]]
+id = "r17"
+group = "committed"
+preference = ["A", "B", "C"]
+position = [0.2628, 0.3975]
+
+[[people]]
+id = "r18"
+group = "committed"
+preference = ["C", "B", "A"]
+position = [0.4075, 0.2912]
+
+[[people]]
+id = "r19"
+group = "sensor"
+preference = ["A", "B", "C"]
+position = [0.2917, 0.4204]
+
+[[people]]
+id = "r20"
+group = "sensor"
+preference = ["A", "B", "C"]
+position = [0.1719, 0.1956]
+
+[[people]]
+id = "r21"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.8112, 0.2014]
+
+[[people]]
+id = "r22"
+group = "trusting"
+preference = ["A", "C", "B"]
+position = [0.3771, 0.5624]
+
+[[people]]
+id = "r23"
+group = "trusting"
+preference = ["C", "B", "A"]
+position = [0.8487, 0.9248]
+
+[[people]]
+id = "r24"
+group = "committed"
+preference = ["B", "A", "C"]
+position = [0.4005, 0.4826]
+
+[[people]]
+id = "r25"
+group = "committed"
+preference = ["B", "C", "A"]
+position = [0.2262, 0.1826]
+
+[[people]]
+id = "r26"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.5628, 0.5344]
+
+[[people]]
+id = "r27"
+group = "committed"
+preference = ["C", "B", "A"]
+position = [0.2255, 0.3837]
+
+[[people]]
+id = "r28"
+group = "trusting"
+preference = ["B", "A", "C"]
+position = [0.4757, 0.1384]
+
+[[people]]
+id = "r29"
+group = "trusting"
+preference = ["B", "A", "C"]
+position = [0.3231, 0.1655]
+
+[[people]]
+id = "r30"
+group = "trusting"
+preference = ["B", "A", "C"]
+position = [0.6805, 0.5154]
+
+[[people]]
+id = "r31"
+group = "committed"
+preference = ["A", "B", "C"]
+position = [0.5406, 0.0554]
+
+[[people]]
+id = "r32"
+group = "trusting"
+preference = ["B", "C", "A"]
+position = [0.2754, 0.3747]
+
+[[people]]
+id = "r33"
+group = "trusting"
+preference = ["A", "C", "B"]
+position = [0.7623, 0.3399]
+
+[[people]]
+id = "r34"
+group = "sensor"
+preference = ["A", "C", "B"]
+position = [0.7992, 0.7255]
+
+[[people]]
+id = "r35"
+group = "committed"
+preference = ["A", "B", "C"]
+position = [0.0572, 0.0563]
+
+[[people]]
+id = "r36"
+group = "committed"
+preference = ["A", "B", "C"]
+position = [0.5988, 0.3536]
+
+[[people]]
+id = "r37"
+group = "sensor"
+preference = ["C", "A", "B"]
+position = [0.3728, 0.2372]
+
+[[people]]
+id = "r38"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.4837, 0.9561]
+
+[[people]]
+id = "r39"
+group = "trusting"
+preference = ["B", "C", "A"]
+position = [0.6438, 0.7817]
+
+[[people]]
+id = "r40"
+group = "sensor"
+preference = ["A", "C", "B"]
+position = [0.7654, 0.7351]
+
+[[people]]
+id = "r41"
+group = "trusting"
+preference = ["B", "C", "A"]
+position = [0.6277, 0.1115]
+
+[[people]]
+id = "r42"
+group = "trusting"
+preference = ["C", "A", "B"]
+position = [0.7288, 0.1098]
+
+[[people]]
+id = "r43"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.5854, 0.4674]
+
+[[people]]
+id = "r44"
+group = "trusting"
+preference = ["B", "A", "C"]
+position = [0.3594, 0.5457]
+
+[[people]]
+id = "r45"
+group = "trusting"
+preference = ["A", "C", "B"]
+position = [0.7128, 0.1266]
+
+[[people]]
+id = "r46"
+group = "trusting"
+preference = ["B", "C", "A"]
+position = [0.8494, 0.8066]
+
+[[people]]
+id = "r47"
+group = "committed"
+preference = ["A", "B", "C"]
+position = [0.5011, 0.7479]
+
+[[people]]
+id = "r48"
+group = "sensor"
+preference = ["A", "B", "C"]
+position = [0.0873, 0.7255]
+
+[[people]]
+id = "r49"
+group = "sensor"
+preference = ["C", "A", "B"]
+position = [0.8555, 0.1529]
+
+[[people]]
+id = "r50"
+group = "sensor"
+preference = ["A", "C", "B"]
+position = [0.7599, 0.602]
+
+[[people]]
+id = "r51"
+group = "committed"
+preference = ["C", "B", "A"]
+position = [0.4751, 0.7117]
+
+[[people]]
+id = "r52"
+group = "trusting"
+preference = ["B", "A", "C"]
+position = [0.5289, 0.4835]
+
+[[people]]
+id = "r53"
+group = "committed"
+preference = ["C", "B", "A"]
+position = [0.2903, 0.7559]
+
+[[people]]
+id = "r54"
+group = "trusting"
+preference = ["B", "C", "A"]
+position = [0.8877, 0.4467]
+
+[[people]]
+id = "r55"
+group = "trusting"
+preference = ["B", "C", "A"]
+position = [0.4552, 0.5313]
+
+[[people]]
+id = "r56"
+group = "trusting"
+preference = ["B", "C", "A"]
+position = [0.8539, 0.9156]
+
+[[people]]
+id = "r57"
+group = "sensor"
+preference = ["A", "C", "B"]
+position = [0.1589, 0.1443]
+
+[[people]]
+id = "r58"
+group = "trusting"
+preference = ["B", "C", "A"]
+position = [0.4326, 0.2299]
+
+[[people]]
+id = "r59"
+group = "sensor"
+preference = ["A", "C", "B"]
+position = [0.1752, 0.7032]
+
+[[people]]
+id = "r60"
+group = "committed"
+preference = ["B", "C", "A"]
+position = [0.159, 0.4697]
+
+[[people]]
+id = "r61"
+group = "committed"
+preference = ["B", "C", "A"]
+position = [0.488, 0.9605]
+
+[[people]]
+id = "r62"
+group = "trusting"
+preference = ["C", "B", "A"]
+position = [0.9644, 0.4096]
+
+[[people]]
+id = "r63"
+group = "committed"
+preference = ["B", "A", "C"]
+position = [0.7088, 0.0483]
+
+[[people]]
+id = "r64"
+group = "trusting"
+preference = ["B", "A", "C"]
+position = [0.3913, 0.5164]
+
+[[people]]
+id = "r65"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.8934, 0.2448]
+
+[[people]]
+id = "r66"
+group = "committed"
+preference = ["C", "B", "A"]
+position = [0.0672, 0.7623]
+
+[[people]]
+id = "r67"
+group = "sensor"
+preference = ["A", "C", "B"]
+position = [0.8286, 0.6654]
+
+[[people]]
+id = "r68"
+group = "committed"
+preference = ["C", "A", "B"]
+position = [0.894, 0.5664]
+
+[[people]]
+id = "r69"
+group = "committed"
+preference = ["B", "C", "A"]
+position = [0.7816, 0.2023]
+
+[[people]]
+id = "r70"
+group = "sensor"
+preference = ["C", "A", "B"]
+position = [0.6264, 0.7835]
+
+[[people]]
+id = "r71"
+group = "committed"
+preference = ["A", "C", "B"]
+position = [0.841, 0.4565]
+
+[[people]]
+id = "r72"
+group = "sensor"
+preference = ["A", "B", "C"]
+position = [0.2818, 0.1515]
+
+[[people]]
+id = "r73"
+group = "sensor"
+preference = ["B", "C", "A"]
+position = [0.9411, 0.2762]
+
+[[people]]
+id = "r74"
+group = "trusting"
+preference = ["A", "B", "C"]
+position = [0.5292, 0.2235]
+
+[[people]]
+id = "r75"
+group = "committed"
+preference = ["B", "C", "A"]
+position = [0.7855, 0.9648]
+
+[[people]]
+id = "r76"
+group = "trusting"
+preference = ["A", "C", "B"]
+position = [0.548, 0.2081]
+
+[[people]]
+id = "r77"
+group = "committed"
+preference = ["B", "A", "C"]
+position = [0.7998, 0.4362]
+
+[[people]]
+id = "r78"
+group = "sensor"
+preference = ["B", "A", "C"]
+position = [0.3193, 0.2323]
+
+[[people]]
+id = "r79"
+group = "sensor"
+preference = ["A", "C", "B"]
+position = [0.6943, 0.6278]
+
+[[people]]
+id = "r80"
+group = "sensor"
+preference = ["B", "A", "C"]
+position = [0.8168, 0.0434]
+
+[[people]]
+id = "r81"
+group = "trusting"
+preference = ["B", "A", "C"]
+position = [0.0821, 0.6553]
+
+[[people]]
+id = "r82"
+group = "trusting"
+preference = ["A", "B", "C"]
+position = [0.6811, 0.0725]
+
+[[people]]
+id = "r83"
+group = "trusting"
+preference = ["A", "B", "C"]
+position = [0.2774, 0.9341]
+
+[[people]]
+id = "r84"
+group = "committed"
+preference = ["C", "A", "B"]
+position = [0.9377, 0.321]
+
+[[people]]
+id = "spy00"
+group = "spies"
+preference = ["C", "B", "A"]
+position = [0.5411, 0.03]
+
+[[people]]
+id = "spy01"
+group = "spies"
+preference = ["C", "B", "A"]
+position = [0.3159, 0.916]
+
+[[people]]
+id = "spy02"
+group = "spies"
+preference = ["A", "B", "C"]
+position = [0.409, 0.8202]
+
+[[people]]
+id = "spy03"
+group = "spies"
+preference = ["A", "B", "C"]
+position = [0.575, 0.2588]
+
+[[people]]
+id = "spy04"
+group = "spies"
+preference = ["C", "B", "A"]
+position = [0.97, 0.3494]
+
+[[people]]
+id = "spy05"
+group = "spies"
+preference = ["C", "B", "A"]
+position = [0.6498, 0.1109]
+
+[[people]]
+id = "spy06"
+group = "spies"
+preference = ["C", "B", "A"]
+position = [0.7086, 0.5822]
+
+[[people]]
+id = "spy07"
+group = "spies"
+preference = ["A", "B", "C"]
+position = [0.3552, 0.5188]
+
+[[people]]
+id = "spy08"
+group = "spies"
+preference = ["A", "B", "C"]
+position = [0.559, 0.2446]
+
+[[people]]
+id = "spy09"
+group = "spies"
+preference = ["C", "B", "A"]
+position = [0.2538, 0.9147]
+
+[[people]]
+id = "spy10"
+group = "spies"
+preference = ["A", "B", "C"]
+position = [0.5628, 0.4539]
+
+[[people]]
+id = "spy11"
+group = "spies"
+preference = ["A", "B", "C"]
+position = [0.7687, 0.0465]
+
+[[people]]
+id = "spy12"
+group = "spies"
+preference = ["A", "B", "C"]
+position = [0.9408, 0.4053]
+
+[[people]]
+id = "spy13"
+group = "spies"
+preference = ["A", "B", "C"]
+position = [0.4311, 0.4756]
+
+[[people]]
+id = "spy14"
+group = "spies"
+preference = ["C", "B", "A"]
+position = [0.1342, 0.4271]

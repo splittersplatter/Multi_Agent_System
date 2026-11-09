@@ -1,0 +1,629 @@
+k = 1
+seed = 1
+rounds = 60
+
+[nomination]
+mode = "fixed"
+m = 3
+eligible = ["ana", "ben", "cyd"]
+nominees = ["ana", "ben", "cyd"]
+
+[alignment]
+drift_max_step = 0.015
+
+[alignment.attack]
+target = "cyd"
+policy = "toward_target"
+targets = ["v27", "v06", "v14", "v71", "v57", "v42", "v41", "v55", "v03", "v67", "v66", "v37", "v70", "v53", "v49", "v13", "v52", "v36", "v45", "v51"]
+per_person_round = 0.03
+total_budget = 18.0
+observe_target_ideals = true
+
+[groups.candidates]
+voting = "sincere"
+
+[groups.voters]
+voting = "sincere"
+
+[network]
+radius = 0.11
+
+[[people]]
+id = "ana"
+group = "candidates"
+ideal = [0.25, 0.42]
+position = [0.3238, 0.1508]
+
+[[people]]
+id = "ben"
+group = "candidates"
+ideal = [0.74, 0.42]
+position = [0.6509, 0.0724]
+
+[[people]]
+id = "cyd"
+group = "candidates"
+ideal = [0.5, 0.84]
+position = [0.5359, 0.3657]
+
+[[people]]
+id = "v00"
+group = "voters"
+ideal = [0.3845, 0.4551]
+position = [0.0375, 0.4336]
+
+[[people]]
+id = "v01"
+group = "voters"
+ideal = [0.2913, 0.4241]
+position = [0.4245, 0.8269]
+
+[[people]]
+id = "v02"
+group = "voters"
+ideal = [0.3058, 0.4648]
+position = [0.6274, 0.9477]
+
+[[people]]
+id = "v03"
+group = "voters"
+ideal = [0.1244, 0.3391]
+position = [0.9763, 0.0466]
+
+[[people]]
+id = "v04"
+group = "voters"
+ideal = [0.3077, 0.3165]
+position = [0.1443, 0.1178]
+
+[[people]]
+id = "v05"
+group = "voters"
+ideal = [0.1541, 0.6233]
+position = [0.1807, 0.5816]
+
+[[people]]
+id = "v06"
+group = "voters"
+ideal = [0.1594, 0.3039]
+position = [0.5477, 0.0628]
+
+[[people]]
+id = "v07"
+group = "voters"
+ideal = [0.3222, 0.4323]
+position = [0.6804, 0.4276]
+
+[[people]]
+id = "v08"
+group = "voters"
+ideal = [0.1723, 0.5587]
+position = [0.4532, 0.2998]
+
+[[people]]
+id = "v09"
+group = "voters"
+ideal = [0.2954, 0.2063]
+position = [0.2441, 0.5744]
+
+[[people]]
+id = "v10"
+group = "voters"
+ideal = [0.0, 0.3582]
+position = [0.7294, 0.2879]
+
+[[people]]
+id = "v11"
+group = "voters"
+ideal = [0.3047, 0.3919]
+position = [0.4181, 0.7571]
+
+[[people]]
+id = "v12"
+group = "voters"
+ideal = [0.327, 0.523]
+position = [0.0392, 0.6682]
+
+[[people]]
+id = "v13"
+group = "voters"
+ideal = [0.2555, 0.2311]
+position = [0.8755, 0.3137]
+
+[[people]]
+id = "v14"
+group = "voters"
+ideal = [0.1811, 0.2356]
+position = [0.5799, 0.4562]
+
+[[people]]
+id = "v15"
+group = "voters"
+ideal = [0.4075, 0.1359]
+position = [0.4741, 0.6642]
+
+[[people]]
+id = "v16"
+group = "voters"
+ideal = [0.4276, 0.4752]
+position = [0.6471, 0.9931]
+
+[[people]]
+id = "v17"
+group = "voters"
+ideal = [0.2865, 0.3043]
+position = [0.3858, 0.6687]
+
+[[people]]
+id = "v18"
+group = "voters"
+ideal = [0.3832, 0.4204]
+position = [0.168, 0.1171]
+
+[[people]]
+id = "v19"
+group = "voters"
+ideal = [0.4472, 0.4805]
+position = [0.1293, 0.2476]
+
+[[people]]
+id = "v20"
+group = "voters"
+ideal = [0.0361, 0.5666]
+position = [0.0806, 0.4492]
+
+[[people]]
+id = "v21"
+group = "voters"
+ideal = [0.0, 0.3176]
+position = [0.8193, 0.864]
+
+[[people]]
+id = "v22"
+group = "voters"
+ideal = [0.2161, 0.5325]
+position = [0.3588, 0.8842]
+
+[[people]]
+id = "v23"
+group = "voters"
+ideal = [0.3118, 0.3805]
+position = [0.1762, 0.232]
+
+[[people]]
+id = "v24"
+group = "voters"
+ideal = [0.2557, 0.5489]
+position = [0.5891, 0.2627]
+
+[[people]]
+id = "v25"
+group = "voters"
+ideal = [0.3754, 0.4035]
+position = [0.3693, 0.5663]
+
+[[people]]
+id = "v26"
+group = "voters"
+ideal = [0.4305, 0.3422]
+position = [0.5155, 0.6176]
+
+[[people]]
+id = "v27"
+group = "voters"
+ideal = [0.2206, 0.3613]
+position = [0.8995, 0.78]
+
+[[people]]
+id = "v28"
+group = "voters"
+ideal = [0.4039, 0.2351]
+position = [0.3924, 0.399]
+
+[[people]]
+id = "v29"
+group = "voters"
+ideal = [0.3867, 0.5117]
+position = [0.0622, 0.0673]
+
+[[people]]
+id = "v30"
+group = "voters"
+ideal = [0.2598, 0.4748]
+position = [0.3401, 0.0526]
+
+[[people]]
+id = "v31"
+group = "voters"
+ideal = [0.3145, 0.4001]
+position = [0.1015, 0.3636]
+
+[[people]]
+id = "v32"
+group = "voters"
+ideal = [0.5014, 0.4422]
+position = [0.6141, 0.1486]
+
+[[people]]
+id = "v33"
+group = "voters"
+ideal = [0.2383, 0.5201]
+position = [0.3642, 0.1228]
+
+[[people]]
+id = "v34"
+group = "voters"
+ideal = [0.4788, 0.0666]
+position = [0.466, 0.4838]
+
+[[people]]
+id = "v35"
+group = "voters"
+ideal = [0.2918, 0.431]
+position = [0.3426, 0.2648]
+
+[[people]]
+id = "v36"
+group = "voters"
+ideal = [0.2767, 0.3321]
+position = [0.0231, 0.951]
+
+[[people]]
+id = "v37"
+group = "voters"
+ideal = [0.168, 0.3871]
+position = [0.5432, 0.027]
+
+[[people]]
+id = "v38"
+group = "voters"
+ideal = [0.0, 0.3367]
+position = [0.8633, 0.6962]
+
+[[people]]
+id = "v39"
+group = "voters"
+ideal = [0.7313, 0.524]
+position = [0.167, 0.7719]
+
+[[people]]
+id = "v40"
+group = "voters"
+ideal = [0.5188, 0.3541]
+position = [0.3297, 0.223]
+
+[[people]]
+id = "v41"
+group = "voters"
+ideal = [0.8819, 0.0512]
+position = [0.8526, 0.8061]
+
+[[people]]
+id = "v42"
+group = "voters"
+ideal = [0.8288, 0.206]
+position = [0.2267, 0.5176]
+
+[[people]]
+id = "v43"
+group = "voters"
+ideal = [0.7206, 0.4248]
+position = [0.0279, 0.2794]
+
+[[people]]
+id = "v44"
+group = "voters"
+ideal = [0.7285, 0.5993]
+position = [0.9565, 0.4472]
+
+[[people]]
+id = "v45"
+group = "voters"
+ideal = [1.0, 0.2509]
+position = [0.955, 0.3646]
+
+[[people]]
+id = "v46"
+group = "voters"
+ideal = [0.7572, 0.4917]
+position = [0.1967, 0.2044]
+
+[[people]]
+id = "v47"
+group = "voters"
+ideal = [0.5414, 0.2038]
+position = [0.8404, 0.4795]
+
+[[people]]
+id = "v48"
+group = "voters"
+ideal = [0.6065, 0.2089]
+position = [0.0848, 0.6606]
+
+[[people]]
+id = "v49"
+group = "voters"
+ideal = [0.9315, 0.2781]
+position = [0.7501, 0.478]
+
+[[people]]
+id = "v50"
+group = "voters"
+ideal = [0.8396, 0.6066]
+position = [0.3325, 0.8008]
+
+[[people]]
+id = "v51"
+group = "voters"
+ideal = [0.8684, 0.3769]
+position = [0.4014, 0.9468]
+
+[[people]]
+id = "v52"
+group = "voters"
+ideal = [0.7275, 0.3216]
+position = [0.127, 0.1512]
+
+[[people]]
+id = "v53"
+group = "voters"
+ideal = [0.9348, 0.2674]
+position = [0.1462, 0.8265]
+
+[[people]]
+id = "v54"
+group = "voters"
+ideal = [0.9288, 0.3765]
+position = [0.3504, 0.5487]
+
+[[people]]
+id = "v55"
+group = "voters"
+ideal = [0.755, 0.4161]
+position = [0.9709, 0.6497]
+
+[[people]]
+id = "v56"
+group = "voters"
+ideal = [0.4414, 0.3497]
+position = [0.4338, 0.8717]
+
+[[people]]
+id = "v57"
+group = "voters"
+ideal = [0.7812, 0.3205]
+position = [0.2518, 0.293]
+
+[[people]]
+id = "v58"
+group = "voters"
+ideal = [0.7503, 0.5724]
+position = [0.2594, 0.419]
+
+[[people]]
+id = "v59"
+group = "voters"
+ideal = [0.9339, 0.6093]
+position = [0.3538, 0.4582]
+
+[[people]]
+id = "v60"
+group = "voters"
+ideal = [0.4961, 0.2592]
+position = [0.4206, 0.9177]
+
+[[people]]
+id = "v61"
+group = "voters"
+ideal = [0.5798, 0.3983]
+position = [0.5235, 0.0187]
+
+[[people]]
+id = "v62"
+group = "voters"
+ideal = [0.6631, 0.4304]
+position = [0.0039, 0.7992]
+
+[[people]]
+id = "v63"
+group = "voters"
+ideal = [0.809, 0.5301]
+position = [0.7252, 0.5565]
+
+[[people]]
+id = "v64"
+group = "voters"
+ideal = [0.6678, 0.5396]
+position = [0.5554, 0.7843]
+
+[[people]]
+id = "v65"
+group = "voters"
+ideal = [0.871, 0.5031]
+position = [0.2485, 0.2769]
+
+[[people]]
+id = "v66"
+group = "voters"
+ideal = [0.7616, 0.2467]
+position = [0.5617, 0.76]
+
+[[people]]
+id = "v67"
+group = "voters"
+ideal = [0.86, 0.3265]
+position = [0.6125, 0.5056]
+
+[[people]]
+id = "v68"
+group = "voters"
+ideal = [0.5409, 0.3848]
+position = [0.4523, 0.5333]
+
+[[people]]
+id = "v69"
+group = "voters"
+ideal = [0.4332, 0.4426]
+position = [0.6992, 0.8765]
+
+[[people]]
+id = "v70"
+group = "voters"
+ideal = [0.8342, 0.3642]
+position = [0.5595, 0.9433]
+
+[[people]]
+id = "v71"
+group = "voters"
+ideal = [0.7778, 0.3404]
+position = [0.1216, 0.4421]
+
+[[people]]
+id = "v72"
+group = "voters"
+ideal = [0.8266, 0.4425]
+position = [0.0731, 0.6695]
+
+[[people]]
+id = "v73"
+group = "voters"
+ideal = [0.5496, 0.5708]
+position = [0.1544, 0.7161]
+
+[[people]]
+id = "v74"
+group = "voters"
+ideal = [0.4673, 0.7484]
+position = [0.8828, 0.9675]
+
+[[people]]
+id = "v75"
+group = "voters"
+ideal = [0.5516, 1.0]
+position = [0.3983, 0.4873]
+
+[[people]]
+id = "v76"
+group = "voters"
+ideal = [0.7075, 0.7868]
+position = [0.1615, 0.4315]
+
+[[people]]
+id = "v77"
+group = "voters"
+ideal = [0.4004, 0.7902]
+position = [0.1957, 0.3185]
+
+[[people]]
+id = "v78"
+group = "voters"
+ideal = [0.4962, 0.7785]
+position = [0.5541, 0.4405]
+
+[[people]]
+id = "v79"
+group = "voters"
+ideal = [0.5981, 0.8112]
+position = [0.6239, 0.5123]
+
+[[people]]
+id = "v80"
+group = "voters"
+ideal = [0.7933, 0.9254]
+position = [0.7884, 0.9717]
+
+[[people]]
+id = "v81"
+group = "voters"
+ideal = [0.5684, 0.8529]
+position = [0.0396, 0.779]
+
+[[people]]
+id = "v82"
+group = "voters"
+ideal = [0.4926, 0.8575]
+position = [0.4223, 0.9114]
+
+[[people]]
+id = "v83"
+group = "voters"
+ideal = [0.5357, 0.7228]
+position = [0.1494, 0.9192]
+
+[[people]]
+id = "v84"
+group = "voters"
+ideal = [0.3457, 0.7267]
+position = [0.0895, 0.0575]
+
+[[people]]
+id = "v85"
+group = "voters"
+ideal = [0.4562, 0.6928]
+position = [0.0724, 0.9383]
+
+[[people]]
+id = "v86"
+group = "voters"
+ideal = [0.3686, 0.652]
+position = [0.0837, 0.8562]
+
+[[people]]
+id = "v87"
+group = "voters"
+ideal = [0.7003, 0.8891]
+position = [0.4538, 0.3392]
+
+[[people]]
+id = "v88"
+group = "voters"
+ideal = [0.2624, 0.7177]
+position = [0.2679, 0.1292]
+
+[[people]]
+id = "v89"
+group = "voters"
+ideal = [0.42, 0.7863]
+position = [0.1095, 0.1614]
+
+[[people]]
+id = "v90"
+group = "voters"
+ideal = [0.5702, 0.823]
+position = [0.312, 0.305]
+
+[[people]]
+id = "v91"
+group = "voters"
+ideal = [0.5054, 0.7091]
+position = [0.5001, 0.1779]
+
+[[people]]
+id = "v92"
+group = "voters"
+ideal = [0.4879, 0.8173]
+position = [0.2504, 0.0153]
+
+[[people]]
+id = "v93"
+group = "voters"
+ideal = [0.4852, 0.6616]
+position = [0.1895, 0.4748]
+
+[[people]]
+id = "v94"
+group = "voters"
+ideal = [0.5478, 0.7792]
+position = [0.8189, 0.4322]
+
+[[people]]
+id = "v95"
+group = "voters"
+ideal = [0.2914, 0.8066]
+position = [0.3931, 0.5067]
+
+[[people]]
+id = "v96"
+group = "voters"
+ideal = [0.3808, 0.5109]
+position = [0.3427, 0.8323]

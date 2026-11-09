@@ -1,0 +1,1784 @@
+{
+ "baseline_passive_payoffs": {
+  "A": 0.37333333333333335,
+  "B": 0.33266666666666667,
+  "C": 0.294
+ },
+ "mean_gain_by_strategy": {
+  "A": {
+   "passive": -0.008640000000000021,
+   "fortify": -0.0055333333333333545,
+   "infiltrate": 0.03257333333333332,
+   "bridge": 0.017759999999999988,
+   "broadcast": -0.001893333333333347
+  },
+  "B": {
+   "passive": -0.01715999999999999,
+   "fortify": 0.003426666666666669,
+   "infiltrate": -0.002613333333333332,
+   "bridge": -0.002426666666666666,
+   "broadcast": -0.0018666666666666586
+  },
+  "C": {
+   "passive": -0.008306666666666653,
+   "fortify": -0.0047733333333333135,
+   "infiltrate": 0.003400000000000012,
+   "bridge": 0.0026133333333333408,
+   "broadcast": -0.006559999999999982
+  }
+ },
+ "best_response_counts": {
+  "A": {
+   "infiltrate": 19,
+   "bridge": 6
+  },
+  "B": {
+   "fortify": 13,
+   "bridge": 5,
+   "infiltrate": 6,
+   "broadcast": 1
+  },
+  "C": {
+   "infiltrate": 20,
+   "bridge": 5
+  }
+ },
+ "pure_nash_equilibria": [],
+ "symmetric_profiles": {
+  "passive": {
+   "payoffs": {
+    "A": 0.37333333333333335,
+    "B": 0.33266666666666667,
+    "C": 0.294
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7878787878787878,
+   "cross_exposure": 0.6212121212121212
+  },
+  "fortify": {
+   "payoffs": {
+    "A": 0.376,
+    "B": 0.344,
+    "C": 0.28
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.8143939393939394,
+   "cross_exposure": 0.6212121212121212
+  },
+  "infiltrate": {
+   "payoffs": {
+    "A": 0.37033333333333335,
+    "B": 0.3303333333333333,
+    "C": 0.29933333333333334
+   },
+   "winners": {
+    "B": 1,
+    "A": 2
+   },
+   "chamber_purity": 0.553030303030303,
+   "cross_exposure": 0.7575757575757576
+  },
+  "bridge": {
+   "payoffs": {
+    "A": 0.37933333333333336,
+    "B": 0.319,
+    "C": 0.30166666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7765151515151515,
+   "cross_exposure": 0.7121212121212122
+  },
+  "broadcast": {
+   "payoffs": {
+    "A": 0.37733333333333335,
+    "B": 0.3416666666666667,
+    "C": 0.281
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.7272727272727273
+  }
+ },
+ "underdog_C_budget_sweep": {
+  "infiltrate|2": 0.289,
+  "infiltrate|4": 0.2843333333333333,
+  "infiltrate|6": 0.2826666666666667,
+  "infiltrate|10": 0.2823333333333333,
+  "infiltrate|14": 0.295,
+  "bridge|2": 0.289,
+  "bridge|4": 0.2843333333333333,
+  "bridge|6": 0.2826666666666667,
+  "bridge|10": 0.285,
+  "bridge|14": 0.30066666666666664,
+  "broadcast|2": 0.286,
+  "broadcast|4": 0.2853333333333333,
+  "broadcast|6": 0.2773333333333334,
+  "broadcast|10": 0.28833333333333333,
+  "broadcast|14": 0.29,
+  "fortify|2": 0.28400000000000003,
+  "fortify|4": 0.2823333333333333,
+  "fortify|6": 0.28,
+  "fortify|10": 0.28,
+  "fortify|14": 0.28
+ },
+ "factorial": {
+  "A=passive B=passive C=passive": {
+   "payoffs": {
+    "A": 0.37333333333333335,
+    "B": 0.33266666666666667,
+    "C": 0.294
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7878787878787878,
+   "cross_exposure": 0.6212121212121212
+  },
+  "A=passive B=passive C=fortify": {
+   "payoffs": {
+    "A": 0.37333333333333335,
+    "B": 0.32933333333333337,
+    "C": 0.29733333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7916666666666666,
+   "cross_exposure": 0.6212121212121212
+  },
+  "A=passive B=passive C=infiltrate": {
+   "payoffs": {
+    "A": 0.369,
+    "B": 0.32833333333333337,
+    "C": 0.30266666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7840909090909091,
+   "cross_exposure": 0.6742424242424242
+  },
+  "A=passive B=passive C=bridge": {
+   "payoffs": {
+    "A": 0.37,
+    "B": 0.32833333333333337,
+    "C": 0.30166666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7916666666666666,
+   "cross_exposure": 0.6515151515151515
+  },
+  "A=passive B=passive C=broadcast": {
+   "payoffs": {
+    "A": 0.37333333333333335,
+    "B": 0.33133333333333337,
+    "C": 0.29533333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7878787878787878,
+   "cross_exposure": 0.6590909090909091
+  },
+  "A=passive B=fortify C=passive": {
+   "payoffs": {
+    "A": 0.37333333333333335,
+    "B": 0.35,
+    "C": 0.27666666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.8068181818181818,
+   "cross_exposure": 0.6212121212121212
+  },
+  "A=passive B=fortify C=fortify": {
+   "payoffs": {
+    "A": 0.37333333333333335,
+    "B": 0.3466666666666667,
+    "C": 0.28
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.8106060606060606,
+   "cross_exposure": 0.6212121212121212
+  },
+  "A=passive B=fortify C=infiltrate": {
+   "payoffs": {
+    "A": 0.369,
+    "B": 0.3456666666666667,
+    "C": 0.2853333333333333
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.803030303030303,
+   "cross_exposure": 0.6742424242424242
+  },
+  "A=passive B=fortify C=bridge": {
+   "payoffs": {
+    "A": 0.37,
+    "B": 0.3456666666666667,
+    "C": 0.2843333333333333
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.8106060606060606,
+   "cross_exposure": 0.6515151515151515
+  },
+  "A=passive B=fortify C=broadcast": {
+   "payoffs": {
+    "A": 0.37333333333333335,
+    "B": 0.34933333333333333,
+    "C": 0.2773333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.8068181818181818,
+   "cross_exposure": 0.6666666666666666
+  },
+  "A=passive B=infiltrate C=passive": {
+   "payoffs": {
+    "A": 0.356,
+    "B": 0.35,
+    "C": 0.294
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=passive B=infiltrate C=fortify": {
+   "payoffs": {
+    "A": 0.356,
+    "B": 0.3466666666666667,
+    "C": 0.29733333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7727272727272727,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=passive B=infiltrate C=infiltrate": {
+   "payoffs": {
+    "A": 0.35666666666666663,
+    "B": 0.337,
+    "C": 0.30633333333333335
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.6969696969696969
+  },
+  "A=passive B=infiltrate C=bridge": {
+   "payoffs": {
+    "A": 0.35633333333333334,
+    "B": 0.3373333333333334,
+    "C": 0.30633333333333335
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.6969696969696969
+  },
+  "A=passive B=infiltrate C=broadcast": {
+   "payoffs": {
+    "A": 0.35633333333333334,
+    "B": 0.34833333333333333,
+    "C": 0.29533333333333334
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.7121212121212122
+  },
+  "A=passive B=bridge C=passive": {
+   "payoffs": {
+    "A": 0.35633333333333334,
+    "B": 0.3496666666666666,
+    "C": 0.294
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7803030303030303,
+   "cross_exposure": 0.6742424242424242
+  },
+  "A=passive B=bridge C=fortify": {
+   "payoffs": {
+    "A": 0.35633333333333334,
+    "B": 0.3463333333333333,
+    "C": 0.29733333333333334
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7840909090909091,
+   "cross_exposure": 0.6742424242424242
+  },
+  "A=passive B=bridge C=infiltrate": {
+   "payoffs": {
+    "A": 0.3456666666666667,
+    "B": 0.339,
+    "C": 0.31533333333333335
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.7045454545454545
+  },
+  "A=passive B=bridge C=bridge": {
+   "payoffs": {
+    "A": 0.35566666666666663,
+    "B": 0.33466666666666667,
+    "C": 0.30966666666666665
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7840909090909091,
+   "cross_exposure": 0.6742424242424242
+  },
+  "A=passive B=bridge C=broadcast": {
+   "payoffs": {
+    "A": 0.35566666666666663,
+    "B": 0.3486666666666666,
+    "C": 0.29566666666666663
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7840909090909091,
+   "cross_exposure": 0.7121212121212122
+  },
+  "A=passive B=broadcast C=passive": {
+   "payoffs": {
+    "A": 0.37166666666666665,
+    "B": 0.34933333333333333,
+    "C": 0.279
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7840909090909091,
+   "cross_exposure": 0.6590909090909091
+  },
+  "A=passive B=broadcast C=fortify": {
+   "payoffs": {
+    "A": 0.37166666666666665,
+    "B": 0.3423333333333333,
+    "C": 0.286
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7954545454545454,
+   "cross_exposure": 0.6590909090909091
+  },
+  "A=passive B=broadcast C=infiltrate": {
+   "payoffs": {
+    "A": 0.365,
+    "B": 0.34400000000000003,
+    "C": 0.291
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7803030303030303,
+   "cross_exposure": 0.712121212121212
+  },
+  "A=passive B=broadcast C=bridge": {
+   "payoffs": {
+    "A": 0.36833333333333335,
+    "B": 0.3423333333333333,
+    "C": 0.28933333333333333
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7878787878787878,
+   "cross_exposure": 0.6818181818181818
+  },
+  "A=passive B=broadcast C=broadcast": {
+   "payoffs": {
+    "A": 0.37166666666666665,
+    "B": 0.3446666666666667,
+    "C": 0.2836666666666667
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7803030303030303,
+   "cross_exposure": 0.696969696969697
+  },
+  "A=fortify B=passive C=passive": {
+   "payoffs": {
+    "A": 0.376,
+    "B": 0.33,
+    "C": 0.294
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7916666666666666,
+   "cross_exposure": 0.6212121212121212
+  },
+  "A=fortify B=passive C=fortify": {
+   "payoffs": {
+    "A": 0.376,
+    "B": 0.32666666666666666,
+    "C": 0.29733333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7954545454545454,
+   "cross_exposure": 0.6212121212121212
+  },
+  "A=fortify B=passive C=infiltrate": {
+   "payoffs": {
+    "A": 0.37333333333333335,
+    "B": 0.32666666666666666,
+    "C": 0.3
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7916666666666666,
+   "cross_exposure": 0.6666666666666666
+  },
+  "A=fortify B=passive C=bridge": {
+   "payoffs": {
+    "A": 0.37333333333333335,
+    "B": 0.32666666666666666,
+    "C": 0.3
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7916666666666666,
+   "cross_exposure": 0.6515151515151515
+  },
+  "A=fortify B=passive C=broadcast": {
+   "payoffs": {
+    "A": 0.376,
+    "B": 0.32866666666666666,
+    "C": 0.29533333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7916666666666666,
+   "cross_exposure": 0.6590909090909091
+  },
+  "A=fortify B=fortify C=passive": {
+   "payoffs": {
+    "A": 0.376,
+    "B": 0.3473333333333333,
+    "C": 0.27666666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.8106060606060607,
+   "cross_exposure": 0.6212121212121212
+  },
+  "A=fortify B=fortify C=fortify": {
+   "payoffs": {
+    "A": 0.376,
+    "B": 0.344,
+    "C": 0.28
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.8143939393939394,
+   "cross_exposure": 0.6212121212121212
+  },
+  "A=fortify B=fortify C=infiltrate": {
+   "payoffs": {
+    "A": 0.37333333333333335,
+    "B": 0.344,
+    "C": 0.2826666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.8106060606060607,
+   "cross_exposure": 0.6666666666666666
+  },
+  "A=fortify B=fortify C=bridge": {
+   "payoffs": {
+    "A": 0.37333333333333335,
+    "B": 0.344,
+    "C": 0.2826666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.8106060606060607,
+   "cross_exposure": 0.6515151515151515
+  },
+  "A=fortify B=fortify C=broadcast": {
+   "payoffs": {
+    "A": 0.376,
+    "B": 0.3466666666666667,
+    "C": 0.2773333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.8106060606060607,
+   "cross_exposure": 0.6666666666666666
+  },
+  "A=fortify B=infiltrate C=passive": {
+   "payoffs": {
+    "A": 0.36266666666666664,
+    "B": 0.3433333333333333,
+    "C": 0.294
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7727272727272727,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=fortify B=infiltrate C=fortify": {
+   "payoffs": {
+    "A": 0.36266666666666664,
+    "B": 0.34,
+    "C": 0.29733333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7765151515151515,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=fortify B=infiltrate C=infiltrate": {
+   "payoffs": {
+    "A": 0.364,
+    "B": 0.33,
+    "C": 0.306
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7803030303030303,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=fortify B=infiltrate C=bridge": {
+   "payoffs": {
+    "A": 0.364,
+    "B": 0.33,
+    "C": 0.306
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7803030303030303,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=fortify B=infiltrate C=broadcast": {
+   "payoffs": {
+    "A": 0.35733333333333334,
+    "B": 0.347,
+    "C": 0.29566666666666663
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7651515151515151,
+   "cross_exposure": 0.7121212121212122
+  },
+  "A=fortify B=bridge C=passive": {
+   "payoffs": {
+    "A": 0.35466666666666663,
+    "B": 0.35133333333333333,
+    "C": 0.294
+   },
+   "winners": {
+    "A": 1,
+    "B": 2
+   },
+   "chamber_purity": 0.7765151515151515,
+   "cross_exposure": 0.6666666666666666
+  },
+  "A=fortify B=bridge C=fortify": {
+   "payoffs": {
+    "A": 0.35466666666666663,
+    "B": 0.348,
+    "C": 0.29733333333333334
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7803030303030303,
+   "cross_exposure": 0.6666666666666666
+  },
+  "A=fortify B=bridge C=infiltrate": {
+   "payoffs": {
+    "A": 0.3536666666666667,
+    "B": 0.3373333333333334,
+    "C": 0.309
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7765151515151515,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=fortify B=bridge C=bridge": {
+   "payoffs": {
+    "A": 0.358,
+    "B": 0.3373333333333334,
+    "C": 0.30466666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7803030303030303,
+   "cross_exposure": 0.6742424242424242
+  },
+  "A=fortify B=bridge C=broadcast": {
+   "payoffs": {
+    "A": 0.351,
+    "B": 0.35333333333333333,
+    "C": 0.29566666666666663
+   },
+   "winners": {
+    "A": 1,
+    "B": 2
+   },
+   "chamber_purity": 0.7803030303030303,
+   "cross_exposure": 0.7121212121212122
+  },
+  "A=fortify B=broadcast C=passive": {
+   "payoffs": {
+    "A": 0.374,
+    "B": 0.347,
+    "C": 0.279
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7878787878787878,
+   "cross_exposure": 0.6590909090909091
+  },
+  "A=fortify B=broadcast C=fortify": {
+   "payoffs": {
+    "A": 0.374,
+    "B": 0.34,
+    "C": 0.286
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7992424242424242,
+   "cross_exposure": 0.6590909090909091
+  },
+  "A=fortify B=broadcast C=infiltrate": {
+   "payoffs": {
+    "A": 0.36933333333333335,
+    "B": 0.3426666666666667,
+    "C": 0.28800000000000003
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7878787878787878,
+   "cross_exposure": 0.7045454545454545
+  },
+  "A=fortify B=broadcast C=bridge": {
+   "payoffs": {
+    "A": 0.37166666666666665,
+    "B": 0.341,
+    "C": 0.28733333333333333
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7878787878787878,
+   "cross_exposure": 0.6818181818181818
+  },
+  "A=fortify B=broadcast C=broadcast": {
+   "payoffs": {
+    "A": 0.374,
+    "B": 0.3423333333333333,
+    "C": 0.2836666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7840909090909091,
+   "cross_exposure": 0.696969696969697
+  },
+  "A=infiltrate B=passive C=passive": {
+   "payoffs": {
+    "A": 0.41100000000000003,
+    "B": 0.30133333333333334,
+    "C": 0.2876666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7424242424242424,
+   "cross_exposure": 0.6515151515151515
+  },
+  "A=infiltrate B=passive C=fortify": {
+   "payoffs": {
+    "A": 0.41100000000000003,
+    "B": 0.298,
+    "C": 0.291
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7462121212121212,
+   "cross_exposure": 0.6515151515151515
+  },
+  "A=infiltrate B=passive C=infiltrate": {
+   "payoffs": {
+    "A": 0.401,
+    "B": 0.296,
+    "C": 0.303
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7348484848484849,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=infiltrate B=passive C=bridge": {
+   "payoffs": {
+    "A": 0.401,
+    "B": 0.296,
+    "C": 0.303
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7348484848484849,
+   "cross_exposure": 0.6893939393939394
+  },
+  "A=infiltrate B=passive C=broadcast": {
+   "payoffs": {
+    "A": 0.4126666666666667,
+    "B": 0.299,
+    "C": 0.28833333333333333
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7386363636363636,
+   "cross_exposure": 0.6818181818181818
+  },
+  "A=infiltrate B=fortify C=passive": {
+   "payoffs": {
+    "A": 0.399,
+    "B": 0.32433333333333336,
+    "C": 0.27666666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.6363636363636364
+  },
+  "A=infiltrate B=fortify C=fortify": {
+   "payoffs": {
+    "A": 0.399,
+    "B": 0.321,
+    "C": 0.28
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7727272727272727,
+   "cross_exposure": 0.6363636363636364
+  },
+  "A=infiltrate B=fortify C=infiltrate": {
+   "payoffs": {
+    "A": 0.389,
+    "B": 0.319,
+    "C": 0.292
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7613636363636364,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=infiltrate B=fortify C=bridge": {
+   "payoffs": {
+    "A": 0.389,
+    "B": 0.319,
+    "C": 0.292
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7613636363636364,
+   "cross_exposure": 0.6742424242424242
+  },
+  "A=infiltrate B=fortify C=broadcast": {
+   "payoffs": {
+    "A": 0.40066666666666667,
+    "B": 0.32233333333333336,
+    "C": 0.277
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7651515151515151,
+   "cross_exposure": 0.6818181818181818
+  },
+  "A=infiltrate B=infiltrate C=passive": {
+   "payoffs": {
+    "A": 0.4206666666666667,
+    "B": 0.29433333333333334,
+    "C": 0.285
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.6022727272727273,
+   "cross_exposure": 0.7424242424242424
+  },
+  "A=infiltrate B=infiltrate C=fortify": {
+   "payoffs": {
+    "A": 0.4206666666666667,
+    "B": 0.291,
+    "C": 0.28833333333333333
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.6060606060606061,
+   "cross_exposure": 0.7424242424242424
+  },
+  "A=infiltrate B=infiltrate C=infiltrate": {
+   "payoffs": {
+    "A": 0.37033333333333335,
+    "B": 0.3303333333333333,
+    "C": 0.29933333333333334
+   },
+   "winners": {
+    "B": 1,
+    "A": 2
+   },
+   "chamber_purity": 0.553030303030303,
+   "cross_exposure": 0.7575757575757576
+  },
+  "A=infiltrate B=infiltrate C=bridge": {
+   "payoffs": {
+    "A": 0.419,
+    "B": 0.2823333333333333,
+    "C": 0.29866666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.6022727272727273,
+   "cross_exposure": 0.7575757575757576
+  },
+  "A=infiltrate B=infiltrate C=broadcast": {
+   "payoffs": {
+    "A": 0.421,
+    "B": 0.29333333333333333,
+    "C": 0.2856666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.5984848484848485,
+   "cross_exposure": 0.7727272727272727
+  },
+  "A=infiltrate B=bridge C=passive": {
+   "payoffs": {
+    "A": 0.404,
+    "B": 0.30833333333333335,
+    "C": 0.2876666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.6969696969696969,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=infiltrate B=bridge C=fortify": {
+   "payoffs": {
+    "A": 0.404,
+    "B": 0.305,
+    "C": 0.291
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7007575757575757,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=infiltrate B=bridge C=infiltrate": {
+   "payoffs": {
+    "A": 0.4013333333333333,
+    "B": 0.29,
+    "C": 0.30866666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.6969696969696969,
+   "cross_exposure": 0.75
+  },
+  "A=infiltrate B=bridge C=bridge": {
+   "payoffs": {
+    "A": 0.406,
+    "B": 0.2886666666666667,
+    "C": 0.30533333333333335
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.6893939393939393,
+   "cross_exposure": 0.7348484848484849
+  },
+  "A=infiltrate B=bridge C=broadcast": {
+   "payoffs": {
+    "A": 0.4053333333333333,
+    "B": 0.306,
+    "C": 0.2886666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7007575757575758,
+   "cross_exposure": 0.7272727272727273
+  },
+  "A=infiltrate B=broadcast C=passive": {
+   "payoffs": {
+    "A": 0.41666666666666663,
+    "B": 0.31333333333333335,
+    "C": 0.27
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7386363636363636,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=infiltrate B=broadcast C=fortify": {
+   "payoffs": {
+    "A": 0.41666666666666663,
+    "B": 0.30633333333333335,
+    "C": 0.277
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.75,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=infiltrate B=broadcast C=infiltrate": {
+   "payoffs": {
+    "A": 0.404,
+    "B": 0.307,
+    "C": 0.28900000000000003
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7310606060606061,
+   "cross_exposure": 0.7424242424242424
+  },
+  "A=infiltrate B=broadcast C=bridge": {
+   "payoffs": {
+    "A": 0.4076666666666667,
+    "B": 0.30566666666666664,
+    "C": 0.2866666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7310606060606061,
+   "cross_exposure": 0.7196969696969697
+  },
+  "A=infiltrate B=broadcast C=broadcast": {
+   "payoffs": {
+    "A": 0.417,
+    "B": 0.31,
+    "C": 0.273
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7310606060606061,
+   "cross_exposure": 0.7272727272727273
+  },
+  "A=bridge B=passive C=passive": {
+   "payoffs": {
+    "A": 0.4093333333333333,
+    "B": 0.299,
+    "C": 0.29166666666666663
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7348484848484849,
+   "cross_exposure": 0.6590909090909091
+  },
+  "A=bridge B=passive C=fortify": {
+   "payoffs": {
+    "A": 0.4093333333333333,
+    "B": 0.2956666666666667,
+    "C": 0.295
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7386363636363636,
+   "cross_exposure": 0.6590909090909091
+  },
+  "A=bridge B=passive C=infiltrate": {
+   "payoffs": {
+    "A": 0.4,
+    "B": 0.29833333333333334,
+    "C": 0.30166666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7424242424242424,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=bridge B=passive C=bridge": {
+   "payoffs": {
+    "A": 0.4036666666666667,
+    "B": 0.2946666666666667,
+    "C": 0.30166666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7424242424242424,
+   "cross_exposure": 0.6893939393939394
+  },
+  "A=bridge B=passive C=broadcast": {
+   "payoffs": {
+    "A": 0.408,
+    "B": 0.29966666666666664,
+    "C": 0.29233333333333333
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7386363636363636,
+   "cross_exposure": 0.6893939393939394
+  },
+  "A=bridge B=fortify C=passive": {
+   "payoffs": {
+    "A": 0.39966666666666667,
+    "B": 0.32633333333333336,
+    "C": 0.274
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.6515151515151515
+  },
+  "A=bridge B=fortify C=fortify": {
+   "payoffs": {
+    "A": 0.39966666666666667,
+    "B": 0.323,
+    "C": 0.2773333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7727272727272727,
+   "cross_exposure": 0.6515151515151515
+  },
+  "A=bridge B=fortify C=infiltrate": {
+   "payoffs": {
+    "A": 0.39166666666666666,
+    "B": 0.323,
+    "C": 0.2853333333333333
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=bridge B=fortify C=bridge": {
+   "payoffs": {
+    "A": 0.3933333333333333,
+    "B": 0.32233333333333336,
+    "C": 0.2843333333333333
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7803030303030303,
+   "cross_exposure": 0.6818181818181818
+  },
+  "A=bridge B=fortify C=broadcast": {
+   "payoffs": {
+    "A": 0.3993333333333333,
+    "B": 0.32666666666666666,
+    "C": 0.274
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=bridge B=infiltrate C=passive": {
+   "payoffs": {
+    "A": 0.373,
+    "B": 0.336,
+    "C": 0.291
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7045454545454546,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=bridge B=infiltrate C=fortify": {
+   "payoffs": {
+    "A": 0.373,
+    "B": 0.33266666666666667,
+    "C": 0.29433333333333334
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7083333333333334,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=bridge B=infiltrate C=infiltrate": {
+   "payoffs": {
+    "A": 0.3726666666666667,
+    "B": 0.3303333333333333,
+    "C": 0.297
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7083333333333334,
+   "cross_exposure": 0.7121212121212122
+  },
+  "A=bridge B=infiltrate C=bridge": {
+   "payoffs": {
+    "A": 0.37233333333333335,
+    "B": 0.32866666666666666,
+    "C": 0.299
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7045454545454546,
+   "cross_exposure": 0.7196969696969697
+  },
+  "A=bridge B=infiltrate C=broadcast": {
+   "payoffs": {
+    "A": 0.373,
+    "B": 0.3353333333333333,
+    "C": 0.29166666666666663
+   },
+   "winners": {
+    "A": 2,
+    "B": 1
+   },
+   "chamber_purity": 0.7045454545454546,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=bridge B=bridge C=passive": {
+   "payoffs": {
+    "A": 0.38366666666666666,
+    "B": 0.32533333333333336,
+    "C": 0.291
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=bridge B=bridge C=fortify": {
+   "payoffs": {
+    "A": 0.38366666666666666,
+    "B": 0.322,
+    "C": 0.29433333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7727272727272727,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=bridge B=bridge C=infiltrate": {
+   "payoffs": {
+    "A": 0.379,
+    "B": 0.319,
+    "C": 0.302
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7575757575757576,
+   "cross_exposure": 0.7348484848484849
+  },
+  "A=bridge B=bridge C=bridge": {
+   "payoffs": {
+    "A": 0.37933333333333336,
+    "B": 0.319,
+    "C": 0.30166666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7765151515151515,
+   "cross_exposure": 0.7121212121212122
+  },
+  "A=bridge B=bridge C=broadcast": {
+   "payoffs": {
+    "A": 0.38233333333333336,
+    "B": 0.323,
+    "C": 0.29466666666666663
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7727272727272727,
+   "cross_exposure": 0.7272727272727273
+  },
+  "A=bridge B=broadcast C=passive": {
+   "payoffs": {
+    "A": 0.401,
+    "B": 0.32133333333333336,
+    "C": 0.2776666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7537878787878788,
+   "cross_exposure": 0.696969696969697
+  },
+  "A=bridge B=broadcast C=fortify": {
+   "payoffs": {
+    "A": 0.401,
+    "B": 0.31433333333333335,
+    "C": 0.2846666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7651515151515151,
+   "cross_exposure": 0.696969696969697
+  },
+  "A=bridge B=broadcast C=infiltrate": {
+   "payoffs": {
+    "A": 0.3933333333333333,
+    "B": 0.317,
+    "C": 0.2896666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.75,
+   "cross_exposure": 0.7424242424242424
+  },
+  "A=bridge B=broadcast C=bridge": {
+   "payoffs": {
+    "A": 0.395,
+    "B": 0.31633333333333336,
+    "C": 0.2886666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7613636363636364,
+   "cross_exposure": 0.7196969696969697
+  },
+  "A=bridge B=broadcast C=broadcast": {
+   "payoffs": {
+    "A": 0.401,
+    "B": 0.31733333333333336,
+    "C": 0.2816666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.75,
+   "cross_exposure": 0.7272727272727273
+  },
+  "A=broadcast B=passive C=passive": {
+   "payoffs": {
+    "A": 0.381,
+    "B": 0.32533333333333336,
+    "C": 0.29366666666666663
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7727272727272727,
+   "cross_exposure": 0.6363636363636364
+  },
+  "A=broadcast B=passive C=fortify": {
+   "payoffs": {
+    "A": 0.381,
+    "B": 0.32533333333333336,
+    "C": 0.29366666666666663
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7727272727272727,
+   "cross_exposure": 0.6363636363636364
+  },
+  "A=broadcast B=passive C=infiltrate": {
+   "payoffs": {
+    "A": 0.376,
+    "B": 0.32333333333333336,
+    "C": 0.30066666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7651515151515151,
+   "cross_exposure": 0.6893939393939394
+  },
+  "A=broadcast B=passive C=bridge": {
+   "payoffs": {
+    "A": 0.37533333333333335,
+    "B": 0.32333333333333336,
+    "C": 0.30133333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.6590909090909091
+  },
+  "A=broadcast B=passive C=broadcast": {
+   "payoffs": {
+    "A": 0.381,
+    "B": 0.324,
+    "C": 0.295
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7727272727272727,
+   "cross_exposure": 0.6742424242424242
+  },
+  "A=broadcast B=fortify C=passive": {
+   "payoffs": {
+    "A": 0.37933333333333336,
+    "B": 0.3433333333333333,
+    "C": 0.2773333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7954545454545454,
+   "cross_exposure": 0.6363636363636364
+  },
+  "A=broadcast B=fortify C=fortify": {
+   "payoffs": {
+    "A": 0.37933333333333336,
+    "B": 0.3433333333333333,
+    "C": 0.2773333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7954545454545454,
+   "cross_exposure": 0.6363636363636364
+  },
+  "A=broadcast B=fortify C=infiltrate": {
+   "payoffs": {
+    "A": 0.37433333333333335,
+    "B": 0.3413333333333333,
+    "C": 0.2843333333333333
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7878787878787878,
+   "cross_exposure": 0.6893939393939394
+  },
+  "A=broadcast B=fortify C=bridge": {
+   "payoffs": {
+    "A": 0.37366666666666665,
+    "B": 0.3413333333333333,
+    "C": 0.285
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7916666666666666,
+   "cross_exposure": 0.6590909090909091
+  },
+  "A=broadcast B=fortify C=broadcast": {
+   "payoffs": {
+    "A": 0.37933333333333336,
+    "B": 0.3426666666666667,
+    "C": 0.278
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7954545454545454,
+   "cross_exposure": 0.6818181818181818
+  },
+  "A=broadcast B=infiltrate C=passive": {
+   "payoffs": {
+    "A": 0.365,
+    "B": 0.3413333333333333,
+    "C": 0.29366666666666663
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7575757575757576,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=broadcast B=infiltrate C=fortify": {
+   "payoffs": {
+    "A": 0.365,
+    "B": 0.3413333333333333,
+    "C": 0.29366666666666663
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7575757575757576,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=broadcast B=infiltrate C=infiltrate": {
+   "payoffs": {
+    "A": 0.367,
+    "B": 0.33233333333333337,
+    "C": 0.30066666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7575757575757576,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=broadcast B=infiltrate C=bridge": {
+   "payoffs": {
+    "A": 0.36566666666666664,
+    "B": 0.33266666666666667,
+    "C": 0.30166666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7575757575757576,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=broadcast B=infiltrate C=broadcast": {
+   "payoffs": {
+    "A": 0.36533333333333334,
+    "B": 0.3396666666666667,
+    "C": 0.295
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7575757575757576,
+   "cross_exposure": 0.7272727272727273
+  },
+  "A=broadcast B=bridge C=passive": {
+   "payoffs": {
+    "A": 0.36033333333333334,
+    "B": 0.346,
+    "C": 0.29366666666666663
+   },
+   "winners": {
+    "A": 1,
+    "B": 2
+   },
+   "chamber_purity": 0.7575757575757576,
+   "cross_exposure": 0.6893939393939394
+  },
+  "A=broadcast B=bridge C=fortify": {
+   "payoffs": {
+    "A": 0.36033333333333334,
+    "B": 0.346,
+    "C": 0.29366666666666663
+   },
+   "winners": {
+    "A": 1,
+    "B": 2
+   },
+   "chamber_purity": 0.7575757575757576,
+   "cross_exposure": 0.6893939393939394
+  },
+  "A=broadcast B=bridge C=infiltrate": {
+   "payoffs": {
+    "A": 0.35833333333333334,
+    "B": 0.33366666666666667,
+    "C": 0.308
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.75,
+   "cross_exposure": 0.7045454545454546
+  },
+  "A=broadcast B=bridge C=bridge": {
+   "payoffs": {
+    "A": 0.36166666666666664,
+    "B": 0.33366666666666667,
+    "C": 0.30466666666666664
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7575757575757576,
+   "cross_exposure": 0.6742424242424242
+  },
+  "A=broadcast B=bridge C=broadcast": {
+   "payoffs": {
+    "A": 0.36033333333333334,
+    "B": 0.3446666666666667,
+    "C": 0.295
+   },
+   "winners": {
+    "A": 1,
+    "B": 2
+   },
+   "chamber_purity": 0.7575757575757576,
+   "cross_exposure": 0.7196969696969697
+  },
+  "A=broadcast B=broadcast C=passive": {
+   "payoffs": {
+    "A": 0.37733333333333335,
+    "B": 0.3463333333333333,
+    "C": 0.2763333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7727272727272727,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=broadcast B=broadcast C=fortify": {
+   "payoffs": {
+    "A": 0.37733333333333335,
+    "B": 0.3393333333333333,
+    "C": 0.2833333333333334
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7840909090909091,
+   "cross_exposure": 0.6893939393939393
+  },
+  "A=broadcast B=broadcast C=infiltrate": {
+   "payoffs": {
+    "A": 0.37266666666666665,
+    "B": 0.34,
+    "C": 0.28733333333333333
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.7348484848484849
+  },
+  "A=broadcast B=broadcast C=bridge": {
+   "payoffs": {
+    "A": 0.372,
+    "B": 0.3383333333333334,
+    "C": 0.2896666666666667
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7727272727272727,
+   "cross_exposure": 0.7121212121212122
+  },
+  "A=broadcast B=broadcast C=broadcast": {
+   "payoffs": {
+    "A": 0.37733333333333335,
+    "B": 0.3416666666666667,
+    "C": 0.281
+   },
+   "winners": {
+    "A": 3
+   },
+   "chamber_purity": 0.7689393939393939,
+   "cross_exposure": 0.7272727272727273
+  }
+ },
+ "runs": 435,
+ "seeds": [
+  1,
+  2,
+  3
+ ],
+ "rounds": 40,
+ "payoff": "mean first-choice share over the last 10 rounds",
+ "game": {
+  "approximate_equilibria": [
+   {
+    "A": "bridge",
+    "B": "infiltrate",
+    "C": "infiltrate",
+    "epsilon": 0.0020000000000000018,
+    "payoffs": {
+     "A": 0.3726666666666667,
+     "B": 0.3303333333333333,
+     "C": 0.297
+    }
+   },
+   {
+    "A": "infiltrate",
+    "B": "infiltrate",
+    "C": "infiltrate",
+    "epsilon": 0.002333333333333354,
+    "payoffs": {
+     "A": 0.37033333333333335,
+     "B": 0.3303333333333333,
+     "C": 0.29933333333333334
+    }
+   },
+   {
+    "A": "infiltrate",
+    "B": "fortify",
+    "C": "bridge",
+    "epsilon": 0.0043333333333333,
+    "payoffs": {
+     "A": 0.389,
+     "B": 0.319,
+     "C": 0.292
+    }
+   },
+   {
+    "A": "bridge",
+    "B": "fortify",
+    "C": "bridge",
+    "epsilon": 0.006333333333333302,
+    "payoffs": {
+     "A": 0.3933333333333333,
+     "B": 0.32233333333333336,
+     "C": 0.2843333333333333
+    }
+   },
+   {
+    "A": "bridge",
+    "B": "fortify",
+    "C": "infiltrate",
+    "epsilon": 0.007333333333333303,
+    "payoffs": {
+     "A": 0.39166666666666666,
+     "B": 0.323,
+     "C": 0.2853333333333333
+    }
+   },
+   {
+    "A": "broadcast",
+    "B": "infiltrate",
+    "C": "infiltrate",
+    "epsilon": 0.008999999999999952,
+    "payoffs": {
+     "A": 0.367,
+     "B": 0.33233333333333337,
+     "C": 0.30066666666666664
+    }
+   },
+   {
+    "A": "bridge",
+    "B": "fortify",
+    "C": "fortify",
+    "epsilon": 0.009666666666666657,
+    "payoffs": {
+     "A": 0.39966666666666667,
+     "B": 0.323,
+     "C": 0.2773333333333334
+    }
+   },
+   {
+    "A": "infiltrate",
+    "B": "fortify",
+    "C": "infiltrate",
+    "epsilon": 0.011333333333333306,
+    "payoffs": {
+     "A": 0.389,
+     "B": 0.319,
+     "C": 0.292
+    }
+   }
+  ],
+  "best_response_path": [
+   [
+    "passive",
+    "passive",
+    "passive"
+   ],
+   [
+    "infiltrate",
+    "fortify",
+    "infiltrate"
+   ],
+   [
+    "bridge",
+    "infiltrate",
+    "bridge"
+   ],
+   [
+    "infiltrate",
+    "fortify",
+    "bridge"
+   ],
+   [
+    "bridge",
+    "infiltrate",
+    "bridge"
+   ]
+  ],
+  "best_response_converged": false
+ }
+}

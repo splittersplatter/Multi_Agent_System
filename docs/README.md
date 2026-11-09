@@ -12,6 +12,8 @@
 - [Confirmed-convergence foundation: proof domains and implementation prerequisites](convergence-foundations.md)
 - [Evaluation metrics: formulas, eligibility and uncertainty](heuristic-evaluation-metrics.md)
 - [Finite knowledge models and epistemic voting](epistemic-voting.md)
+- [Scenario studies: watchdog, foreign intelligence, propaganda, echo chambers](suchit_sims/README.md)
+- [MARL interface for learned movement](marl-interface.md) · [Changes on branch suchit-sims](suchit-sims-changes.md)
 
 ## Current state
 

@@ -1,0 +1,1224 @@
+{
+ "showcase": [
+  {
+   "id": "W1",
+   "variant": "Blitz: 25 swing voters, 0.35/round",
+   "drift": 0.01,
+   "onset": 1,
+   "third_win": 3,
+   "final_target_share": 0.38,
+   "max_one_round_jump": 0.14,
+   "attack_spend": 5.0,
+   "engine_alert": 1,
+   "engine_outcome": "caught before win",
+   "optimal_alert": 1,
+   "optimal_outcome": "caught before win",
+   "control_false_alarm_engine": false,
+   "control_false_alarm_optimal": false
+  },
+  {
+   "id": "W2",
+   "variant": "Fast: 25 swing, 0.12/round",
+   "drift": 0.01,
+   "onset": 1,
+   "third_win": 4,
+   "final_target_share": 0.42,
+   "max_one_round_jump": 0.1,
+   "attack_spend": 5.0,
+   "engine_alert": 1,
+   "engine_outcome": "caught before win",
+   "optimal_alert": 1,
+   "optimal_outcome": "caught before win",
+   "control_false_alarm_engine": false,
+   "control_false_alarm_optimal": false
+  },
+  {
+   "id": "W3",
+   "variant": "Steady: 25 swing, 0.05/round",
+   "drift": 0.01,
+   "onset": 1,
+   "third_win": 5,
+   "final_target_share": 0.46,
+   "max_one_round_jump": 0.11,
+   "attack_spend": 5.0,
+   "engine_alert": 3,
+   "engine_outcome": "caught before win",
+   "optimal_alert": 2,
+   "optimal_outcome": "caught before win",
+   "control_false_alarm_engine": false,
+   "control_false_alarm_optimal": false
+  },
+  {
+   "id": "W4",
+   "variant": "Slow drip: 25 swing, 0.02/round",
+   "drift": 0.01,
+   "onset": 1,
+   "third_win": 9,
+   "final_target_share": 0.46,
+   "max_one_round_jump": 0.05,
+   "attack_spend": 5.0,
+   "engine_alert": null,
+   "engine_outcome": "missed",
+   "optimal_alert": 5,
+   "optimal_outcome": "caught before win",
+   "control_false_alarm_engine": false,
+   "control_false_alarm_optimal": false
+  },
+  {
+   "id": "W5",
+   "variant": "Hide in noise: slow drip, drift 0.03",
+   "drift": 0.03,
+   "onset": 1,
+   "third_win": 10,
+   "final_target_share": 0.41,
+   "max_one_round_jump": 0.04,
+   "attack_spend": 5.0,
+   "engine_alert": null,
+   "engine_outcome": "missed",
+   "optimal_alert": 5,
+   "optimal_outcome": "caught before win",
+   "control_false_alarm_engine": false,
+   "control_false_alarm_optimal": false
+  },
+  {
+   "id": "W6",
+   "variant": "Concentrated: 10 swing, 0.15/round",
+   "drift": 0.01,
+   "onset": 1,
+   "third_win": null,
+   "final_target_share": 0.33,
+   "max_one_round_jump": 0.1,
+   "attack_spend": 3.0,
+   "engine_alert": 1,
+   "engine_outcome": "caught (attack failed anyway)",
+   "optimal_alert": 1,
+   "optimal_outcome": "caught (attack failed anyway)",
+   "control_false_alarm_engine": false,
+   "control_false_alarm_optimal": false
+  },
+  {
+   "id": "W7",
+   "variant": "Broad shallow: 50 voters, 0.02/round",
+   "drift": 0.01,
+   "onset": 1,
+   "third_win": null,
+   "final_target_share": 0.32,
+   "max_one_round_jump": 0.04,
+   "attack_spend": 6.0,
+   "engine_alert": null,
+   "engine_outcome": "harmless, no alert",
+   "optimal_alert": 5,
+   "optimal_outcome": "caught (attack failed anyway)",
+   "control_false_alarm_engine": false,
+   "control_false_alarm_optimal": false
+  },
+  {
+   "id": "W8",
+   "variant": "Random-direction push",
+   "drift": 0.01,
+   "onset": 1,
+   "third_win": null,
+   "final_target_share": 0.26,
+   "max_one_round_jump": 0.02,
+   "attack_spend": 5.0,
+   "engine_alert": null,
+   "engine_outcome": "harmless, no alert",
+   "optimal_alert": null,
+   "optimal_outcome": "harmless, no alert",
+   "control_false_alarm_engine": false,
+   "control_false_alarm_optimal": false
+  },
+  {
+   "id": "W9",
+   "variant": "Under-funded: steady, budget 1.0",
+   "drift": 0.01,
+   "onset": 1,
+   "third_win": null,
+   "final_target_share": 0.23,
+   "max_one_round_jump": 0.01,
+   "attack_spend": 1.0,
+   "engine_alert": null,
+   "engine_outcome": "harmless, no alert",
+   "optimal_alert": null,
+   "optimal_outcome": "harmless, no alert",
+   "control_false_alarm_engine": false,
+   "control_false_alarm_optimal": false
+  },
+  {
+   "id": "W10",
+   "variant": "Wrong targets: 25 core opponents",
+   "drift": 0.01,
+   "onset": 1,
+   "third_win": null,
+   "final_target_share": 0.23,
+   "max_one_round_jump": 0.0,
+   "attack_spend": 5.0,
+   "engine_alert": null,
+   "engine_outcome": "harmless, no alert",
+   "optimal_alert": null,
+   "optimal_outcome": "harmless, no alert",
+   "control_false_alarm_engine": false,
+   "control_false_alarm_optimal": false
+  }
+ ],
+ "engine_detector": "single-round \u0394 > 0.05",
+ "optimal_detector": "3-round rise > 0.04",
+ "optimal_detector_calibration": {
+  "false_alarm_rate": 0.0,
+  "harmful": 25,
+  "caught": 25,
+  "catch_rate": 1.0,
+  "mean_delay": 2.36,
+  "stress_false_alarm_rate": 0.0
+ },
+ "best_per_family_calibration": {
+  "single": {
+   "detector": "single-round \u0394 > 0.03",
+   "false_alarm_rate": 0.0,
+   "harmful": 25,
+   "caught": 25,
+   "catch_rate": 1.0,
+   "mean_delay": 2.56,
+   "stress_false_alarm_rate": 0.0
+  },
+  "window": {
+   "detector": "3-round rise > 0.04",
+   "false_alarm_rate": 0.0,
+   "harmful": 25,
+   "caught": 25,
+   "catch_rate": 1.0,
+   "mean_delay": 2.36,
+   "stress_false_alarm_rate": 0.0
+  },
+  "cusum": {
+   "detector": "CUSUM k=0.010 h=0.03",
+   "false_alarm_rate": 0.0,
+   "harmful": 25,
+   "caught": 25,
+   "catch_rate": 1.0,
+   "mean_delay": 2.56,
+   "stress_false_alarm_rate": 0.0
+  }
+ },
+ "held_out": {
+  "engine default": {
+   "false_alarm_rate": 0.0,
+   "harmful": 25,
+   "caught": 20,
+   "catch_rate": 0.8,
+   "mean_delay": 1.85
+  },
+  "best single": {
+   "false_alarm_rate": 0.0,
+   "harmful": 25,
+   "caught": 25,
+   "catch_rate": 1.0,
+   "mean_delay": 2.44
+  },
+  "best window": {
+   "false_alarm_rate": 0.0,
+   "harmful": 25,
+   "caught": 25,
+   "catch_rate": 1.0,
+   "mean_delay": 2.36
+  },
+  "best cusum": {
+   "false_alarm_rate": 0.0,
+   "harmful": 25,
+   "caught": 25,
+   "catch_rate": 1.0,
+   "mean_delay": 2.48
+  }
+ },
+ "attacker_best_response_vs_optimal": {
+  "per_person_round": 0.2,
+  "targets": 25,
+  "undetected_win_rate": 0.0,
+  "mean_third_win_round": 3
+ },
+ "attacker_best_response_vs_engine": {
+  "per_person_round": 0.01,
+  "targets": 25,
+  "undetected_win_rate": 1.0
+ },
+ "attacker_grid": {
+  "0.01|10": [
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.01|25": [
+   {
+    "t3": 16,
+    "engine": "missed",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 20,
+    "engine": "missed",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 16,
+    "engine": "missed",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 17,
+    "engine": "missed",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 17,
+    "engine": "missed",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.01|40": [
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.01|60": [
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   }
+  ],
+  "0.015|10": [
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.015|25": [
+   {
+    "t3": 12,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 13,
+    "engine": "missed",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 12,
+    "engine": "missed",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 12,
+    "engine": "missed",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 12,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.015|40": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.015|60": [
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   }
+  ],
+  "0.02|10": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.02|25": [
+   {
+    "t3": 9,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 9,
+    "engine": "missed",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 9,
+    "engine": "missed",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 10,
+    "engine": "missed",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 10,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.02|40": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.02|60": [
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   }
+  ],
+  "0.03|10": [
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.03|25": [
+   {
+    "t3": 7,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 7,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 7,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 7,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 8,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.03|40": [
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.03|60": [
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   }
+  ],
+  "0.05|10": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.05|25": [
+   {
+    "t3": 5,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 5,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 5,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 5,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 5,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.05|40": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.05|60": [
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   }
+  ],
+  "0.08|10": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.08|25": [
+   {
+    "t3": 4,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 4,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 4,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 4,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 4,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.08|40": [
+   {
+    "t3": 21,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": 16,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 10,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.08|60": [
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "harmless, no alert"
+   }
+  ],
+  "0.12|10": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.12|25": [
+   {
+    "t3": 4,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 4,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 4,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 4,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 4,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.12|40": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.12|60": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "harmless, no alert",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.2|10": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.2|25": [
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.2|40": [
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.2|60": [
+   {
+    "t3": 14,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 10,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 8,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.35|10": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ],
+  "0.35|25": [
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.35|40": [
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": 3,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   }
+  ],
+  "0.35|60": [
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": 11,
+    "engine": "caught before win",
+    "optimal": "caught before win"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   },
+   {
+    "t3": null,
+    "engine": "caught (attack failed anyway)",
+    "optimal": "caught (attack failed anyway)"
+   }
+  ]
+ },
+ "runs": {
+  "showcase": 20,
+  "calibration": 130,
+  "held_out": 90,
+  "attacker_grid": 180
+ }
+}
