@@ -26,3 +26,8 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# huashu-design skill: background-music tracks kept locally, not in git (re-download from
+# https://github.com/alchaincyf/huashu-design/tree/main/assets if needed)
+/.claude/skills/huashu-design/assets/bgm-*.mp3
+/.claude/skills/huashu-design/.env
