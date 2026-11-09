@@ -1,0 +1,404 @@
+parties = ["Left", "Right", "Centre"]
+k = 1
+seed = 19
+rounds = 40
+
+[groups.loyal_centre]
+voting = "sincere"
+movement = "random_walk"
+max_step = 0.03
+proximity_radius = 0.2
+
+[groups.sincere]
+voting = "sincere"
+movement = "random_walk"
+max_step = 0.03
+proximity_radius = 0.2
+
+[groups.front_runner]
+voting = "top_k"
+movement = "random_walk"
+max_step = 0.03
+proximity_radius = 0.2
+capabilities = { sense_public_ballots = true }
+
+[groups.front_runner.parameters]
+voting = { top_k = 2 }
+
+[groups.copycat]
+voting = "sensed_plurality"
+movement = "random_walk"
+max_step = 0.03
+proximity_radius = 0.2
+capabilities = { sense_public_ballots = true }
+
+[groups.pivot_seeker]
+voting = "pivotal"
+movement = "random_walk"
+max_step = 0.03
+proximity_radius = 0.2
+capabilities = { sense_public_ballots = true }
+
+[network]
+radius = 0.2
+persistent_edges = []
+
+[[people]]
+id = "v00"
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.693, 0.0365]
+
+[[people]]
+id = "v01"
+group = "front_runner"
+preference = ["Left", "Centre", "Right"]
+position = [0.481, 0.1426]
+
+[[people]]
+id = "v02"
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.5001, 0.3769]
+
+[[people]]
+id = "v03"
+group = "copycat"
+preference = ["Right", "Centre", "Left"]
+position = [0.8441, 0.8671]
+
+[[people]]
+id = "v04"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.0543, 0.384]
+
+[[people]]
+id = "v05"
+group = "loyal_centre"
+preference = ["Centre", "Right", "Left"]
+position = [0.1368, 0.6929]
+
+[[people]]
+id = "v06"
+group = "loyal_centre"
+preference = ["Centre", "Left", "Right"]
+position = [0.2772, 0.1507]
+
+[[people]]
+id = "v07"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.4092, 0.7213]
+
+[[people]]
+id = "v08"
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.3131, 0.6667]
+
+[[people]]
+id = "v09"
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.2267, 0.6762]
+
+[[people]]
+id = "v10"
+group = "copycat"
+preference = ["Left", "Centre", "Right"]
+position = [0.1252, 0.0925]
+
+[[people]]
+id = "v11"
+group = "loyal_centre"
+preference = ["Centre", "Right", "Left"]
+position = [0.5054, 0.6471]
+
+[[people]]
+id = "v12"
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.4406, 0.2883]
+
+[[people]]
+id = "v13"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.1909, 0.2987]
+
+[[people]]
+id = "v14"
+group = "loyal_centre"
+preference = ["Centre", "Right", "Left"]
+position = [0.469, 0.1355]
+
+[[people]]
+id = "v15"
+group = "front_runner"
+preference = ["Left", "Centre", "Right"]
+position = [0.856, 0.6729]
+
+[[people]]
+id = "v16"
+group = "loyal_centre"
+preference = ["Centre", "Left", "Right"]
+position = [0.0939, 0.6396]
+
+[[people]]
+id = "v17"
+group = "loyal_centre"
+preference = ["Centre", "Right", "Left"]
+position = [0.6258, 0.0382]
+
+[[people]]
+id = "v18"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.6434, 0.9231]
+
+[[people]]
+id = "v19"
+group = "pivot_seeker"
+preference = ["Right", "Centre", "Left"]
+position = [0.5654, 0.5835]
+
+[[people]]
+id = "v20"
+group = "pivot_seeker"
+preference = ["Right", "Centre", "Left"]
+position = [0.228, 0.5086]
+
+[[people]]
+id = "v21"
+group = "sincere"
+preference = ["Centre", "Right", "Left"]
+position = [0.7581, 0.6444]
+
+[[people]]
+id = "v22"
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.2153, 0.5223]
+
+[[people]]
+id = "v23"
+group = "copycat"
+preference = ["Left", "Centre", "Right"]
+position = [0.1577, 0.334]
+
+[[people]]
+id = "v24"
+group = "front_runner"
+preference = ["Left", "Centre", "Right"]
+position = [0.2755, 0.8614]
+
+[[people]]
+id = "v25"
+group = "copycat"
+preference = ["Left", "Centre", "Right"]
+position = [0.9281, 0.6325]
+
+[[people]]
+id = "v26"
+group = "front_runner"
+preference = ["Centre", "Right", "Left"]
+position = [0.2983, 0.5044]
+
+[[people]]
+id = "v27"
+group = "front_runner"
+preference = ["Centre", "Left", "Right"]
+position = [0.4797, 0.0887]
+
+[[people]]
+id = "v28"
+group = "copycat"
+preference = ["Left", "Centre", "Right"]
+position = [0.1752, 0.4608]
+
+[[people]]
+id = "v29"
+group = "pivot_seeker"
+preference = ["Right", "Centre", "Left"]
+position = [0.5122, 0.8464]
+
+[[people]]
+id = "v30"
+group = "sincere"
+preference = ["Centre", "Left", "Right"]
+position = [0.4688, 0.3865]
+
+[[people]]
+id = "v31"
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.3772, 0.4485]
+
+[[people]]
+id = "v32"
+group = "copycat"
+preference = ["Centre", "Left", "Right"]
+position = [0.9427, 0.1189]
+
+[[people]]
+id = "v33"
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.5271, 0.4184]
+
+[[people]]
+id = "v34"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.3701, 0.328]
+
+[[people]]
+id = "v35"
+group = "sincere"
+preference = ["Centre", "Left", "Right"]
+position = [0.5879, 0.3751]
+
+[[people]]
+id = "v36"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.2878, 0.9486]
+
+[[people]]
+id = "v37"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.9445, 0.1857]
+
+[[people]]
+id = "v38"
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.5512, 0.6973]
+
+[[people]]
+id = "v39"
+group = "front_runner"
+preference = ["Centre", "Right", "Left"]
+position = [0.8514, 0.5823]
+
+[[people]]
+id = "v40"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.6717, 0.6064]
+
+[[people]]
+id = "v41"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.7168, 0.8156]
+
+[[people]]
+id = "v42"
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.1695, 0.3018]
+
+[[people]]
+id = "v43"
+group = "front_runner"
+preference = ["Centre", "Right", "Left"]
+position = [0.4475, 0.0979]
+
+[[people]]
+id = "v44"
+group = "front_runner"
+preference = ["Left", "Centre", "Right"]
+position = [0.5444, 0.574]
+
+[[people]]
+id = "v45"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.7682, 0.6662]
+
+[[people]]
+id = "v46"
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.3556, 0.8998]
+
+[[people]]
+id = "v47"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.4506, 0.3158]
+
+[[people]]
+id = "v48"
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.7774, 0.1461]
+
+[[people]]
+id = "v49"
+group = "sincere"
+preference = ["Left", "Centre", "Right"]
+position = [0.0899, 0.1484]
+
+[[people]]
+id = "v50"
+group = "front_runner"
+preference = ["Centre", "Left", "Right"]
+position = [0.4896, 0.9188]
+
+[[people]]
+id = "v51"
+group = "front_runner"
+preference = ["Left", "Centre", "Right"]
+position = [0.5239, 0.0549]
+
+[[people]]
+id = "v52"
+group = "sincere"
+preference = ["Right", "Centre", "Left"]
+position = [0.3208, 0.2591]
+
+[[people]]
+id = "v53"
+group = "copycat"
+preference = ["Left", "Centre", "Right"]
+position = [0.422, 0.1581]
+
+[[people]]
+id = "v54"
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.1768, 0.2049]
+
+[[people]]
+id = "v55"
+group = "front_runner"
+preference = ["Left", "Centre", "Right"]
+position = [0.1108, 0.7413]
+
+[[people]]
+id = "v56"
+group = "front_runner"
+preference = ["Right", "Centre", "Left"]
+position = [0.0905, 0.6636]
+
+[[people]]
+id = "v57"
+group = "pivot_seeker"
+preference = ["Centre", "Right", "Left"]
+position = [0.7242, 0.8209]
+
+[[people]]
+id = "v58"
+group = "pivot_seeker"
+preference = ["Left", "Centre", "Right"]
+position = [0.2852, 0.4871]
+
+[[people]]
+id = "v59"
+group = "copycat"
+preference = ["Right", "Centre", "Left"]
+position = [0.4031, 0.9388]
