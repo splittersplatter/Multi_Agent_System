@@ -12,6 +12,7 @@
 - [Confirmed-convergence foundation: proof domains and implementation prerequisites](convergence-foundations.md)
 - [Evaluation metrics: formulas, eligibility and uncertainty](heuristic-evaluation-metrics.md)
 - [Finite knowledge models and epistemic voting](epistemic-voting.md)
+- [Project report (6 pages) and 24-slide presentation](presentation_docs/README.md)
 
 ## Current state
 
