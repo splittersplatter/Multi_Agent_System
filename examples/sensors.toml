@@ -1,0 +1,40 @@
+parties = ["A", "B", "C"]
+k = 2
+seed = 9
+rounds = 2
+
+[groups.sender]
+voting = "sincere"
+
+[groups.sensor]
+voting = "sensed_plurality"
+capabilities = {sense_public_ballots = true}
+
+[groups.report_only]
+voting = "local_plurality"
+
+[network]
+persistent_edges = [["1", "2"], ["1", "3"]]
+
+[[people]]
+id = "1"
+group = "sender"
+preference = ["A", "B", "C"]
+position = [0.2, 0.5]
+
+[[people]]
+id = "2"
+group = "sensor"
+preference = ["B", "A", "C"]
+position = [0.5, 0.7]
+
+[[people]]
+id = "3"
+group = "report_only"
+preference = ["B", "A", "C"]
+position = [0.8, 0.3]
+
+[[interventions]]
+round = 1
+person = "1"
+ballot = ["C", "A"]

@@ -1,0 +1,14 @@
+{
+  "parties": ["B", "A", "C"],
+  "k": 1,
+  "agents": ["1", "2"],
+  "actual": "only",
+  "worlds": [
+    {
+      "id": "only",
+      "preferences": {"1": ["A", "B", "C"], "2": ["C", "B", "A"]},
+      "ballots": {"1": ["A"], "2": ["C"]},
+      "observations": {"1": "only", "2": "only"}
+    }
+  ]
+}

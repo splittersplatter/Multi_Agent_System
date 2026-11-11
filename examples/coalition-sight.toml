@@ -1,0 +1,46 @@
+parties = ["A", "B", "C"]
+k = 1
+seed = 72
+rounds = 4
+
+[groups.coalition]
+voting = "sight_plurality"
+movement = "random_walk"
+max_step = 0.02
+communication = "target_report"
+capabilities = { observe_target_preferences = true }
+
+[groups.residents]
+voting = "sincere"
+
+[network]
+persistent_edges = [["1", "2"]]
+private_channels = { team = ["1", "3"] }
+
+[[coalitions]]
+id = "campaign"
+members = ["1"]
+target = "B"
+report_budget_per_round = 1
+report_budget_total = 1
+sight_targets = ["2", "3"]
+sight_budget_per_round = 1
+sight_budget_total = 2
+
+[[people]]
+id = "1"
+group = "coalition"
+preference = ["A", "B", "C"]
+position = [0.2, 0.2]
+
+[[people]]
+id = "2"
+group = "residents"
+preference = ["B", "C", "A"]
+position = [0.6, 0.2]
+
+[[people]]
+id = "3"
+group = "residents"
+preference = ["C", "A", "B"]
+position = [0.8, 0.2]

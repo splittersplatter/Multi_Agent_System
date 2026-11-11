@@ -1,0 +1,35 @@
+parties = ["A", "B", "C"]
+k = 1
+seed = 2026
+rounds = 15
+
+[convergence]
+case = "source_local_dominance"
+
+[groups.residents]
+voting = "source_local_dominance"
+
+[groups.residents.parameters.voting]
+radius = 1
+max_states = 200000
+
+[[people]]
+id = "1"
+group = "residents"
+preference = ["C", "B", "A"]
+[[people]]
+id = "2"
+group = "residents"
+preference = ["B", "A", "C"]
+[[people]]
+id = "3"
+group = "residents"
+preference = ["A", "C", "B"]
+[[people]]
+id = "4"
+group = "residents"
+preference = ["A", "B", "C"]
+[[people]]
+id = "5"
+group = "residents"
+preference = ["B", "A", "C"]

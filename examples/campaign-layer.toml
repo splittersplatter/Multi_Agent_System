@@ -1,0 +1,38 @@
+parties = ["A", "B", "C"]
+k = 2
+seed = 11
+rounds = 3
+
+[groups.sender]
+voting = "sincere"
+communication = "truthful"
+
+[groups.observer]
+voting = "sensed_plurality"
+capabilities = {sense_public_ballots = true}
+
+[network]
+radius = 0.15
+campaign_edges = [["1", "2"]]
+
+[[people]]
+id = "1"
+group = "sender"
+preference = ["A", "B", "C"]
+position = [0.2, 0.4]
+
+[[people]]
+id = "2"
+group = "observer"
+preference = ["B", "A", "C"]
+position = [0.3, 0.4]
+
+[[interventions]]
+round = 1
+person = "2"
+position = [0.8, 0.4]
+
+[[interventions]]
+round = 2
+person = "1"
+remove_campaign_edges = ["2"]

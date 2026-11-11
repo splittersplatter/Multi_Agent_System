@@ -1,0 +1,30 @@
+parties = ["A", "B"]
+k = 1
+seed = 2026
+rounds = 12
+
+[convergence]
+case = "certified_conformity"
+
+[groups.residents]
+voting = "certified_conformity"
+capabilities = { sense_public_ballots = true }
+
+[network]
+persistent_edges = [["1", "2"], ["2", "1"]]
+
+[[people]]
+id = "1"
+group = "residents"
+preference = ["A", "B"]
+
+[[people]]
+id = "2"
+group = "residents"
+preference = ["B", "A"]
+
+[[interventions]]
+round = 3
+person = "1"
+preference = ["B", "A"]
+ballot = ["A"]

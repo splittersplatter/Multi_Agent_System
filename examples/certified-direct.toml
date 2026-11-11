@@ -1,0 +1,31 @@
+parties = ["A", "B", "C"]
+k = 1
+seed = 2026
+rounds = 10
+
+[convergence]
+case = "direct_best_response"
+
+[groups.residents]
+voting = "direct_best_response"
+
+[[people]]
+id = "1"
+group = "residents"
+preference = ["C", "B", "A"]
+[[people]]
+id = "2"
+group = "residents"
+preference = ["B", "A", "C"]
+[[people]]
+id = "3"
+group = "residents"
+preference = ["A", "C", "B"]
+[[people]]
+id = "4"
+group = "residents"
+preference = ["A", "B", "C"]
+[[people]]
+id = "5"
+group = "residents"
+preference = ["B", "A", "C"]

@@ -1,0 +1,40 @@
+parties = ["A", "B"]
+k = 1
+seed = 73
+rounds = 4
+
+[groups.observer]
+voting = "overheard_plurality"
+capabilities = { intercept_private_reports = true, observe_private_channels = false }
+
+[groups.residents]
+voting = "sincere"
+communication = "truthful"
+
+[network]
+private_channels = { team = ["2", "3"] }
+
+[[coalitions]]
+id = "campaign"
+members = ["1"]
+target = "B"
+report_budget_per_round = 0
+report_budget_total = 0
+eavesdrop_channels = ["team"]
+eavesdrop_budget_per_round = 1
+eavesdrop_budget_total = 2
+
+[[people]]
+id = "1"
+group = "observer"
+preference = ["A", "B"]
+
+[[people]]
+id = "2"
+group = "residents"
+preference = ["B", "A"]
+
+[[people]]
+id = "3"
+group = "residents"
+preference = ["A", "B"]
