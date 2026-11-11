@@ -1,0 +1,2 @@
+# the full run log is shipped compressed as runs.jsonl.gz; a local rerun unpacks it here
+results/runs.jsonl
